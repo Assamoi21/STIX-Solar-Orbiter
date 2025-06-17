@@ -1,0 +1,29 @@
+Metadata-Version: 2.1
+Name: HelioPy
+Version: 1.0.0
+Summary: "Python for heliophysics"
+Home-page: UNKNOWN
+Author: HelioPy contributors
+Author-email: dstansby@protonmail.com
+License: GPL v3
+Keywords: physics,space-physics,heliophysics
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Topic :: Scientific/Engineering :: Physics
+Provides: heliopy
+Requires-Python: >=3.6
+License-File: LICENSE
+Provides-Extra: docs
+Requires-Dist: sphinx (>=2) ; extra == 'docs'
+Requires-Dist: sphinx-bootstrap-theme (>=0.7) ; extra == 'docs'
+
+UNKNOWN
+

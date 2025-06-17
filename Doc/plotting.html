@@ -1,0 +1,2495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>plotting API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>plotting</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import numpy as np
+import pandas as pd
+import datetime
+import re
+from tkinter import *
+from astropy.io import fits
+from matplotlib import pyplot as plt
+from matplotlib import ticker as tck
+from pandas.plotting import register_matplotlib_converters
+from entry_int import EntryInt
+
+register_matplotlib_converters()
+
+
+class Input:
+    &#34;&#34;&#34;Class to load the parameters from input data, data times, and plot Spectrum, Time Profile and Spectrogram.
+       Called Units: Rate, Counts, Flux.&#34;&#34;&#34;
+
+    def __init__(self, file, start=None, end=None, hours=None, *args):
+        &#34;&#34;&#34;When opening the .fits file, the returned object, called hdulist, behaves like a Python list and each element
+        maps to a Header - Data Unit(HDU). We are primarily interested in RATE extension which contains the spectral
+        data. Extracted object has two important attributes: data, which behaves like an array, can be used to access
+        to the numerical data and header, which behaves like a dictionary, can be used to access to the header
+        information. Also, if the start and end times are specified, extracts from the file the dates and times.
+        Parameters:
+            file: the file in your computer containing data you want to analyse;
+            start: starting time of the plotting; optionnal;
+            end: ending time of the plotting; optionnal;
+            hours: keeps the old value for data time for future comparisons; optionnal.&#34;&#34;&#34;
+
+        # Value for each minimum Energy bands
+        self.E_bands_min = []
+        # Value for each maximum Energy bands
+        self.E_bands_max = []
+        # Index Value for each minimum Energy bands
+        self.E_bands_min_index = []
+        # Index Value for each maximum Energy bands
+        self.E_bands_max_index = []
+
+        # Loading data
+        self.data2 = None
+        data1, data2, header0, header1 = self.__load_data(file)
+
+        # Constant to use to define the plot
+        self.energies_bin = header1[4]
+
+        # Date intervals
+        self.start_date = header0[19]
+        self.end_date = header0[21]
+        self.start_time = self.find_time(self.start_date)
+        self.start_time_sec_plot = self.start_time[0] * 3600 + self.start_time[1] * 60 + self.start_time[2]
+        self.end_time = self.find_time(self.end_date)
+        if start is not None:
+            self.start_date = start
+        if end is not None:
+            self.end_date = end
+        if hours is not None:
+            self.hours_fixed = hours
+
+        # Indexing times
+        self.index_times_start_real = int()
+        self.index_times_end_real = int()
+        self.index_start_sec = IntVar()
+        self.index_end_sec = IntVar()
+        self.data_start = []
+        self.data_start_index = []
+        self.data_end = []
+        self.data_end_index = []
+
+        # Parameter false if user unticked &#34;Entire file&#34;
+        if start is None or end is None or hours is None:
+            self.entire_file = True
+        else:
+            self.entire_file = False
+
+        # To define COUNTS :
+        self.counts = data1.counts
+        self.area = 6  # Value of the surface of detection (in cm²) to compute the flux
+        self.energies_low = np.array(data2.e_low)
+        self.energies_high = np.array(data2.e_high)
+
+        # To define RATE :
+        self.del_times_debut = data1.timedel
+        self.del_times = self.delay_times(self.del_times_debut)
+        self.times = data1.time
+        self.data_tracer = []
+
+        # Time format conversion for Time - 2, 2 seconds difference
+        # Conversion from seconds to hours/minutes/seconds
+        self.hr = IntVar()
+        self.mi = IntVar()
+        self.ss = IntVar()
+        self.date_split = None
+        self.date_day = IntVar()
+        self.date_time = IntVar()
+        self.date_time_int = IntVar()
+
+        # Declaration of the variables for the windows created with tkinter
+        self.canvas_canal = StringVar()
+        self.canvas_plot = None
+        self.window_elimits = None
+        self.window_spec_limits = None
+
+        # Limits for energy bands
+        self.ylim_min = StringVar()
+        self.ylim_max = StringVar()
+        self.e_ylim_min = StringVar()
+        self.e_ylim_max = StringVar()
+        self.energy_elimit_text = StringVar()
+        self.rounded = int()
+
+        # Saving values for min and max energies for the time plot
+        self.ee1_min = None
+        self.ee1_max = None
+        self.eelist_min = list()
+        self.eelist_max = list()
+        self.text_min_energy = StringVar()
+        self.text_max_energy = StringVar()
+
+        # Plotting spectrogram and spectrum
+        self.limit_button = None
+        self.log_spectrum_button = None
+        self.energy_spec_limits_text = StringVar()
+        self.raised_power = float()
+
+        # Show information button
+        self.CheckVar = IntVar()
+        self.CheckVarBk = None
+
+        # Linear/log radioboxes
+        self.scalex = StringVar()
+        self.scaley = StringVar()
+        self.scaleboxx = StringVar()
+        self.scaleboxx.set(&#34;linear&#34;)
+        self.scaleboxy = StringVar()
+        self.scaleboxy.set(&#34;linear&#34;)
+        self.r1_text = StringVar()
+        self.r2_text = StringVar()
+        self.r11 = None
+        self.r12 = None
+        self.r21 = None
+        self.r22 = None
+
+    # =================== 0. Global functions ===================
+
+    def __load_data(self, file):
+        &#34;&#34;&#34;Loads the input file choosen in &#39;Select Input&#39; section.
+        Parameters: &#39;file&#39; containing the data in a fits file.
+        Returns respectively counts, energies, time and channels.&#34;&#34;&#34;
+        self.hdulist = fits.open(file)  # read the data
+        self.hdulist.info()  # display the content of the read file
+        return self.hdulist[2].data, self.hdulist[3].data, self.hdulist[0].header, self.hdulist[3].header
+        # read the Data and Header contents from input file
+
+    def delay_times(self, data1):
+        &#34;&#34;&#34;Creates a TEMPORARY -1 interval, because there is a step between deltimes data.
+        Takes a data as parameter and returns the shifted data.&#34;&#34;&#34;
+        self.data2 = np.zeros_like(data1)
+        for i in range(1, len(data1)):
+            self.data2[i] = data1[i - 1]
+        self.data2[0] = data1[0]
+        return self.data2
+
+    def find_time(self, date):
+        &#34;&#34;&#34;Converts the starting time in the data.
+        Parameters: you need to give the starting date (list) as an argument of the function.&#34;&#34;&#34;
+        self.date_split = re.split(&#39;T&#39;, date)
+        self.date_day = self.date_split[0]
+        self.date_time = re.split(&#39;:&#39;, self.date_split[1])
+        self.date_time_int = re.split(&#39;\.&#39;, self.date_time[2])
+        self.date_time[2] = self.date_time_int[0]
+        found_time = (int(self.date_time[0]), int(self.date_time[1]), int(self.date_time[2]))
+        return found_time
+
+    def acq_time(self, label):
+        &#34;&#34;&#34;If not using the entire file, this function checks if the acquisition time is &gt; 24 h and reduces data
+        according to the size of chosen time period.&#34;&#34;&#34;
+        time_24 = 0
+        for i in label:
+            if i &gt; 86400:
+                time_24 += 1
+        self.index_start_sec = 3600 * self.find_time(self.start_date)[0] + 60 * \
+            self.find_time(self.start_date)[1] + \
+            self.find_time(self.start_date)[2]
+        self.index_end_sec = 3600 * self.find_time(self.end_date)[0] + 60 * \
+            self.find_time(self.end_date)[1] + \
+            self.find_time(self.end_date)[2]
+        if time_24 &gt; 0:  # If acquisition time &gt; 24 h:
+            if self.index_start_sec &lt; 3600:
+                startIndexh = (self.index_start_sec - self.start_time_sec_plot) + 86400
+            else:
+                startIndexh = self.index_start_sec - self.start_time_sec_plot
+            if self.index_end_sec &lt; 3600:
+                endIndexh = (self.index_end_sec - self.start_time_sec_plot) + 86400  # Adding 24 h
+            else:
+                endIndexh = self.index_end_sec - self.start_time_sec_plot  # Else, no adding necessary
+        else:  # This is the same day
+            startIndexh = self.index_start_sec - self.start_time_sec_plot
+            endIndexh = self.index_end_sec - self.start_time_sec_plot
+        self.index_times_start_real, self.index_times_end_real = self.time_index(self.times, startIndexh, endIndexh)
+
+    def log_axis(self, window, relx, rely, *args):
+        &#34;&#34;&#34;Displays the radio boxes allowing the user to choose between linear and logarithmic axis.
+        Parameters: window is the current window on which the radio boxes need to be displayed;
+        relx and rely are the relative position of the North-West of the whole set on the window.&#34;&#34;&#34;
+        self.r1_text = Label(window, text=&#34;x axis:&#34;, fg=&#39;blue&#39;)
+        self.r1_text.place(relx=relx, rely=rely)
+        self.r2_text = Label(window, text=&#34;y axis:&#34;, fg=&#39;blue&#39;)
+        self.r2_text.place(relx=relx, rely=rely + 0.10)
+
+        self.r11 = Radiobutton(window, text=&#34;Linear&#34;, variable=self.scaleboxx, value=&#34;linear&#34;,
+                               command=self.radiox)
+        self.r11.place(relx=relx + 0.13, rely=rely)
+        self.r12 = Radiobutton(window, text=&#34;Logarithmic&#34;, variable=self.scaleboxx, value=&#34;log&#34;,
+                               command=self.radiox)
+        self.r12.place(relx=relx + 0.32, rely=rely)
+        self.r21 = Radiobutton(window, text=&#34;Linear&#34;, variable=self.scaleboxy, value=&#34;linear&#34;,
+                               command=self.radioy)
+        self.r21.place(relx=relx + 0.13, rely=rely + 0.10)
+        self.r22 = Radiobutton(window, text=&#34;Logarithmic&#34;, variable=self.scaleboxy, value=&#34;log&#34;,
+                               command=self.radioy)
+        self.r22.place(relx=relx + 0.32, rely=rely + 0.10)
+
+    def radiox(self):
+        &#34;&#34;&#34;Commands radio box for x axis in log_axis function to save the scale.
+        Saves in scalex a StringVar() &#39;linear&#39; or &#39;log&#39;.&#34;&#34;&#34;
+        self.scalex = self.scaleboxx.get()
+
+    def radioy(self):
+        &#34;&#34;&#34;Commands radio box for y axis in log_axis function to save the scale.
+        Saves in scaley a StringVar() &#39;linear&#39; or &#39;log&#39;.&#34;&#34;&#34;
+        self.scaley = self.scaleboxy.get()
+
+    # =================== 1. Time Profile Plotting ===================
+
+    def rate_vs_time_plotting(self):
+        &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the time profile setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__time_profile_setting(&#39;rate&#39;)
+
+    def counts_vs_time_plotting(self):
+        &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the time profile setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__time_profile_setting(&#39;counts&#39;)
+
+    def flux_vs_time_plotting(self):
+        &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the time profile setting. \n
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__time_profile_setting(&#39;flux&#39;)
+
+    def __time_profile_setting(self, typ, *args):
+        &#34;&#34;&#34;Plots the function of time by selected Unit.
+            Uses two frames: the first one to select values, the second one to plot figures. \n
+            Parameters: \n
+                typ (str): the type of plotting between &#39;rate&#39;, &#39;counts&#39;, and &#39;flux&#39;; \n
+                show (bool): if True, displays the window for plot time options.&#34;&#34;&#34;
+        self.toptime = Toplevel()
+        self.toptime.title(&#39;STIX PlotTime Options&#39;)
+        self.toptime.geometry(&#34;400x600&#34;)
+        self.typ = typ  # Copying the local variable to a global variable to pass it in command functions.
+
+        Label(self.toptime, text=&#34;Plot Time Profile&#34;, fg=&#34;red&#34;,
+              font=&#34;Helvetica 12 bold italic&#34;).place(relx=0.5, rely=0.1, anchor=N)
+        self.frametime1 = LabelFrame(self.toptime, relief=RAISED, borderwidth=1)
+        self.frametime1.place(relx=0.01, rely=0.05, relheight=0.9, relwidth=0.98)
+
+        self.lblFilenametime = Label(self.frametime1, text=&#34;Selection of Energy bands number: &#34;)
+        self.lblFilenametime.place(relx=0.02, rely=0.06, anchor=W)
+        self.EnergyBands_number_choices = (&#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;)
+
+        self.varE_number = StringVar(self.frametime1)
+        self.varE_number.set(&#39;-&#39;)  # Default value
+
+        self.selectionE_number = OptionMenu(self.frametime1, self.varE_number, *self.EnergyBands_number_choices)
+        self.selectionE_number.place(relx=0.52, rely=0.06, anchor=W)
+        self.buttonDo_plot_refresh = Button(self.frametime1, text=&#39;Refresh&#39;, command=self.do_refresh)
+        self.buttonDo_plot_refresh.place(relx=0.25, rely=0.92, anchor=N)
+        self.buttonForget = Button(self.frametime1, text=&#39;Close&#39;, command=self.destroy_bis)
+        self.buttonForget.place(relx=0.50, rely=0.92, anchor=N)
+        self.varE_number.trace(&#34;w&#34;, self.entries_list)
+
+        if typ == &#39;counts&#39;:
+            self.buttonDo_plot = Button(self.frametime1, text=&#39;Do Plot&#39;, command=self.__do_plot_counts)
+        elif typ == &#39;rate&#39;:
+            self.buttonDo_plot = Button(self.frametime1, text=&#39;Do Plot&#39;, command=self.__do_plot_rate)
+        elif typ == &#39;flux&#39;:
+            self.buttonDo_plot = Button(self.frametime1, text=&#39;Do Plot&#39;, command=self.__do_plot_flux)
+        else:
+            self.buttonDo_plot = None
+            print(&#34;Type not found.&#34;)
+
+        self.buttonDo_plot.place(relx=0.75, rely=0.92, anchor=N)
+
+    def do_refresh(self):
+        &#34;&#34;&#34;Destroys the current plotting window, reset all values for matrix plotting, and reopen the plotting window.
+        Function only called as a command function in the time profile settings.&#34;&#34;&#34;
+        self.toptime.destroy()
+        self.__time_profile_setting(self.typ)
+        self.E_bands_min = []
+        self.E_bands_max = []
+        self.E_bands_min_index = []
+        self.E_bands_max_index = []
+        if not self.entire_file:
+            self.start_time = self.find_time(self.hours_fixed)
+        self.ee1_min = None
+        self.ee1_max = None
+        print(&#34;\nValues refreshed&#34;)
+
+    def destroy_bis(self):
+        &#34;&#34;&#34;Closes &#39;STIX PlotTime Options&#39; window when clicking &#39;Close&#39; button. Used in the time profile setting.&#34;&#34;&#34;
+        self.toptime.destroy()
+
+    def entries_list(self, *args):
+        &#34;&#34;&#34;Allows to create all buttons and Entry boxes to choose energy values.
+        Creates a new window called &#39;canvas_plot&#39;.&#34;&#34;&#34;
+        self.canvas_plot = Canvas(self.toptime, width=350, height=300)
+        self.canvas_plot.place(relx=0.5, rely=0.15, anchor=N)
+
+        # To print information about the canal sum
+        self.CheckVarBk = Checkbutton(self.canvas_plot, text=&#34;Show Information&#34;,
+                                      variable=self.CheckVar, command=self.sum_canal, state=NORMAL)
+        self.CheckVarBk.place(relx=0.21, rely=0.88)
+
+        # This loop creates text zones to allow the user to enter energy bands
+        self.text_min_energy = Label(self.canvas_plot, text=&#34;Min energy&#34;)
+        self.text_min_energy.place(relx=0.3, rely=0.05, anchor=N)
+        self.text_max_energy = Label(self.canvas_plot, text=&#34;Max energy&#34;)
+        self.text_max_energy.place(relx=0.7, rely=0.05, anchor=N)
+
+        if self.varE_number.get().isdigit():
+            self.eelist_min = [&#39;&#39;] * int(self.varE_number.get())
+            self.eelist_max = [&#39;&#39;] * int(self.varE_number.get())
+            for i in range(int(self.varE_number.get())):
+                self.open_value(i)
+                self.eelist_min[i] = self.ee1_min
+                self.eelist_max[i] = self.ee1_max
+
+        # Scaling
+        self.log_axis(self.canvas_plot, 0.12, 0.64)
+
+    def sum_canal(self, *args):
+        &#34;&#34;&#34;Prints the sum of canal if the box &#34;Show information&#34; is ticked.&#34;&#34;&#34;
+        if self.CheckVar.get() == 1:
+            self.canvas_canal = Canvas(self.toptime, width=350, height=100, bg=&#39;ivory&#39;)
+            self.canvas_canal.place(relx=0.5, rely=0.65, anchor=N)
+            txt = []
+            if self.E_bands_min_index:
+                for i in range(len(self.E_bands_min_index)):
+                    txt.append([i + 1, self.E_bands_min_index[i], self.E_bands_max_index[i]])
+            else:
+                print(&#39;No information currently available&#39;)
+
+            frame_summarize_canal = LabelFrame(self.canvas_canal, relief=RAISED, borderwidth=2)
+            frame_summarize_canal.place(relheight=1, relwidth=1)
+
+            txtcanal = []
+            for i in range(len(txt)):
+                txtcanal.append(&#39;\nCanal selected for Energy band {} is:&#39;.format(txt[i][0]))
+                txtcanal.append(txt[i][1])
+                txtcanal.append(&#39;to&#39;)
+                txtcanal.append(txt[i][2])
+
+            listcanal = Text(frame_summarize_canal)
+            listcanal.insert(END, str(txtcanal))
+            listcanal.pack()
+
+        else:
+            print(&#39;Destroying canvas&#39;)
+            self.canvas_canal.destroy()
+
+    def open_value(self, i):
+        &#34;&#34;&#34;Creates entry boxes to let the user choose the limits of the plot.
+        Dependencies: entry_int.py&#34;&#34;&#34;
+        self.ee1_min = EntryInt(self.canvas_plot, width=20)
+        self.ee1_min.place(relx=0.3, rely=0.14 + 0.1 * i, anchor=N)
+
+        self.ee1_max = EntryInt(self.canvas_plot, width=20)
+        self.ee1_max.place(relx=0.7, rely=0.14 + 0.1 * i, anchor=N)
+
+    def __do_plot_rate(self):
+        &#34;&#34;&#34;Collects rate data to do the plotting.&#34;&#34;&#34;
+        self.add_E()
+        data = self.__get_data(&#34;rate&#34;)
+        self.__time_profile_plotting(data, &#34;rate&#34;)
+
+    def __do_plot_counts(self):
+        &#34;&#34;&#34;Collects counts data to do the plotting.&#34;&#34;&#34;
+        self.add_E()
+        data = self.__get_data(&#34;counts&#34;)
+        self.__time_profile_plotting(data, &#34;counts&#34;)
+
+    def __do_plot_flux(self):
+        &#34;&#34;&#34;Collects flux data to do the plotting.&#34;&#34;&#34;
+        self.add_E()
+        data = self.__get_data(&#34;flux&#34;)
+        self.__time_profile_plotting(data, &#34;flux&#34;)
+
+    def add_E(self, *args):
+        &#34;&#34;&#34;Gets the values of plot limits from user choice.
+        ee1_min and ee1_max are the Entry boxes for min and max energy bands defined in open_value.&#34;&#34;&#34;
+        for i in range(int(self.varE_number.get())):
+            if self.ee1_min.get() != &#39;&#39;:
+                self.round_energy(self.energies_low, int(self.eelist_min[i].get()))
+                a_index = (np.where(self.energies_low == float(self.rounded)))[0][0]
+                self.E_bands_min.append(int(self.eelist_min[i].get()))
+                self.E_bands_min_index.append(int(a_index))
+
+            if self.ee1_max.get() != &#39;&#39;:
+                self.round_energy(self.energies_high, int(self.eelist_max[i].get()))
+                b_index = (np.where(self.energies_high == float(self.rounded)))[0][0]
+                self.E_bands_max.append(int(self.eelist_max[i].get()))
+                self.E_bands_max_index.append(int(b_index))
+
+    def round_energy(self, liste, value):
+        &#34;&#34;&#34;Searches for the nearest number from the list.
+        Parameters: liste is the list where you store your researched values;
+        value is the number you want to round to match one of the given list.&#34;&#34;&#34;
+        near = 150
+        self.rounded = int(value)
+        for i in range(len(liste)):
+            diff = np.abs(value - liste[i])
+            if near &gt; diff:
+                near = diff
+                self.rounded = int(liste[i])
+
+    def __get_data(self, typ):
+        &#34;&#34;&#34;Defines the Rate, Counts, and Flux for &#34;Plot Time Profile&#34;
+        Rate  = array which has a count rate data for each energy channel
+        There is a amount gived by the user for the total of energy bands : 1 to 5&#34;&#34;&#34;
+        data = np.zeros((len(self.times), len(self.E_bands_min) + 1))
+        for i in range(len(self.times)):
+            for j in range(len(self.E_bands_min) + 1):
+                if j == len(self.E_bands_min):
+                    data[i, j] = self.times[i]
+
+                else:
+                    if np.where(self.energies_low == self.E_bands_min[j])[0]:
+                        a = (np.where(self.energies_low == self.E_bands_min[j]))[0][0]
+                    else:
+                        self.round_energy(self.energies_low, self.E_bands_min[j])
+                        a = (np.where(self.energies_low == self.rounded))[0][0]
+                    self.E_bands_min_index.append(a + 1)
+
+                    if np.where(self.energies_high == self.E_bands_max[j])[0]:
+                        b = (np.where(self.energies_high == self.E_bands_max[j]))[0][0]
+                    else:
+                        self.round_energy(self.energies_high, self.E_bands_max[j])
+                        b = (np.where(self.energies_high == self.rounded))[0][0]
+                    self.E_bands_max_index.append(b + 1)
+                    # Determines the energy distribution for different channels relative to the time of observed data
+
+                    if typ == &#39;rate&#39;:
+                        data[i, j] = sum(self.counts[i, a:(b + 1)]) / self.del_times[i]  # energy channel
+                    elif typ == &#39;counts&#39;:
+                        data[i, j] = sum(self.counts[i, a:(b + 1)])  # energy channel
+                    elif typ == &#39;flux&#39;:
+                        self.e_diff = np.abs(self.E_bands_max[j] - self.E_bands_min[j])
+                        data[i, j] = (sum(self.counts[i, a:(b + 1)]) / self.del_times[i]) / (self.area * self.e_diff)
+                    else:
+                        print(&#34;Error&#34;)
+                        return None
+
+        return data  # Returns rate unit
+
+    def __time_profile_plotting(self, data, typ, show=True):
+        &#34;&#34;&#34;Plots the function of time by selected Unit. Uses the colormesh function provided by matplotlib library.
+        Parameters: data, the same as defined previously; typ: &#39;rate&#39;, &#39;counts&#39;, or &#39;flux&#39;.&#34;&#34;&#34;
+        plt.figure()
+        self.columns_label = [str(low) + &#39;-&#39; + str(high) + &#39;keV&#39; for low, high in
+                              zip(self.E_bands_min, self.E_bands_max)]
+        self.columns_label.append(&#39;Times&#39;)
+        color = [&#39;blue&#39;, &#39;red&#39;, &#39;green&#39;, &#39;black&#39;, &#39;orange&#39;]
+
+        # Absciss data transformation
+        self.label_time_plot = np.asarray(self.times) + self.start_time_sec_plot
+
+        if self.entire_file:
+            data_reduced = data
+            times_reduced = self.times
+        else:
+            self.acq_time(self.label_time_plot)
+            times_reduced = data[self.index_times_start_real:self.index_times_end_real + 1, -1]
+            data_reduced = data[self.index_times_start_real:self.index_times_end_real + 1, :]
+
+        # Plotting different figures according to chosen parameter
+        if typ == &#34;rate&#34;:
+            # Choosing the specific color for each energy channel
+            df = pd.DataFrame(data_reduced, index=times_reduced, columns=self.columns_label)
+            plt.ylabel(&#39;Rate (Counts/s) by Bands&#39;)
+            plt.title(&#39;Time Profile Plotting Rate (Counts/s)&#39;)
+
+        elif typ == &#34;counts&#34;:
+            # Choosing the specific color for each energy channel
+            df = pd.DataFrame(data_reduced, index=times_reduced,
+                              columns=self.columns_label)
+            plt.ylabel(&#39;Counts by Bands&#39;)
+            plt.title(&#39;Time Profile Plotting Counts&#39;)
+
+        elif typ == &#34;flux&#34;:
+            # Choosing the specific color for each energy channel
+            df = pd.DataFrame(data_reduced, index=times_reduced,
+                              columns=self.columns_label)
+            plt.ylabel(&#39;Flux by Bands&#39;)
+            plt.title(&#39;Time Profile Plotting Flux&#39;)
+
+        else:
+            df = None
+            print(&#34;Error&#34;)
+
+        ax_bis1 = plt.gca()
+        for l_bands in range(len(self.E_bands_min)):
+            df.plot(x=&#39;Times&#39;, y=self.columns_label[l_bands], color=color[l_bands], ax=ax_bis1)
+
+        # Absciss legend plot
+        if show:
+            if self.entire_file:
+                nx = max(self.times) - min(self.times)
+            else:
+                nx = self.times[self.index_times_end_real] - self.times[self.index_times_start_real]
+
+            if nx &lt;= 1800:  # file duration less than 30 minutes
+                step_x = 120
+            elif nx &lt;= 3600:  # file duration less than 1 hour
+                step_x = 480
+            elif nx &lt;= 28800:  # file duration less than 8 hours
+                step_x = 3600
+            else:
+                step_x = 7200  # file duration more than 8 hours
+
+            # Coloration
+            if self.entire_file:
+                x_positions = np.arange(0, nx, step_x)
+            else:
+                x_positions = np.arange(data[self.index_times_start_real, -1],
+                                        nx + data[self.index_times_start_real, -1], step_x)
+            x_positions_bis = x_positions + self.start_time_sec_plot  # pixel count at label position
+            x_labels_plot = list(
+                map(lambda x: (str(datetime.timedelta(seconds=x))).split(&#39;.&#39;)[0][:-3], x_positions_bis))
+            x_labels_plot_days = []
+            for i in range(len(x_labels_plot)):
+                if &#39;day&#39; in x_labels_plot[i]:
+                    x_labels_plot_days.append((x_labels_plot[i].split(&#39;,&#39;))[1])
+                else:
+                    x_labels_plot_days.append(x_labels_plot[i])
+            plt.xticks(x_positions, x_labels_plot_days)
+
+            # Scaling
+            if self.scalex == &#39;log&#39;:
+                plt.xscale(&#39;log&#39;)
+            if self.scaley == &#39;log&#39;:
+                plt.yscale(&#39;log&#39;)
+
+            # Plotting and closing parameters window
+            plt.xlabel(&#39;Start time: &#39; + str(self.start_date) + &#39; -- End time : &#39; + str(
+                self.end_date))  # load start time from header and display it in X - axis
+            self.toptime.destroy()
+            plt.show()
+
+    def time_index(self, index_times, value_start, value_end):
+        &#34;&#34;&#34;Find the index of start time which corresponds to the chosen start and end data.&#34;&#34;&#34;
+        for i in range(len(index_times)):
+            if index_times[i] &gt;= value_start:
+                self.data_start.append(index_times[i])
+                self.data_start_index.append(i)
+            if index_times[i] &lt;= value_end:
+                self.data_end.append(index_times[i])
+                self.data_end_index.append(i)
+        return self.data_start_index[0], self.data_end_index[-1]
+
+    # =================== 2. Spectrum plotting ===================
+
+    def plot_spectrum_rate(self):
+        &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the spectrum setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrum(&#39;rate&#39;)
+
+    def plot_spectrum_counts(self):
+        &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the spectrum setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrum(&#39;counts&#39;)
+
+    def plot_spectrum_flux(self):
+        &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the spectrum setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrum(&#39;flux&#39;)
+
+    def __plot_spectrum(self, typ):
+        &#34;&#34;&#34;Preparing figure plotting with the data. Takes typ &#39;rate&#39;, &#39;counts&#39;, or &#39;flux&#39; as an argument.&#34;&#34;&#34;
+        plt.figure()
+        data = np.zeros(self.energies_bin)
+        self.start_time_sec = self.start_time[0] * 3600 + self.start_time[1] * 60 + self.start_time[2]
+        self.label_time_plot_spectro = np.asarray(self.times) + self.start_time_sec
+
+        if not self.entire_file:
+            self.acq_time(self.label_time_plot_spectro)
+
+        if typ == &#39;rate&#39;:
+            self.data_tracer = self.passage_counts_rate()
+            for i in range(self.energies_bin):  # for each channel
+                # Determines Rate for &#34;Plot Spectrum&#34;
+                if self.entire_file:
+                    data[i] = np.mean(self.data_tracer[:, i])
+                else:
+                    data[i] = np.mean(self.data_tracer[self.index_times_start_real:self.index_times_end_real + 1, i])
+            plt.ylabel(&#39;counts/s&#39;)
+            plt.title(&#39;STIX SOLAR Range vs Energy&#39;)
+
+        elif typ == &#39;counts&#39;:
+            for i in range(self.energies_bin):  # for each channel
+                # Determines Counts for &#34;Plot Spectrum&#34;
+                if self.entire_file:
+                    data[i] = np.mean(self.counts[:, i])
+                else:
+                    data[i] = np.mean(self.counts[self.index_times_start_real:self.index_times_end_real + 1, i])
+            plt.ylabel(&#39;counts&#39;)
+            plt.title(&#39;STIX SOLAR Counts vs Energy&#39;)
+
+        elif typ == &#39;flux&#39;:
+            self.data_tracer = self.passage_counts_flux()
+            for i in range(self.energies_bin):  # for each channel
+                # Determines Flux for &#34;Plot Spectrum&#34;
+                if self.entire_file:
+                    data[i] = np.mean(self.data_tracer[:, i]) / self.area
+                else:
+                    data[i] = np.mean(self.data_tracer[self.index_times_start_real:self.index_times_end_real + 1, i])
+            plt.ylabel(&#39;counts/s/mm²/keV&#39;)
+            plt.title(&#39;STIX SOLAR Flux vs Energy&#39;)
+
+        else:
+            print(&#39;error&#39;)
+
+        self.win_log_spec()
+        plt.rcParams[&#34;figure.figsize&#34;] = [6, 6]
+        plt.plot(self.energies_low, data, drawstyle=&#39;steps-post&#39;)  # Unit vs Energy
+        plt.xlabel(&#39;Energy(keV) / Start time: &#39; + str(self.start_date) + &#39; -- End time : &#39; + str(self.end_date))
+
+    def win_log_spec(self):
+        &#34;&#34;&#34;Creates a new window &#39;window_spec_limits&#39; to choose the linear or logarithmic axis for spectrum plotting.
+        Calls for the log_axis function.&#34;&#34;&#34;
+        self.window_spec_limits = Toplevel()
+        self.window_spec_limits.title(&#39;Scales for axis&#39;)
+        self.window_spec_limits.geometry(&#34;400x300&#34;)
+        self.energy_spec_limits_text = Label(self.window_spec_limits, text=&#34;Choose your scale for both x and y axis.&#34;,
+                                             fg=&#39;black&#39;, font=(&#34;Times&#34;, 11))
+        self.energy_spec_limits_text.place(relx=0.5, rely=0.09, anchor=&#39;center&#39;)
+        self.log_axis(self.window_spec_limits, 0.10, 0.30)
+        self.log_spectrum_button = Button(self.window_spec_limits, text=&#34;Plot spectrum&#34;, command=self.__plot_show)
+        self.log_spectrum_button.place(relx=0.5, rely=0.80, anchor=S, relheight=0.11, relwidth=0.25)
+
+    def __plot_show(self):
+        &#34;&#34;&#34;Closes the previous window and shows the plot for the spectrum.&#34;&#34;&#34;
+        if self.scalex == &#39;log&#39;:
+            plt.xscale(&#39;log&#39;)
+        if self.scaley == &#39;log&#39;:
+            plt.yscale(&#39;log&#39;)
+        self.window_spec_limits.destroy()
+        plt.show()
+
+    # =================== 3. Spectrogram Plotting ===================
+
+    def plot_spectrogram_rate(self):
+        &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the spectrogram setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrogram(&#39;rate&#39;)
+
+    def plot_spectrogram_counts(self):
+        &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the spectrogram setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrogram(&#39;counts&#39;)
+
+    def plot_spectrogram_flux(self):
+        &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the spectrogram setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrogram(&#39;flux&#39;)
+
+    def __plot_spectrogram(self, typ):
+        &#34;&#34;&#34;Spectrogram = function of Rate/Counts/Flux as a function of energy and time.
+        Parameters: x = tick(Time in h:m:s) and y(Energy bounds) are bounds,
+        z is the value *inside* those bounds (Rate/Counts/Flux)&#34;&#34;&#34;
+        # pcolormesh function(below) does not work with pandas time conversion function(TimeNew), we have to rewrite it.
+
+        # Absciss data transformation
+        self.start_time_sec = self.start_time[0] * 3600 + self.start_time[1] * 60 + self.start_time[2]
+        self.label_time_plot_spectro = np.asarray(self.times) + self.start_time_sec
+
+        if self.entire_file:
+            self.times_sequences = self.times
+        else:
+            self.acq_time(self.label_time_plot_spectro)
+            self.times_sequences = self.times[self.index_times_start_real:self.index_times_end_real + 1]
+
+        fig, self.ax = plt.subplots(1, 1, figsize=(15, 5), sharey=&#34;all&#34;, facecolor=&#39;w&#39;)
+        fig.canvas.draw()
+
+        # Limits and display
+        self.specgm_lim()
+
+        # Plotting rate
+        if typ == &#39;rate&#39;:
+            self.data_tracer = self.passage_counts_rate()
+            if self.entire_file:
+                plt.pcolormesh(self.times, self.energies_low, np.log10(np.transpose(self.data_tracer)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            else:
+                data_sequences = self.data_tracer[self.index_times_start_real:self.index_times_end_real + 1, :]
+                plt.pcolormesh(self.times_sequences, self.energies_low, np.log10(np.transpose(data_sequences)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            plt.title(&#39;STIX SOLAR Rates Spectrogram&#39;)
+            self.spgm_label = &#39;Counts/sec&#39;
+
+        # Plotting counts
+        elif typ == &#39;counts&#39;:
+            if self.entire_file:
+                plt.pcolormesh(self.times, self.energies_low, np.log10(np.transpose(self.counts)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            else:
+                data_sequences = self.counts[self.index_times_start_real:self.index_times_end_real + 1, :]
+                plt.pcolormesh(self.times_sequences, self.energies_low, np.log10(np.transpose(data_sequences)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            plt.title(&#39;STIX SOLAR Counts Spectrogram&#39;)
+            self.spgm_label = &#39;Counts&#39;
+
+        # Plotting flux
+        elif typ == &#39;flux&#39;:
+            self.data_tracer = self.passage_counts_flux()
+            if self.entire_file:
+                plt.pcolormesh(self.times, self.energies_low, np.log10(np.transpose(self.data_tracer)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            else:
+                data_sequences = self.data_tracer[self.index_times_start_real:self.index_times_end_real + 1, :]
+                plt.pcolormesh(self.times_sequences, self.energies_low, np.log10(np.transpose(data_sequences)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            plt.title(&#39;STIX SOLAR Flux Spectrogram&#39;)
+            self.spgm_label = &#39;counts/s/mm²/keV&#39;
+
+        else:
+            print(&#39;error&#39;)
+
+        # Defining x step
+        nx = max(self.times_sequences) - min(self.times_sequences)
+        if nx &lt;= 1800:  # file duration less than 30 minutes
+            step_x = 120
+        elif nx &lt;= 3600:  # file duration less than 1 hour
+            step_x = 480
+        elif nx &lt;= 28800:  # file duration less than 8 hours
+            step_x = 3600
+        else:  # file duration more than 8 hours
+            step_x = 7200
+
+        # x axis construction
+        x_positions = np.arange(0, nx, step_x)
+
+        if self.entire_file:
+            x_positions_bis = x_positions + self.start_time_sec  # pixel count at label position
+            x_labels_plot = list(
+                map(lambda x: (str(datetime.timedelta(seconds=x))).split(&#39;.&#39;)[0][:-3], x_positions_bis))
+        else:
+            x_positions_bis = np.asarray(x_positions) + self.times[self.index_times_start_real]
+            x_positions_bis_label = np.asarray(x_positions) + self.label_time_plot_spectro[self.index_times_start_real]
+            x_labels_plot = list(
+                map(lambda x: (str(datetime.timedelta(seconds=float(x)))).split(&#39;.&#39;)[0][:-3], x_positions_bis_label))
+
+        x_labels_plot_days = []
+        for i in range(len(x_labels_plot)):
+            if &#39;day&#39; in x_labels_plot[i]:
+                x_labels_plot_days.append((x_labels_plot[i].split(&#39;,&#39;))[1])
+            else:
+                x_labels_plot_days.append(x_labels_plot[i])
+        if self.entire_file:
+            plt.xticks(x_positions, x_labels_plot_days)
+        else:
+            plt.xticks(x_positions_bis, x_labels_plot_days)
+
+        # Ordinate legend plot
+        if self.entire_file:
+            self.energy_idx = self.energies_low
+            self.ene_leg = [str(a) + &#39;-&#39; + str(b) for a, b in zip(self.energies_low, self.energies_high)]
+            self.ene_leg = np.array(self.ene_leg)
+
+    def passage_counts_rate(self):
+        &#34;&#34;&#34;Converts counts data to rate data.
+        Rate = Counts / Time&#34;&#34;&#34;
+        (self.ligne, self.colonne) = np.shape(self.counts)
+        self.data_tracer = np.zeros((self.ligne, self.colonne))
+        for i in range(self.ligne):
+            for j in range(self.colonne):
+                self.data_tracer[i][j] = self.counts[i][j] / self.del_times[i]
+        return self.data_tracer
+
+    def passage_counts_flux(self):
+        &#34;&#34;&#34;Converts counts data to flux data.
+        Flux = Rate / Area / Bands length = Counts / (Time * Area * Bands length)&#34;&#34;&#34;
+        (self.ligne, self.colonne) = np.shape(self.counts)
+        self.data_tracer = np.zeros((self.ligne, self.colonne))
+        delta_e = np.zeros(shape=(len(self.energies_low)))
+        for i in range(self.ligne):
+            for j in range(self.colonne):
+                delta_e[j] = self.energies_high[j] - self.energies_low[j]  # Difference between bands
+                self.data_tracer[i][j] = self.counts[i][j] / self.del_times[i] / self.area / delta_e[j]
+        return self.data_tracer
+
+    def specgm_lim(self):
+        &#34;&#34;&#34;Displays a window to allow user to change plot scale axis for spectrogram plotting.&#34;&#34;&#34;
+        # Window
+        self.window_elimits = Toplevel()
+        self.window_elimits.title(&#39;Energy limits&#39;)
+        self.window_elimits.geometry(&#34;400x300&#34;)
+        self.energy_elimit_text = Label(self.window_elimits, text=&#34;Enter the minimum and maximum energy to plot the &#34;
+                                                                  &#34;spectrogram.&#34;, fg=&#39;black&#39;, font=(&#34;Times&#34;, 11))
+        self.energy_elimit_text.place(relx=0.5, rely=0.09, anchor=&#39;center&#39;)
+
+        # Limits
+        self.ylim_min.set(&#39;1&#39;)
+        self.ylim_max.set(&#39;150&#39;)
+        self.e_ylim_min = EntryInt(self.window_elimits)
+        self.e_ylim_min.place(relx=0.5, rely=0.22, relheight=0.10, relwidth=0.25, anchor=&#39;center&#39;)
+        self.e_ylim_max = EntryInt(self.window_elimits)
+        self.e_ylim_max.place(relx=0.5, rely=0.37, relheight=0.10, relwidth=0.25, anchor=&#39;center&#39;)
+
+        # Scaling
+        self.log_axis(self.window_elimits, 0.10, 0.50)
+
+        # Plotting
+        self.limit_button = Button(self.window_elimits, text=&#34;Plot spectrogram&#34;, command=self.show_specgm)
+        self.limit_button.place(relx=0.5, rely=0.85, anchor=N)
+
+    def colorbar_scale(self, plot, pos):
+        &#34;&#34;&#34;Formats the colorbar plotted for spectrogram, displaying units as 10^x.&#34;&#34;&#34;
+        decimal, power = &#39;{:.2e}&#39;.format(plot).split(&#39;e&#39;)
+        self.raised_power = np.floor(float(decimal) * 10**(1+float(power))) / 10
+        return r&#39;$10^{{{}}}$&#39;.format(self.raised_power)
+
+    def show_specgm(self):
+        &#34;&#34;&#34;Adds all chosen values to the plot and shows the figure.&#34;&#34;&#34;
+        # Limits
+        if self.e_ylim_min.get().isdigit():
+            self.ylim_min = int(self.e_ylim_min.get())
+        else:
+            self.ylim_min = 1  # Default min value
+        if self.e_ylim_max.get().isdigit():
+            self.ylim_max = int(self.e_ylim_max.get())
+        else:
+            self.ylim_max = 150  # Default max value
+
+        # Scaling
+        if self.scalex == &#39;log&#39;:
+            plt.xscale(&#39;log&#39;)
+        if self.scaley == &#39;log&#39;:
+            plt.yscale(&#39;log&#39;)
+
+        # Plotting
+        self.window_elimits.destroy()
+        plt.ylim(self.ylim_min, self.ylim_max)
+        plt.ylabel(&#39;Energy (keV)&#39;)
+        plt.xlabel(&#39;Time(UT)&#39;)
+        plt.xlabel(&#39;Start time: &#39; + str(self.start_date) + &#39; -- End time : &#39; + str(self.end_date))
+        plt.colorbar(ax=self.ax, label=self.spgm_label, format=tck.FuncFormatter(self.colorbar_scale))
+        plt.show()
+
+
+&#39;&#39;&#39;
+# testing
+if __name__ == &#39;__main__&#39;:
+    plots = Input(&#34;.fits&#34;)  # any input file with .fits extension
+    plots.rate_vs_time_plotting()  # plot Count Rate vs Time
+    plots.counts_vs_time_plotting()  # plot Counts vs Time
+    plots.flux_vs_time_plotting()  # plot Count Flux vs Time
+    plots.plot_spectrum_rate()  # plot Count Rate vs Energy
+    plots.plot_spectrum_counts()  # plot Counts vs Energy
+    plots.plot_spectrum_flux()  # plot Flux vs Energy
+    plots.plot_spectrogram_rate()  # plot Count Rate Spectrogram
+    plots.plot_spectrogram_counts()  # plot Counts Spectrogram
+    plots.plot_spectrogram_flux()  # plot Flux Spectrogram
+&#39;&#39;&#39;</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="plotting.Input"><code class="flex name class">
+<span>class <span class="ident">Input</span></span>
+<span>(</span><span>file, start=None, end=None, hours=None, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class to load the parameters from input data, data times, and plot Spectrum, Time Profile and Spectrogram.
+Called Units: Rate, Counts, Flux.</p>
+<p>When opening the .fits file, the returned object, called hdulist, behaves like a Python list and each element
+maps to a Header - Data Unit(HDU). We are primarily interested in RATE extension which contains the spectral
+data. Extracted object has two important attributes: data, which behaves like an array, can be used to access
+to the numerical data and header, which behaves like a dictionary, can be used to access to the header
+information. Also, if the start and end times are specified, extracts from the file the dates and times.</p>
+<h2 id="parameters">Parameters</h2>
+<p>file: the file in your computer containing data you want to analyse;
+start: starting time of the plotting; optionnal;
+end: ending time of the plotting; optionnal;
+hours: keeps the old value for data time for future comparisons; optionnal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Input:
+    &#34;&#34;&#34;Class to load the parameters from input data, data times, and plot Spectrum, Time Profile and Spectrogram.
+       Called Units: Rate, Counts, Flux.&#34;&#34;&#34;
+
+    def __init__(self, file, start=None, end=None, hours=None, *args):
+        &#34;&#34;&#34;When opening the .fits file, the returned object, called hdulist, behaves like a Python list and each element
+        maps to a Header - Data Unit(HDU). We are primarily interested in RATE extension which contains the spectral
+        data. Extracted object has two important attributes: data, which behaves like an array, can be used to access
+        to the numerical data and header, which behaves like a dictionary, can be used to access to the header
+        information. Also, if the start and end times are specified, extracts from the file the dates and times.
+        Parameters:
+            file: the file in your computer containing data you want to analyse;
+            start: starting time of the plotting; optionnal;
+            end: ending time of the plotting; optionnal;
+            hours: keeps the old value for data time for future comparisons; optionnal.&#34;&#34;&#34;
+
+        # Value for each minimum Energy bands
+        self.E_bands_min = []
+        # Value for each maximum Energy bands
+        self.E_bands_max = []
+        # Index Value for each minimum Energy bands
+        self.E_bands_min_index = []
+        # Index Value for each maximum Energy bands
+        self.E_bands_max_index = []
+
+        # Loading data
+        self.data2 = None
+        data1, data2, header0, header1 = self.__load_data(file)
+
+        # Constant to use to define the plot
+        self.energies_bin = header1[4]
+
+        # Date intervals
+        self.start_date = header0[19]
+        self.end_date = header0[21]
+        self.start_time = self.find_time(self.start_date)
+        self.start_time_sec_plot = self.start_time[0] * 3600 + self.start_time[1] * 60 + self.start_time[2]
+        self.end_time = self.find_time(self.end_date)
+        if start is not None:
+            self.start_date = start
+        if end is not None:
+            self.end_date = end
+        if hours is not None:
+            self.hours_fixed = hours
+
+        # Indexing times
+        self.index_times_start_real = int()
+        self.index_times_end_real = int()
+        self.index_start_sec = IntVar()
+        self.index_end_sec = IntVar()
+        self.data_start = []
+        self.data_start_index = []
+        self.data_end = []
+        self.data_end_index = []
+
+        # Parameter false if user unticked &#34;Entire file&#34;
+        if start is None or end is None or hours is None:
+            self.entire_file = True
+        else:
+            self.entire_file = False
+
+        # To define COUNTS :
+        self.counts = data1.counts
+        self.area = 6  # Value of the surface of detection (in cm²) to compute the flux
+        self.energies_low = np.array(data2.e_low)
+        self.energies_high = np.array(data2.e_high)
+
+        # To define RATE :
+        self.del_times_debut = data1.timedel
+        self.del_times = self.delay_times(self.del_times_debut)
+        self.times = data1.time
+        self.data_tracer = []
+
+        # Time format conversion for Time - 2, 2 seconds difference
+        # Conversion from seconds to hours/minutes/seconds
+        self.hr = IntVar()
+        self.mi = IntVar()
+        self.ss = IntVar()
+        self.date_split = None
+        self.date_day = IntVar()
+        self.date_time = IntVar()
+        self.date_time_int = IntVar()
+
+        # Declaration of the variables for the windows created with tkinter
+        self.canvas_canal = StringVar()
+        self.canvas_plot = None
+        self.window_elimits = None
+        self.window_spec_limits = None
+
+        # Limits for energy bands
+        self.ylim_min = StringVar()
+        self.ylim_max = StringVar()
+        self.e_ylim_min = StringVar()
+        self.e_ylim_max = StringVar()
+        self.energy_elimit_text = StringVar()
+        self.rounded = int()
+
+        # Saving values for min and max energies for the time plot
+        self.ee1_min = None
+        self.ee1_max = None
+        self.eelist_min = list()
+        self.eelist_max = list()
+        self.text_min_energy = StringVar()
+        self.text_max_energy = StringVar()
+
+        # Plotting spectrogram and spectrum
+        self.limit_button = None
+        self.log_spectrum_button = None
+        self.energy_spec_limits_text = StringVar()
+        self.raised_power = float()
+
+        # Show information button
+        self.CheckVar = IntVar()
+        self.CheckVarBk = None
+
+        # Linear/log radioboxes
+        self.scalex = StringVar()
+        self.scaley = StringVar()
+        self.scaleboxx = StringVar()
+        self.scaleboxx.set(&#34;linear&#34;)
+        self.scaleboxy = StringVar()
+        self.scaleboxy.set(&#34;linear&#34;)
+        self.r1_text = StringVar()
+        self.r2_text = StringVar()
+        self.r11 = None
+        self.r12 = None
+        self.r21 = None
+        self.r22 = None
+
+    # =================== 0. Global functions ===================
+
+    def __load_data(self, file):
+        &#34;&#34;&#34;Loads the input file choosen in &#39;Select Input&#39; section.
+        Parameters: &#39;file&#39; containing the data in a fits file.
+        Returns respectively counts, energies, time and channels.&#34;&#34;&#34;
+        self.hdulist = fits.open(file)  # read the data
+        self.hdulist.info()  # display the content of the read file
+        return self.hdulist[2].data, self.hdulist[3].data, self.hdulist[0].header, self.hdulist[3].header
+        # read the Data and Header contents from input file
+
+    def delay_times(self, data1):
+        &#34;&#34;&#34;Creates a TEMPORARY -1 interval, because there is a step between deltimes data.
+        Takes a data as parameter and returns the shifted data.&#34;&#34;&#34;
+        self.data2 = np.zeros_like(data1)
+        for i in range(1, len(data1)):
+            self.data2[i] = data1[i - 1]
+        self.data2[0] = data1[0]
+        return self.data2
+
+    def find_time(self, date):
+        &#34;&#34;&#34;Converts the starting time in the data.
+        Parameters: you need to give the starting date (list) as an argument of the function.&#34;&#34;&#34;
+        self.date_split = re.split(&#39;T&#39;, date)
+        self.date_day = self.date_split[0]
+        self.date_time = re.split(&#39;:&#39;, self.date_split[1])
+        self.date_time_int = re.split(&#39;\.&#39;, self.date_time[2])
+        self.date_time[2] = self.date_time_int[0]
+        found_time = (int(self.date_time[0]), int(self.date_time[1]), int(self.date_time[2]))
+        return found_time
+
+    def acq_time(self, label):
+        &#34;&#34;&#34;If not using the entire file, this function checks if the acquisition time is &gt; 24 h and reduces data
+        according to the size of chosen time period.&#34;&#34;&#34;
+        time_24 = 0
+        for i in label:
+            if i &gt; 86400:
+                time_24 += 1
+        self.index_start_sec = 3600 * self.find_time(self.start_date)[0] + 60 * \
+            self.find_time(self.start_date)[1] + \
+            self.find_time(self.start_date)[2]
+        self.index_end_sec = 3600 * self.find_time(self.end_date)[0] + 60 * \
+            self.find_time(self.end_date)[1] + \
+            self.find_time(self.end_date)[2]
+        if time_24 &gt; 0:  # If acquisition time &gt; 24 h:
+            if self.index_start_sec &lt; 3600:
+                startIndexh = (self.index_start_sec - self.start_time_sec_plot) + 86400
+            else:
+                startIndexh = self.index_start_sec - self.start_time_sec_plot
+            if self.index_end_sec &lt; 3600:
+                endIndexh = (self.index_end_sec - self.start_time_sec_plot) + 86400  # Adding 24 h
+            else:
+                endIndexh = self.index_end_sec - self.start_time_sec_plot  # Else, no adding necessary
+        else:  # This is the same day
+            startIndexh = self.index_start_sec - self.start_time_sec_plot
+            endIndexh = self.index_end_sec - self.start_time_sec_plot
+        self.index_times_start_real, self.index_times_end_real = self.time_index(self.times, startIndexh, endIndexh)
+
+    def log_axis(self, window, relx, rely, *args):
+        &#34;&#34;&#34;Displays the radio boxes allowing the user to choose between linear and logarithmic axis.
+        Parameters: window is the current window on which the radio boxes need to be displayed;
+        relx and rely are the relative position of the North-West of the whole set on the window.&#34;&#34;&#34;
+        self.r1_text = Label(window, text=&#34;x axis:&#34;, fg=&#39;blue&#39;)
+        self.r1_text.place(relx=relx, rely=rely)
+        self.r2_text = Label(window, text=&#34;y axis:&#34;, fg=&#39;blue&#39;)
+        self.r2_text.place(relx=relx, rely=rely + 0.10)
+
+        self.r11 = Radiobutton(window, text=&#34;Linear&#34;, variable=self.scaleboxx, value=&#34;linear&#34;,
+                               command=self.radiox)
+        self.r11.place(relx=relx + 0.13, rely=rely)
+        self.r12 = Radiobutton(window, text=&#34;Logarithmic&#34;, variable=self.scaleboxx, value=&#34;log&#34;,
+                               command=self.radiox)
+        self.r12.place(relx=relx + 0.32, rely=rely)
+        self.r21 = Radiobutton(window, text=&#34;Linear&#34;, variable=self.scaleboxy, value=&#34;linear&#34;,
+                               command=self.radioy)
+        self.r21.place(relx=relx + 0.13, rely=rely + 0.10)
+        self.r22 = Radiobutton(window, text=&#34;Logarithmic&#34;, variable=self.scaleboxy, value=&#34;log&#34;,
+                               command=self.radioy)
+        self.r22.place(relx=relx + 0.32, rely=rely + 0.10)
+
+    def radiox(self):
+        &#34;&#34;&#34;Commands radio box for x axis in log_axis function to save the scale.
+        Saves in scalex a StringVar() &#39;linear&#39; or &#39;log&#39;.&#34;&#34;&#34;
+        self.scalex = self.scaleboxx.get()
+
+    def radioy(self):
+        &#34;&#34;&#34;Commands radio box for y axis in log_axis function to save the scale.
+        Saves in scaley a StringVar() &#39;linear&#39; or &#39;log&#39;.&#34;&#34;&#34;
+        self.scaley = self.scaleboxy.get()
+
+    # =================== 1. Time Profile Plotting ===================
+
+    def rate_vs_time_plotting(self):
+        &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the time profile setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__time_profile_setting(&#39;rate&#39;)
+
+    def counts_vs_time_plotting(self):
+        &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the time profile setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__time_profile_setting(&#39;counts&#39;)
+
+    def flux_vs_time_plotting(self):
+        &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the time profile setting. \n
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__time_profile_setting(&#39;flux&#39;)
+
+    def __time_profile_setting(self, typ, *args):
+        &#34;&#34;&#34;Plots the function of time by selected Unit.
+            Uses two frames: the first one to select values, the second one to plot figures. \n
+            Parameters: \n
+                typ (str): the type of plotting between &#39;rate&#39;, &#39;counts&#39;, and &#39;flux&#39;; \n
+                show (bool): if True, displays the window for plot time options.&#34;&#34;&#34;
+        self.toptime = Toplevel()
+        self.toptime.title(&#39;STIX PlotTime Options&#39;)
+        self.toptime.geometry(&#34;400x600&#34;)
+        self.typ = typ  # Copying the local variable to a global variable to pass it in command functions.
+
+        Label(self.toptime, text=&#34;Plot Time Profile&#34;, fg=&#34;red&#34;,
+              font=&#34;Helvetica 12 bold italic&#34;).place(relx=0.5, rely=0.1, anchor=N)
+        self.frametime1 = LabelFrame(self.toptime, relief=RAISED, borderwidth=1)
+        self.frametime1.place(relx=0.01, rely=0.05, relheight=0.9, relwidth=0.98)
+
+        self.lblFilenametime = Label(self.frametime1, text=&#34;Selection of Energy bands number: &#34;)
+        self.lblFilenametime.place(relx=0.02, rely=0.06, anchor=W)
+        self.EnergyBands_number_choices = (&#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;)
+
+        self.varE_number = StringVar(self.frametime1)
+        self.varE_number.set(&#39;-&#39;)  # Default value
+
+        self.selectionE_number = OptionMenu(self.frametime1, self.varE_number, *self.EnergyBands_number_choices)
+        self.selectionE_number.place(relx=0.52, rely=0.06, anchor=W)
+        self.buttonDo_plot_refresh = Button(self.frametime1, text=&#39;Refresh&#39;, command=self.do_refresh)
+        self.buttonDo_plot_refresh.place(relx=0.25, rely=0.92, anchor=N)
+        self.buttonForget = Button(self.frametime1, text=&#39;Close&#39;, command=self.destroy_bis)
+        self.buttonForget.place(relx=0.50, rely=0.92, anchor=N)
+        self.varE_number.trace(&#34;w&#34;, self.entries_list)
+
+        if typ == &#39;counts&#39;:
+            self.buttonDo_plot = Button(self.frametime1, text=&#39;Do Plot&#39;, command=self.__do_plot_counts)
+        elif typ == &#39;rate&#39;:
+            self.buttonDo_plot = Button(self.frametime1, text=&#39;Do Plot&#39;, command=self.__do_plot_rate)
+        elif typ == &#39;flux&#39;:
+            self.buttonDo_plot = Button(self.frametime1, text=&#39;Do Plot&#39;, command=self.__do_plot_flux)
+        else:
+            self.buttonDo_plot = None
+            print(&#34;Type not found.&#34;)
+
+        self.buttonDo_plot.place(relx=0.75, rely=0.92, anchor=N)
+
+    def do_refresh(self):
+        &#34;&#34;&#34;Destroys the current plotting window, reset all values for matrix plotting, and reopen the plotting window.
+        Function only called as a command function in the time profile settings.&#34;&#34;&#34;
+        self.toptime.destroy()
+        self.__time_profile_setting(self.typ)
+        self.E_bands_min = []
+        self.E_bands_max = []
+        self.E_bands_min_index = []
+        self.E_bands_max_index = []
+        if not self.entire_file:
+            self.start_time = self.find_time(self.hours_fixed)
+        self.ee1_min = None
+        self.ee1_max = None
+        print(&#34;\nValues refreshed&#34;)
+
+    def destroy_bis(self):
+        &#34;&#34;&#34;Closes &#39;STIX PlotTime Options&#39; window when clicking &#39;Close&#39; button. Used in the time profile setting.&#34;&#34;&#34;
+        self.toptime.destroy()
+
+    def entries_list(self, *args):
+        &#34;&#34;&#34;Allows to create all buttons and Entry boxes to choose energy values.
+        Creates a new window called &#39;canvas_plot&#39;.&#34;&#34;&#34;
+        self.canvas_plot = Canvas(self.toptime, width=350, height=300)
+        self.canvas_plot.place(relx=0.5, rely=0.15, anchor=N)
+
+        # To print information about the canal sum
+        self.CheckVarBk = Checkbutton(self.canvas_plot, text=&#34;Show Information&#34;,
+                                      variable=self.CheckVar, command=self.sum_canal, state=NORMAL)
+        self.CheckVarBk.place(relx=0.21, rely=0.88)
+
+        # This loop creates text zones to allow the user to enter energy bands
+        self.text_min_energy = Label(self.canvas_plot, text=&#34;Min energy&#34;)
+        self.text_min_energy.place(relx=0.3, rely=0.05, anchor=N)
+        self.text_max_energy = Label(self.canvas_plot, text=&#34;Max energy&#34;)
+        self.text_max_energy.place(relx=0.7, rely=0.05, anchor=N)
+
+        if self.varE_number.get().isdigit():
+            self.eelist_min = [&#39;&#39;] * int(self.varE_number.get())
+            self.eelist_max = [&#39;&#39;] * int(self.varE_number.get())
+            for i in range(int(self.varE_number.get())):
+                self.open_value(i)
+                self.eelist_min[i] = self.ee1_min
+                self.eelist_max[i] = self.ee1_max
+
+        # Scaling
+        self.log_axis(self.canvas_plot, 0.12, 0.64)
+
+    def sum_canal(self, *args):
+        &#34;&#34;&#34;Prints the sum of canal if the box &#34;Show information&#34; is ticked.&#34;&#34;&#34;
+        if self.CheckVar.get() == 1:
+            self.canvas_canal = Canvas(self.toptime, width=350, height=100, bg=&#39;ivory&#39;)
+            self.canvas_canal.place(relx=0.5, rely=0.65, anchor=N)
+            txt = []
+            if self.E_bands_min_index:
+                for i in range(len(self.E_bands_min_index)):
+                    txt.append([i + 1, self.E_bands_min_index[i], self.E_bands_max_index[i]])
+            else:
+                print(&#39;No information currently available&#39;)
+
+            frame_summarize_canal = LabelFrame(self.canvas_canal, relief=RAISED, borderwidth=2)
+            frame_summarize_canal.place(relheight=1, relwidth=1)
+
+            txtcanal = []
+            for i in range(len(txt)):
+                txtcanal.append(&#39;\nCanal selected for Energy band {} is:&#39;.format(txt[i][0]))
+                txtcanal.append(txt[i][1])
+                txtcanal.append(&#39;to&#39;)
+                txtcanal.append(txt[i][2])
+
+            listcanal = Text(frame_summarize_canal)
+            listcanal.insert(END, str(txtcanal))
+            listcanal.pack()
+
+        else:
+            print(&#39;Destroying canvas&#39;)
+            self.canvas_canal.destroy()
+
+    def open_value(self, i):
+        &#34;&#34;&#34;Creates entry boxes to let the user choose the limits of the plot.
+        Dependencies: entry_int.py&#34;&#34;&#34;
+        self.ee1_min = EntryInt(self.canvas_plot, width=20)
+        self.ee1_min.place(relx=0.3, rely=0.14 + 0.1 * i, anchor=N)
+
+        self.ee1_max = EntryInt(self.canvas_plot, width=20)
+        self.ee1_max.place(relx=0.7, rely=0.14 + 0.1 * i, anchor=N)
+
+    def __do_plot_rate(self):
+        &#34;&#34;&#34;Collects rate data to do the plotting.&#34;&#34;&#34;
+        self.add_E()
+        data = self.__get_data(&#34;rate&#34;)
+        self.__time_profile_plotting(data, &#34;rate&#34;)
+
+    def __do_plot_counts(self):
+        &#34;&#34;&#34;Collects counts data to do the plotting.&#34;&#34;&#34;
+        self.add_E()
+        data = self.__get_data(&#34;counts&#34;)
+        self.__time_profile_plotting(data, &#34;counts&#34;)
+
+    def __do_plot_flux(self):
+        &#34;&#34;&#34;Collects flux data to do the plotting.&#34;&#34;&#34;
+        self.add_E()
+        data = self.__get_data(&#34;flux&#34;)
+        self.__time_profile_plotting(data, &#34;flux&#34;)
+
+    def add_E(self, *args):
+        &#34;&#34;&#34;Gets the values of plot limits from user choice.
+        ee1_min and ee1_max are the Entry boxes for min and max energy bands defined in open_value.&#34;&#34;&#34;
+        for i in range(int(self.varE_number.get())):
+            if self.ee1_min.get() != &#39;&#39;:
+                self.round_energy(self.energies_low, int(self.eelist_min[i].get()))
+                a_index = (np.where(self.energies_low == float(self.rounded)))[0][0]
+                self.E_bands_min.append(int(self.eelist_min[i].get()))
+                self.E_bands_min_index.append(int(a_index))
+
+            if self.ee1_max.get() != &#39;&#39;:
+                self.round_energy(self.energies_high, int(self.eelist_max[i].get()))
+                b_index = (np.where(self.energies_high == float(self.rounded)))[0][0]
+                self.E_bands_max.append(int(self.eelist_max[i].get()))
+                self.E_bands_max_index.append(int(b_index))
+
+    def round_energy(self, liste, value):
+        &#34;&#34;&#34;Searches for the nearest number from the list.
+        Parameters: liste is the list where you store your researched values;
+        value is the number you want to round to match one of the given list.&#34;&#34;&#34;
+        near = 150
+        self.rounded = int(value)
+        for i in range(len(liste)):
+            diff = np.abs(value - liste[i])
+            if near &gt; diff:
+                near = diff
+                self.rounded = int(liste[i])
+
+    def __get_data(self, typ):
+        &#34;&#34;&#34;Defines the Rate, Counts, and Flux for &#34;Plot Time Profile&#34;
+        Rate  = array which has a count rate data for each energy channel
+        There is a amount gived by the user for the total of energy bands : 1 to 5&#34;&#34;&#34;
+        data = np.zeros((len(self.times), len(self.E_bands_min) + 1))
+        for i in range(len(self.times)):
+            for j in range(len(self.E_bands_min) + 1):
+                if j == len(self.E_bands_min):
+                    data[i, j] = self.times[i]
+
+                else:
+                    if np.where(self.energies_low == self.E_bands_min[j])[0]:
+                        a = (np.where(self.energies_low == self.E_bands_min[j]))[0][0]
+                    else:
+                        self.round_energy(self.energies_low, self.E_bands_min[j])
+                        a = (np.where(self.energies_low == self.rounded))[0][0]
+                    self.E_bands_min_index.append(a + 1)
+
+                    if np.where(self.energies_high == self.E_bands_max[j])[0]:
+                        b = (np.where(self.energies_high == self.E_bands_max[j]))[0][0]
+                    else:
+                        self.round_energy(self.energies_high, self.E_bands_max[j])
+                        b = (np.where(self.energies_high == self.rounded))[0][0]
+                    self.E_bands_max_index.append(b + 1)
+                    # Determines the energy distribution for different channels relative to the time of observed data
+
+                    if typ == &#39;rate&#39;:
+                        data[i, j] = sum(self.counts[i, a:(b + 1)]) / self.del_times[i]  # energy channel
+                    elif typ == &#39;counts&#39;:
+                        data[i, j] = sum(self.counts[i, a:(b + 1)])  # energy channel
+                    elif typ == &#39;flux&#39;:
+                        self.e_diff = np.abs(self.E_bands_max[j] - self.E_bands_min[j])
+                        data[i, j] = (sum(self.counts[i, a:(b + 1)]) / self.del_times[i]) / (self.area * self.e_diff)
+                    else:
+                        print(&#34;Error&#34;)
+                        return None
+
+        return data  # Returns rate unit
+
+    def __time_profile_plotting(self, data, typ, show=True):
+        &#34;&#34;&#34;Plots the function of time by selected Unit. Uses the colormesh function provided by matplotlib library.
+        Parameters: data, the same as defined previously; typ: &#39;rate&#39;, &#39;counts&#39;, or &#39;flux&#39;.&#34;&#34;&#34;
+        plt.figure()
+        self.columns_label = [str(low) + &#39;-&#39; + str(high) + &#39;keV&#39; for low, high in
+                              zip(self.E_bands_min, self.E_bands_max)]
+        self.columns_label.append(&#39;Times&#39;)
+        color = [&#39;blue&#39;, &#39;red&#39;, &#39;green&#39;, &#39;black&#39;, &#39;orange&#39;]
+
+        # Absciss data transformation
+        self.label_time_plot = np.asarray(self.times) + self.start_time_sec_plot
+
+        if self.entire_file:
+            data_reduced = data
+            times_reduced = self.times
+        else:
+            self.acq_time(self.label_time_plot)
+            times_reduced = data[self.index_times_start_real:self.index_times_end_real + 1, -1]
+            data_reduced = data[self.index_times_start_real:self.index_times_end_real + 1, :]
+
+        # Plotting different figures according to chosen parameter
+        if typ == &#34;rate&#34;:
+            # Choosing the specific color for each energy channel
+            df = pd.DataFrame(data_reduced, index=times_reduced, columns=self.columns_label)
+            plt.ylabel(&#39;Rate (Counts/s) by Bands&#39;)
+            plt.title(&#39;Time Profile Plotting Rate (Counts/s)&#39;)
+
+        elif typ == &#34;counts&#34;:
+            # Choosing the specific color for each energy channel
+            df = pd.DataFrame(data_reduced, index=times_reduced,
+                              columns=self.columns_label)
+            plt.ylabel(&#39;Counts by Bands&#39;)
+            plt.title(&#39;Time Profile Plotting Counts&#39;)
+
+        elif typ == &#34;flux&#34;:
+            # Choosing the specific color for each energy channel
+            df = pd.DataFrame(data_reduced, index=times_reduced,
+                              columns=self.columns_label)
+            plt.ylabel(&#39;Flux by Bands&#39;)
+            plt.title(&#39;Time Profile Plotting Flux&#39;)
+
+        else:
+            df = None
+            print(&#34;Error&#34;)
+
+        ax_bis1 = plt.gca()
+        for l_bands in range(len(self.E_bands_min)):
+            df.plot(x=&#39;Times&#39;, y=self.columns_label[l_bands], color=color[l_bands], ax=ax_bis1)
+
+        # Absciss legend plot
+        if show:
+            if self.entire_file:
+                nx = max(self.times) - min(self.times)
+            else:
+                nx = self.times[self.index_times_end_real] - self.times[self.index_times_start_real]
+
+            if nx &lt;= 1800:  # file duration less than 30 minutes
+                step_x = 120
+            elif nx &lt;= 3600:  # file duration less than 1 hour
+                step_x = 480
+            elif nx &lt;= 28800:  # file duration less than 8 hours
+                step_x = 3600
+            else:
+                step_x = 7200  # file duration more than 8 hours
+
+            # Coloration
+            if self.entire_file:
+                x_positions = np.arange(0, nx, step_x)
+            else:
+                x_positions = np.arange(data[self.index_times_start_real, -1],
+                                        nx + data[self.index_times_start_real, -1], step_x)
+            x_positions_bis = x_positions + self.start_time_sec_plot  # pixel count at label position
+            x_labels_plot = list(
+                map(lambda x: (str(datetime.timedelta(seconds=x))).split(&#39;.&#39;)[0][:-3], x_positions_bis))
+            x_labels_plot_days = []
+            for i in range(len(x_labels_plot)):
+                if &#39;day&#39; in x_labels_plot[i]:
+                    x_labels_plot_days.append((x_labels_plot[i].split(&#39;,&#39;))[1])
+                else:
+                    x_labels_plot_days.append(x_labels_plot[i])
+            plt.xticks(x_positions, x_labels_plot_days)
+
+            # Scaling
+            if self.scalex == &#39;log&#39;:
+                plt.xscale(&#39;log&#39;)
+            if self.scaley == &#39;log&#39;:
+                plt.yscale(&#39;log&#39;)
+
+            # Plotting and closing parameters window
+            plt.xlabel(&#39;Start time: &#39; + str(self.start_date) + &#39; -- End time : &#39; + str(
+                self.end_date))  # load start time from header and display it in X - axis
+            self.toptime.destroy()
+            plt.show()
+
+    def time_index(self, index_times, value_start, value_end):
+        &#34;&#34;&#34;Find the index of start time which corresponds to the chosen start and end data.&#34;&#34;&#34;
+        for i in range(len(index_times)):
+            if index_times[i] &gt;= value_start:
+                self.data_start.append(index_times[i])
+                self.data_start_index.append(i)
+            if index_times[i] &lt;= value_end:
+                self.data_end.append(index_times[i])
+                self.data_end_index.append(i)
+        return self.data_start_index[0], self.data_end_index[-1]
+
+    # =================== 2. Spectrum plotting ===================
+
+    def plot_spectrum_rate(self):
+        &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the spectrum setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrum(&#39;rate&#39;)
+
+    def plot_spectrum_counts(self):
+        &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the spectrum setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrum(&#39;counts&#39;)
+
+    def plot_spectrum_flux(self):
+        &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the spectrum setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrum(&#39;flux&#39;)
+
+    def __plot_spectrum(self, typ):
+        &#34;&#34;&#34;Preparing figure plotting with the data. Takes typ &#39;rate&#39;, &#39;counts&#39;, or &#39;flux&#39; as an argument.&#34;&#34;&#34;
+        plt.figure()
+        data = np.zeros(self.energies_bin)
+        self.start_time_sec = self.start_time[0] * 3600 + self.start_time[1] * 60 + self.start_time[2]
+        self.label_time_plot_spectro = np.asarray(self.times) + self.start_time_sec
+
+        if not self.entire_file:
+            self.acq_time(self.label_time_plot_spectro)
+
+        if typ == &#39;rate&#39;:
+            self.data_tracer = self.passage_counts_rate()
+            for i in range(self.energies_bin):  # for each channel
+                # Determines Rate for &#34;Plot Spectrum&#34;
+                if self.entire_file:
+                    data[i] = np.mean(self.data_tracer[:, i])
+                else:
+                    data[i] = np.mean(self.data_tracer[self.index_times_start_real:self.index_times_end_real + 1, i])
+            plt.ylabel(&#39;counts/s&#39;)
+            plt.title(&#39;STIX SOLAR Range vs Energy&#39;)
+
+        elif typ == &#39;counts&#39;:
+            for i in range(self.energies_bin):  # for each channel
+                # Determines Counts for &#34;Plot Spectrum&#34;
+                if self.entire_file:
+                    data[i] = np.mean(self.counts[:, i])
+                else:
+                    data[i] = np.mean(self.counts[self.index_times_start_real:self.index_times_end_real + 1, i])
+            plt.ylabel(&#39;counts&#39;)
+            plt.title(&#39;STIX SOLAR Counts vs Energy&#39;)
+
+        elif typ == &#39;flux&#39;:
+            self.data_tracer = self.passage_counts_flux()
+            for i in range(self.energies_bin):  # for each channel
+                # Determines Flux for &#34;Plot Spectrum&#34;
+                if self.entire_file:
+                    data[i] = np.mean(self.data_tracer[:, i]) / self.area
+                else:
+                    data[i] = np.mean(self.data_tracer[self.index_times_start_real:self.index_times_end_real + 1, i])
+            plt.ylabel(&#39;counts/s/mm²/keV&#39;)
+            plt.title(&#39;STIX SOLAR Flux vs Energy&#39;)
+
+        else:
+            print(&#39;error&#39;)
+
+        self.win_log_spec()
+        plt.rcParams[&#34;figure.figsize&#34;] = [6, 6]
+        plt.plot(self.energies_low, data, drawstyle=&#39;steps-post&#39;)  # Unit vs Energy
+        plt.xlabel(&#39;Energy(keV) / Start time: &#39; + str(self.start_date) + &#39; -- End time : &#39; + str(self.end_date))
+
+    def win_log_spec(self):
+        &#34;&#34;&#34;Creates a new window &#39;window_spec_limits&#39; to choose the linear or logarithmic axis for spectrum plotting.
+        Calls for the log_axis function.&#34;&#34;&#34;
+        self.window_spec_limits = Toplevel()
+        self.window_spec_limits.title(&#39;Scales for axis&#39;)
+        self.window_spec_limits.geometry(&#34;400x300&#34;)
+        self.energy_spec_limits_text = Label(self.window_spec_limits, text=&#34;Choose your scale for both x and y axis.&#34;,
+                                             fg=&#39;black&#39;, font=(&#34;Times&#34;, 11))
+        self.energy_spec_limits_text.place(relx=0.5, rely=0.09, anchor=&#39;center&#39;)
+        self.log_axis(self.window_spec_limits, 0.10, 0.30)
+        self.log_spectrum_button = Button(self.window_spec_limits, text=&#34;Plot spectrum&#34;, command=self.__plot_show)
+        self.log_spectrum_button.place(relx=0.5, rely=0.80, anchor=S, relheight=0.11, relwidth=0.25)
+
+    def __plot_show(self):
+        &#34;&#34;&#34;Closes the previous window and shows the plot for the spectrum.&#34;&#34;&#34;
+        if self.scalex == &#39;log&#39;:
+            plt.xscale(&#39;log&#39;)
+        if self.scaley == &#39;log&#39;:
+            plt.yscale(&#39;log&#39;)
+        self.window_spec_limits.destroy()
+        plt.show()
+
+    # =================== 3. Spectrogram Plotting ===================
+
+    def plot_spectrogram_rate(self):
+        &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the spectrogram setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrogram(&#39;rate&#39;)
+
+    def plot_spectrogram_counts(self):
+        &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the spectrogram setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrogram(&#39;counts&#39;)
+
+    def plot_spectrogram_flux(self):
+        &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the spectrogram setting.
+        Dependencies: second.py&#34;&#34;&#34;
+        self.__plot_spectrogram(&#39;flux&#39;)
+
+    def __plot_spectrogram(self, typ):
+        &#34;&#34;&#34;Spectrogram = function of Rate/Counts/Flux as a function of energy and time.
+        Parameters: x = tick(Time in h:m:s) and y(Energy bounds) are bounds,
+        z is the value *inside* those bounds (Rate/Counts/Flux)&#34;&#34;&#34;
+        # pcolormesh function(below) does not work with pandas time conversion function(TimeNew), we have to rewrite it.
+
+        # Absciss data transformation
+        self.start_time_sec = self.start_time[0] * 3600 + self.start_time[1] * 60 + self.start_time[2]
+        self.label_time_plot_spectro = np.asarray(self.times) + self.start_time_sec
+
+        if self.entire_file:
+            self.times_sequences = self.times
+        else:
+            self.acq_time(self.label_time_plot_spectro)
+            self.times_sequences = self.times[self.index_times_start_real:self.index_times_end_real + 1]
+
+        fig, self.ax = plt.subplots(1, 1, figsize=(15, 5), sharey=&#34;all&#34;, facecolor=&#39;w&#39;)
+        fig.canvas.draw()
+
+        # Limits and display
+        self.specgm_lim()
+
+        # Plotting rate
+        if typ == &#39;rate&#39;:
+            self.data_tracer = self.passage_counts_rate()
+            if self.entire_file:
+                plt.pcolormesh(self.times, self.energies_low, np.log10(np.transpose(self.data_tracer)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            else:
+                data_sequences = self.data_tracer[self.index_times_start_real:self.index_times_end_real + 1, :]
+                plt.pcolormesh(self.times_sequences, self.energies_low, np.log10(np.transpose(data_sequences)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            plt.title(&#39;STIX SOLAR Rates Spectrogram&#39;)
+            self.spgm_label = &#39;Counts/sec&#39;
+
+        # Plotting counts
+        elif typ == &#39;counts&#39;:
+            if self.entire_file:
+                plt.pcolormesh(self.times, self.energies_low, np.log10(np.transpose(self.counts)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            else:
+                data_sequences = self.counts[self.index_times_start_real:self.index_times_end_real + 1, :]
+                plt.pcolormesh(self.times_sequences, self.energies_low, np.log10(np.transpose(data_sequences)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            plt.title(&#39;STIX SOLAR Counts Spectrogram&#39;)
+            self.spgm_label = &#39;Counts&#39;
+
+        # Plotting flux
+        elif typ == &#39;flux&#39;:
+            self.data_tracer = self.passage_counts_flux()
+            if self.entire_file:
+                plt.pcolormesh(self.times, self.energies_low, np.log10(np.transpose(self.data_tracer)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            else:
+                data_sequences = self.data_tracer[self.index_times_start_real:self.index_times_end_real + 1, :]
+                plt.pcolormesh(self.times_sequences, self.energies_low, np.log10(np.transpose(data_sequences)),
+                               shading=&#39;auto&#39;, cmap=&#39;coolwarm&#39;)
+            plt.title(&#39;STIX SOLAR Flux Spectrogram&#39;)
+            self.spgm_label = &#39;counts/s/mm²/keV&#39;
+
+        else:
+            print(&#39;error&#39;)
+
+        # Defining x step
+        nx = max(self.times_sequences) - min(self.times_sequences)
+        if nx &lt;= 1800:  # file duration less than 30 minutes
+            step_x = 120
+        elif nx &lt;= 3600:  # file duration less than 1 hour
+            step_x = 480
+        elif nx &lt;= 28800:  # file duration less than 8 hours
+            step_x = 3600
+        else:  # file duration more than 8 hours
+            step_x = 7200
+
+        # x axis construction
+        x_positions = np.arange(0, nx, step_x)
+
+        if self.entire_file:
+            x_positions_bis = x_positions + self.start_time_sec  # pixel count at label position
+            x_labels_plot = list(
+                map(lambda x: (str(datetime.timedelta(seconds=x))).split(&#39;.&#39;)[0][:-3], x_positions_bis))
+        else:
+            x_positions_bis = np.asarray(x_positions) + self.times[self.index_times_start_real]
+            x_positions_bis_label = np.asarray(x_positions) + self.label_time_plot_spectro[self.index_times_start_real]
+            x_labels_plot = list(
+                map(lambda x: (str(datetime.timedelta(seconds=float(x)))).split(&#39;.&#39;)[0][:-3], x_positions_bis_label))
+
+        x_labels_plot_days = []
+        for i in range(len(x_labels_plot)):
+            if &#39;day&#39; in x_labels_plot[i]:
+                x_labels_plot_days.append((x_labels_plot[i].split(&#39;,&#39;))[1])
+            else:
+                x_labels_plot_days.append(x_labels_plot[i])
+        if self.entire_file:
+            plt.xticks(x_positions, x_labels_plot_days)
+        else:
+            plt.xticks(x_positions_bis, x_labels_plot_days)
+
+        # Ordinate legend plot
+        if self.entire_file:
+            self.energy_idx = self.energies_low
+            self.ene_leg = [str(a) + &#39;-&#39; + str(b) for a, b in zip(self.energies_low, self.energies_high)]
+            self.ene_leg = np.array(self.ene_leg)
+
+    def passage_counts_rate(self):
+        &#34;&#34;&#34;Converts counts data to rate data.
+        Rate = Counts / Time&#34;&#34;&#34;
+        (self.ligne, self.colonne) = np.shape(self.counts)
+        self.data_tracer = np.zeros((self.ligne, self.colonne))
+        for i in range(self.ligne):
+            for j in range(self.colonne):
+                self.data_tracer[i][j] = self.counts[i][j] / self.del_times[i]
+        return self.data_tracer
+
+    def passage_counts_flux(self):
+        &#34;&#34;&#34;Converts counts data to flux data.
+        Flux = Rate / Area / Bands length = Counts / (Time * Area * Bands length)&#34;&#34;&#34;
+        (self.ligne, self.colonne) = np.shape(self.counts)
+        self.data_tracer = np.zeros((self.ligne, self.colonne))
+        delta_e = np.zeros(shape=(len(self.energies_low)))
+        for i in range(self.ligne):
+            for j in range(self.colonne):
+                delta_e[j] = self.energies_high[j] - self.energies_low[j]  # Difference between bands
+                self.data_tracer[i][j] = self.counts[i][j] / self.del_times[i] / self.area / delta_e[j]
+        return self.data_tracer
+
+    def specgm_lim(self):
+        &#34;&#34;&#34;Displays a window to allow user to change plot scale axis for spectrogram plotting.&#34;&#34;&#34;
+        # Window
+        self.window_elimits = Toplevel()
+        self.window_elimits.title(&#39;Energy limits&#39;)
+        self.window_elimits.geometry(&#34;400x300&#34;)
+        self.energy_elimit_text = Label(self.window_elimits, text=&#34;Enter the minimum and maximum energy to plot the &#34;
+                                                                  &#34;spectrogram.&#34;, fg=&#39;black&#39;, font=(&#34;Times&#34;, 11))
+        self.energy_elimit_text.place(relx=0.5, rely=0.09, anchor=&#39;center&#39;)
+
+        # Limits
+        self.ylim_min.set(&#39;1&#39;)
+        self.ylim_max.set(&#39;150&#39;)
+        self.e_ylim_min = EntryInt(self.window_elimits)
+        self.e_ylim_min.place(relx=0.5, rely=0.22, relheight=0.10, relwidth=0.25, anchor=&#39;center&#39;)
+        self.e_ylim_max = EntryInt(self.window_elimits)
+        self.e_ylim_max.place(relx=0.5, rely=0.37, relheight=0.10, relwidth=0.25, anchor=&#39;center&#39;)
+
+        # Scaling
+        self.log_axis(self.window_elimits, 0.10, 0.50)
+
+        # Plotting
+        self.limit_button = Button(self.window_elimits, text=&#34;Plot spectrogram&#34;, command=self.show_specgm)
+        self.limit_button.place(relx=0.5, rely=0.85, anchor=N)
+
+    def colorbar_scale(self, plot, pos):
+        &#34;&#34;&#34;Formats the colorbar plotted for spectrogram, displaying units as 10^x.&#34;&#34;&#34;
+        decimal, power = &#39;{:.2e}&#39;.format(plot).split(&#39;e&#39;)
+        self.raised_power = np.floor(float(decimal) * 10**(1+float(power))) / 10
+        return r&#39;$10^{{{}}}$&#39;.format(self.raised_power)
+
+    def show_specgm(self):
+        &#34;&#34;&#34;Adds all chosen values to the plot and shows the figure.&#34;&#34;&#34;
+        # Limits
+        if self.e_ylim_min.get().isdigit():
+            self.ylim_min = int(self.e_ylim_min.get())
+        else:
+            self.ylim_min = 1  # Default min value
+        if self.e_ylim_max.get().isdigit():
+            self.ylim_max = int(self.e_ylim_max.get())
+        else:
+            self.ylim_max = 150  # Default max value
+
+        # Scaling
+        if self.scalex == &#39;log&#39;:
+            plt.xscale(&#39;log&#39;)
+        if self.scaley == &#39;log&#39;:
+            plt.yscale(&#39;log&#39;)
+
+        # Plotting
+        self.window_elimits.destroy()
+        plt.ylim(self.ylim_min, self.ylim_max)
+        plt.ylabel(&#39;Energy (keV)&#39;)
+        plt.xlabel(&#39;Time(UT)&#39;)
+        plt.xlabel(&#39;Start time: &#39; + str(self.start_date) + &#39; -- End time : &#39; + str(self.end_date))
+        plt.colorbar(ax=self.ax, label=self.spgm_label, format=tck.FuncFormatter(self.colorbar_scale))
+        plt.show()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="plotting.Input.acq_time"><code class="name flex">
+<span>def <span class="ident">acq_time</span></span>(<span>self, label)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If not using the entire file, this function checks if the acquisition time is &gt; 24 h and reduces data
+according to the size of chosen time period.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def acq_time(self, label):
+    &#34;&#34;&#34;If not using the entire file, this function checks if the acquisition time is &gt; 24 h and reduces data
+    according to the size of chosen time period.&#34;&#34;&#34;
+    time_24 = 0
+    for i in label:
+        if i &gt; 86400:
+            time_24 += 1
+    self.index_start_sec = 3600 * self.find_time(self.start_date)[0] + 60 * \
+        self.find_time(self.start_date)[1] + \
+        self.find_time(self.start_date)[2]
+    self.index_end_sec = 3600 * self.find_time(self.end_date)[0] + 60 * \
+        self.find_time(self.end_date)[1] + \
+        self.find_time(self.end_date)[2]
+    if time_24 &gt; 0:  # If acquisition time &gt; 24 h:
+        if self.index_start_sec &lt; 3600:
+            startIndexh = (self.index_start_sec - self.start_time_sec_plot) + 86400
+        else:
+            startIndexh = self.index_start_sec - self.start_time_sec_plot
+        if self.index_end_sec &lt; 3600:
+            endIndexh = (self.index_end_sec - self.start_time_sec_plot) + 86400  # Adding 24 h
+        else:
+            endIndexh = self.index_end_sec - self.start_time_sec_plot  # Else, no adding necessary
+    else:  # This is the same day
+        startIndexh = self.index_start_sec - self.start_time_sec_plot
+        endIndexh = self.index_end_sec - self.start_time_sec_plot
+    self.index_times_start_real, self.index_times_end_real = self.time_index(self.times, startIndexh, endIndexh)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.add_E"><code class="name flex">
+<span>def <span class="ident">add_E</span></span>(<span>self, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets the values of plot limits from user choice.
+ee1_min and ee1_max are the Entry boxes for min and max energy bands defined in open_value.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_E(self, *args):
+    &#34;&#34;&#34;Gets the values of plot limits from user choice.
+    ee1_min and ee1_max are the Entry boxes for min and max energy bands defined in open_value.&#34;&#34;&#34;
+    for i in range(int(self.varE_number.get())):
+        if self.ee1_min.get() != &#39;&#39;:
+            self.round_energy(self.energies_low, int(self.eelist_min[i].get()))
+            a_index = (np.where(self.energies_low == float(self.rounded)))[0][0]
+            self.E_bands_min.append(int(self.eelist_min[i].get()))
+            self.E_bands_min_index.append(int(a_index))
+
+        if self.ee1_max.get() != &#39;&#39;:
+            self.round_energy(self.energies_high, int(self.eelist_max[i].get()))
+            b_index = (np.where(self.energies_high == float(self.rounded)))[0][0]
+            self.E_bands_max.append(int(self.eelist_max[i].get()))
+            self.E_bands_max_index.append(int(b_index))</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.colorbar_scale"><code class="name flex">
+<span>def <span class="ident">colorbar_scale</span></span>(<span>self, plot, pos)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Formats the colorbar plotted for spectrogram, displaying units as 10^x.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def colorbar_scale(self, plot, pos):
+    &#34;&#34;&#34;Formats the colorbar plotted for spectrogram, displaying units as 10^x.&#34;&#34;&#34;
+    decimal, power = &#39;{:.2e}&#39;.format(plot).split(&#39;e&#39;)
+    self.raised_power = np.floor(float(decimal) * 10**(1+float(power))) / 10
+    return r&#39;$10^{{{}}}$&#39;.format(self.raised_power)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.counts_vs_time_plotting"><code class="name flex">
+<span>def <span class="ident">counts_vs_time_plotting</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is counts, passes the string 'counts' to the time profile setting.
+Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def counts_vs_time_plotting(self):
+    &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the time profile setting.
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__time_profile_setting(&#39;counts&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.delay_times"><code class="name flex">
+<span>def <span class="ident">delay_times</span></span>(<span>self, data1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a TEMPORARY -1 interval, because there is a step between deltimes data.
+Takes a data as parameter and returns the shifted data.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delay_times(self, data1):
+    &#34;&#34;&#34;Creates a TEMPORARY -1 interval, because there is a step between deltimes data.
+    Takes a data as parameter and returns the shifted data.&#34;&#34;&#34;
+    self.data2 = np.zeros_like(data1)
+    for i in range(1, len(data1)):
+        self.data2[i] = data1[i - 1]
+    self.data2[0] = data1[0]
+    return self.data2</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.destroy_bis"><code class="name flex">
+<span>def <span class="ident">destroy_bis</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Closes 'STIX PlotTime Options' window when clicking 'Close' button. Used in the time profile setting.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def destroy_bis(self):
+    &#34;&#34;&#34;Closes &#39;STIX PlotTime Options&#39; window when clicking &#39;Close&#39; button. Used in the time profile setting.&#34;&#34;&#34;
+    self.toptime.destroy()</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.do_refresh"><code class="name flex">
+<span>def <span class="ident">do_refresh</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Destroys the current plotting window, reset all values for matrix plotting, and reopen the plotting window.
+Function only called as a command function in the time profile settings.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_refresh(self):
+    &#34;&#34;&#34;Destroys the current plotting window, reset all values for matrix plotting, and reopen the plotting window.
+    Function only called as a command function in the time profile settings.&#34;&#34;&#34;
+    self.toptime.destroy()
+    self.__time_profile_setting(self.typ)
+    self.E_bands_min = []
+    self.E_bands_max = []
+    self.E_bands_min_index = []
+    self.E_bands_max_index = []
+    if not self.entire_file:
+        self.start_time = self.find_time(self.hours_fixed)
+    self.ee1_min = None
+    self.ee1_max = None
+    print(&#34;\nValues refreshed&#34;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.entries_list"><code class="name flex">
+<span>def <span class="ident">entries_list</span></span>(<span>self, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Allows to create all buttons and Entry boxes to choose energy values.
+Creates a new window called 'canvas_plot'.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def entries_list(self, *args):
+    &#34;&#34;&#34;Allows to create all buttons and Entry boxes to choose energy values.
+    Creates a new window called &#39;canvas_plot&#39;.&#34;&#34;&#34;
+    self.canvas_plot = Canvas(self.toptime, width=350, height=300)
+    self.canvas_plot.place(relx=0.5, rely=0.15, anchor=N)
+
+    # To print information about the canal sum
+    self.CheckVarBk = Checkbutton(self.canvas_plot, text=&#34;Show Information&#34;,
+                                  variable=self.CheckVar, command=self.sum_canal, state=NORMAL)
+    self.CheckVarBk.place(relx=0.21, rely=0.88)
+
+    # This loop creates text zones to allow the user to enter energy bands
+    self.text_min_energy = Label(self.canvas_plot, text=&#34;Min energy&#34;)
+    self.text_min_energy.place(relx=0.3, rely=0.05, anchor=N)
+    self.text_max_energy = Label(self.canvas_plot, text=&#34;Max energy&#34;)
+    self.text_max_energy.place(relx=0.7, rely=0.05, anchor=N)
+
+    if self.varE_number.get().isdigit():
+        self.eelist_min = [&#39;&#39;] * int(self.varE_number.get())
+        self.eelist_max = [&#39;&#39;] * int(self.varE_number.get())
+        for i in range(int(self.varE_number.get())):
+            self.open_value(i)
+            self.eelist_min[i] = self.ee1_min
+            self.eelist_max[i] = self.ee1_max
+
+    # Scaling
+    self.log_axis(self.canvas_plot, 0.12, 0.64)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.find_time"><code class="name flex">
+<span>def <span class="ident">find_time</span></span>(<span>self, date)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts the starting time in the data.
+Parameters: you need to give the starting date (list) as an argument of the function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_time(self, date):
+    &#34;&#34;&#34;Converts the starting time in the data.
+    Parameters: you need to give the starting date (list) as an argument of the function.&#34;&#34;&#34;
+    self.date_split = re.split(&#39;T&#39;, date)
+    self.date_day = self.date_split[0]
+    self.date_time = re.split(&#39;:&#39;, self.date_split[1])
+    self.date_time_int = re.split(&#39;\.&#39;, self.date_time[2])
+    self.date_time[2] = self.date_time_int[0]
+    found_time = (int(self.date_time[0]), int(self.date_time[1]), int(self.date_time[2]))
+    return found_time</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.flux_vs_time_plotting"><code class="name flex">
+<span>def <span class="ident">flux_vs_time_plotting</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is flux, passes the string 'flux' to the time profile setting. </p>
+<p>Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flux_vs_time_plotting(self):
+    &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the time profile setting. \n
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__time_profile_setting(&#39;flux&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.log_axis"><code class="name flex">
+<span>def <span class="ident">log_axis</span></span>(<span>self, window, relx, rely, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Displays the radio boxes allowing the user to choose between linear and logarithmic axis.
+Parameters: window is the current window on which the radio boxes need to be displayed;
+relx and rely are the relative position of the North-West of the whole set on the window.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_axis(self, window, relx, rely, *args):
+    &#34;&#34;&#34;Displays the radio boxes allowing the user to choose between linear and logarithmic axis.
+    Parameters: window is the current window on which the radio boxes need to be displayed;
+    relx and rely are the relative position of the North-West of the whole set on the window.&#34;&#34;&#34;
+    self.r1_text = Label(window, text=&#34;x axis:&#34;, fg=&#39;blue&#39;)
+    self.r1_text.place(relx=relx, rely=rely)
+    self.r2_text = Label(window, text=&#34;y axis:&#34;, fg=&#39;blue&#39;)
+    self.r2_text.place(relx=relx, rely=rely + 0.10)
+
+    self.r11 = Radiobutton(window, text=&#34;Linear&#34;, variable=self.scaleboxx, value=&#34;linear&#34;,
+                           command=self.radiox)
+    self.r11.place(relx=relx + 0.13, rely=rely)
+    self.r12 = Radiobutton(window, text=&#34;Logarithmic&#34;, variable=self.scaleboxx, value=&#34;log&#34;,
+                           command=self.radiox)
+    self.r12.place(relx=relx + 0.32, rely=rely)
+    self.r21 = Radiobutton(window, text=&#34;Linear&#34;, variable=self.scaleboxy, value=&#34;linear&#34;,
+                           command=self.radioy)
+    self.r21.place(relx=relx + 0.13, rely=rely + 0.10)
+    self.r22 = Radiobutton(window, text=&#34;Logarithmic&#34;, variable=self.scaleboxy, value=&#34;log&#34;,
+                           command=self.radioy)
+    self.r22.place(relx=relx + 0.32, rely=rely + 0.10)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.open_value"><code class="name flex">
+<span>def <span class="ident">open_value</span></span>(<span>self, i)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates entry boxes to let the user choose the limits of the plot.
+Dependencies: entry_int.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def open_value(self, i):
+    &#34;&#34;&#34;Creates entry boxes to let the user choose the limits of the plot.
+    Dependencies: entry_int.py&#34;&#34;&#34;
+    self.ee1_min = EntryInt(self.canvas_plot, width=20)
+    self.ee1_min.place(relx=0.3, rely=0.14 + 0.1 * i, anchor=N)
+
+    self.ee1_max = EntryInt(self.canvas_plot, width=20)
+    self.ee1_max.place(relx=0.7, rely=0.14 + 0.1 * i, anchor=N)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.passage_counts_flux"><code class="name flex">
+<span>def <span class="ident">passage_counts_flux</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts counts data to flux data.
+Flux = Rate / Area / Bands length = Counts / (Time * Area * Bands length)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def passage_counts_flux(self):
+    &#34;&#34;&#34;Converts counts data to flux data.
+    Flux = Rate / Area / Bands length = Counts / (Time * Area * Bands length)&#34;&#34;&#34;
+    (self.ligne, self.colonne) = np.shape(self.counts)
+    self.data_tracer = np.zeros((self.ligne, self.colonne))
+    delta_e = np.zeros(shape=(len(self.energies_low)))
+    for i in range(self.ligne):
+        for j in range(self.colonne):
+            delta_e[j] = self.energies_high[j] - self.energies_low[j]  # Difference between bands
+            self.data_tracer[i][j] = self.counts[i][j] / self.del_times[i] / self.area / delta_e[j]
+    return self.data_tracer</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.passage_counts_rate"><code class="name flex">
+<span>def <span class="ident">passage_counts_rate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Converts counts data to rate data.
+Rate = Counts / Time</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def passage_counts_rate(self):
+    &#34;&#34;&#34;Converts counts data to rate data.
+    Rate = Counts / Time&#34;&#34;&#34;
+    (self.ligne, self.colonne) = np.shape(self.counts)
+    self.data_tracer = np.zeros((self.ligne, self.colonne))
+    for i in range(self.ligne):
+        for j in range(self.colonne):
+            self.data_tracer[i][j] = self.counts[i][j] / self.del_times[i]
+    return self.data_tracer</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.plot_spectrogram_counts"><code class="name flex">
+<span>def <span class="ident">plot_spectrogram_counts</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is counts, passes the string 'counts' to the spectrogram setting.
+Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_spectrogram_counts(self):
+    &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the spectrogram setting.
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__plot_spectrogram(&#39;counts&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.plot_spectrogram_flux"><code class="name flex">
+<span>def <span class="ident">plot_spectrogram_flux</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is flux, passes the string 'flux' to the spectrogram setting.
+Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_spectrogram_flux(self):
+    &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the spectrogram setting.
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__plot_spectrogram(&#39;flux&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.plot_spectrogram_rate"><code class="name flex">
+<span>def <span class="ident">plot_spectrogram_rate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is rate, passes the string 'rate' to the spectrogram setting.
+Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_spectrogram_rate(self):
+    &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the spectrogram setting.
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__plot_spectrogram(&#39;rate&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.plot_spectrum_counts"><code class="name flex">
+<span>def <span class="ident">plot_spectrum_counts</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is counts, passes the string 'counts' to the spectrum setting.
+Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_spectrum_counts(self):
+    &#34;&#34;&#34;If the selected unit is counts, passes the string &#39;counts&#39; to the spectrum setting.
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__plot_spectrum(&#39;counts&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.plot_spectrum_flux"><code class="name flex">
+<span>def <span class="ident">plot_spectrum_flux</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is flux, passes the string 'flux' to the spectrum setting.
+Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_spectrum_flux(self):
+    &#34;&#34;&#34;If the selected unit is flux, passes the string &#39;flux&#39; to the spectrum setting.
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__plot_spectrum(&#39;flux&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.plot_spectrum_rate"><code class="name flex">
+<span>def <span class="ident">plot_spectrum_rate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is rate, passes the string 'rate' to the spectrum setting.
+Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_spectrum_rate(self):
+    &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the spectrum setting.
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__plot_spectrum(&#39;rate&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.radiox"><code class="name flex">
+<span>def <span class="ident">radiox</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Commands radio box for x axis in log_axis function to save the scale.
+Saves in scalex a StringVar() 'linear' or 'log'.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def radiox(self):
+    &#34;&#34;&#34;Commands radio box for x axis in log_axis function to save the scale.
+    Saves in scalex a StringVar() &#39;linear&#39; or &#39;log&#39;.&#34;&#34;&#34;
+    self.scalex = self.scaleboxx.get()</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.radioy"><code class="name flex">
+<span>def <span class="ident">radioy</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Commands radio box for y axis in log_axis function to save the scale.
+Saves in scaley a StringVar() 'linear' or 'log'.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def radioy(self):
+    &#34;&#34;&#34;Commands radio box for y axis in log_axis function to save the scale.
+    Saves in scaley a StringVar() &#39;linear&#39; or &#39;log&#39;.&#34;&#34;&#34;
+    self.scaley = self.scaleboxy.get()</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.rate_vs_time_plotting"><code class="name flex">
+<span>def <span class="ident">rate_vs_time_plotting</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the selected unit is rate, passes the string 'rate' to the time profile setting.
+Dependencies: second.py</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rate_vs_time_plotting(self):
+    &#34;&#34;&#34;If the selected unit is rate, passes the string &#39;rate&#39; to the time profile setting.
+    Dependencies: second.py&#34;&#34;&#34;
+    self.__time_profile_setting(&#39;rate&#39;)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.round_energy"><code class="name flex">
+<span>def <span class="ident">round_energy</span></span>(<span>self, liste, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Searches for the nearest number from the list.
+Parameters: liste is the list where you store your researched values;
+value is the number you want to round to match one of the given list.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def round_energy(self, liste, value):
+    &#34;&#34;&#34;Searches for the nearest number from the list.
+    Parameters: liste is the list where you store your researched values;
+    value is the number you want to round to match one of the given list.&#34;&#34;&#34;
+    near = 150
+    self.rounded = int(value)
+    for i in range(len(liste)):
+        diff = np.abs(value - liste[i])
+        if near &gt; diff:
+            near = diff
+            self.rounded = int(liste[i])</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.show_specgm"><code class="name flex">
+<span>def <span class="ident">show_specgm</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds all chosen values to the plot and shows the figure.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_specgm(self):
+    &#34;&#34;&#34;Adds all chosen values to the plot and shows the figure.&#34;&#34;&#34;
+    # Limits
+    if self.e_ylim_min.get().isdigit():
+        self.ylim_min = int(self.e_ylim_min.get())
+    else:
+        self.ylim_min = 1  # Default min value
+    if self.e_ylim_max.get().isdigit():
+        self.ylim_max = int(self.e_ylim_max.get())
+    else:
+        self.ylim_max = 150  # Default max value
+
+    # Scaling
+    if self.scalex == &#39;log&#39;:
+        plt.xscale(&#39;log&#39;)
+    if self.scaley == &#39;log&#39;:
+        plt.yscale(&#39;log&#39;)
+
+    # Plotting
+    self.window_elimits.destroy()
+    plt.ylim(self.ylim_min, self.ylim_max)
+    plt.ylabel(&#39;Energy (keV)&#39;)
+    plt.xlabel(&#39;Time(UT)&#39;)
+    plt.xlabel(&#39;Start time: &#39; + str(self.start_date) + &#39; -- End time : &#39; + str(self.end_date))
+    plt.colorbar(ax=self.ax, label=self.spgm_label, format=tck.FuncFormatter(self.colorbar_scale))
+    plt.show()</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.specgm_lim"><code class="name flex">
+<span>def <span class="ident">specgm_lim</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Displays a window to allow user to change plot scale axis for spectrogram plotting.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def specgm_lim(self):
+    &#34;&#34;&#34;Displays a window to allow user to change plot scale axis for spectrogram plotting.&#34;&#34;&#34;
+    # Window
+    self.window_elimits = Toplevel()
+    self.window_elimits.title(&#39;Energy limits&#39;)
+    self.window_elimits.geometry(&#34;400x300&#34;)
+    self.energy_elimit_text = Label(self.window_elimits, text=&#34;Enter the minimum and maximum energy to plot the &#34;
+                                                              &#34;spectrogram.&#34;, fg=&#39;black&#39;, font=(&#34;Times&#34;, 11))
+    self.energy_elimit_text.place(relx=0.5, rely=0.09, anchor=&#39;center&#39;)
+
+    # Limits
+    self.ylim_min.set(&#39;1&#39;)
+    self.ylim_max.set(&#39;150&#39;)
+    self.e_ylim_min = EntryInt(self.window_elimits)
+    self.e_ylim_min.place(relx=0.5, rely=0.22, relheight=0.10, relwidth=0.25, anchor=&#39;center&#39;)
+    self.e_ylim_max = EntryInt(self.window_elimits)
+    self.e_ylim_max.place(relx=0.5, rely=0.37, relheight=0.10, relwidth=0.25, anchor=&#39;center&#39;)
+
+    # Scaling
+    self.log_axis(self.window_elimits, 0.10, 0.50)
+
+    # Plotting
+    self.limit_button = Button(self.window_elimits, text=&#34;Plot spectrogram&#34;, command=self.show_specgm)
+    self.limit_button.place(relx=0.5, rely=0.85, anchor=N)</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.sum_canal"><code class="name flex">
+<span>def <span class="ident">sum_canal</span></span>(<span>self, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints the sum of canal if the box "Show information" is ticked.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sum_canal(self, *args):
+    &#34;&#34;&#34;Prints the sum of canal if the box &#34;Show information&#34; is ticked.&#34;&#34;&#34;
+    if self.CheckVar.get() == 1:
+        self.canvas_canal = Canvas(self.toptime, width=350, height=100, bg=&#39;ivory&#39;)
+        self.canvas_canal.place(relx=0.5, rely=0.65, anchor=N)
+        txt = []
+        if self.E_bands_min_index:
+            for i in range(len(self.E_bands_min_index)):
+                txt.append([i + 1, self.E_bands_min_index[i], self.E_bands_max_index[i]])
+        else:
+            print(&#39;No information currently available&#39;)
+
+        frame_summarize_canal = LabelFrame(self.canvas_canal, relief=RAISED, borderwidth=2)
+        frame_summarize_canal.place(relheight=1, relwidth=1)
+
+        txtcanal = []
+        for i in range(len(txt)):
+            txtcanal.append(&#39;\nCanal selected for Energy band {} is:&#39;.format(txt[i][0]))
+            txtcanal.append(txt[i][1])
+            txtcanal.append(&#39;to&#39;)
+            txtcanal.append(txt[i][2])
+
+        listcanal = Text(frame_summarize_canal)
+        listcanal.insert(END, str(txtcanal))
+        listcanal.pack()
+
+    else:
+        print(&#39;Destroying canvas&#39;)
+        self.canvas_canal.destroy()</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.time_index"><code class="name flex">
+<span>def <span class="ident">time_index</span></span>(<span>self, index_times, value_start, value_end)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find the index of start time which corresponds to the chosen start and end data.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def time_index(self, index_times, value_start, value_end):
+    &#34;&#34;&#34;Find the index of start time which corresponds to the chosen start and end data.&#34;&#34;&#34;
+    for i in range(len(index_times)):
+        if index_times[i] &gt;= value_start:
+            self.data_start.append(index_times[i])
+            self.data_start_index.append(i)
+        if index_times[i] &lt;= value_end:
+            self.data_end.append(index_times[i])
+            self.data_end_index.append(i)
+    return self.data_start_index[0], self.data_end_index[-1]</code></pre>
+</details>
+</dd>
+<dt id="plotting.Input.win_log_spec"><code class="name flex">
+<span>def <span class="ident">win_log_spec</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a new window 'window_spec_limits' to choose the linear or logarithmic axis for spectrum plotting.
+Calls for the log_axis function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def win_log_spec(self):
+    &#34;&#34;&#34;Creates a new window &#39;window_spec_limits&#39; to choose the linear or logarithmic axis for spectrum plotting.
+    Calls for the log_axis function.&#34;&#34;&#34;
+    self.window_spec_limits = Toplevel()
+    self.window_spec_limits.title(&#39;Scales for axis&#39;)
+    self.window_spec_limits.geometry(&#34;400x300&#34;)
+    self.energy_spec_limits_text = Label(self.window_spec_limits, text=&#34;Choose your scale for both x and y axis.&#34;,
+                                         fg=&#39;black&#39;, font=(&#34;Times&#34;, 11))
+    self.energy_spec_limits_text.place(relx=0.5, rely=0.09, anchor=&#39;center&#39;)
+    self.log_axis(self.window_spec_limits, 0.10, 0.30)
+    self.log_spectrum_button = Button(self.window_spec_limits, text=&#34;Plot spectrum&#34;, command=self.__plot_show)
+    self.log_spectrum_button.place(relx=0.5, rely=0.80, anchor=S, relheight=0.11, relwidth=0.25)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="plotting.Input" href="#plotting.Input">Input</a></code></h4>
+<ul class="">
+<li><code><a title="plotting.Input.acq_time" href="#plotting.Input.acq_time">acq_time</a></code></li>
+<li><code><a title="plotting.Input.add_E" href="#plotting.Input.add_E">add_E</a></code></li>
+<li><code><a title="plotting.Input.colorbar_scale" href="#plotting.Input.colorbar_scale">colorbar_scale</a></code></li>
+<li><code><a title="plotting.Input.counts_vs_time_plotting" href="#plotting.Input.counts_vs_time_plotting">counts_vs_time_plotting</a></code></li>
+<li><code><a title="plotting.Input.delay_times" href="#plotting.Input.delay_times">delay_times</a></code></li>
+<li><code><a title="plotting.Input.destroy_bis" href="#plotting.Input.destroy_bis">destroy_bis</a></code></li>
+<li><code><a title="plotting.Input.do_refresh" href="#plotting.Input.do_refresh">do_refresh</a></code></li>
+<li><code><a title="plotting.Input.entries_list" href="#plotting.Input.entries_list">entries_list</a></code></li>
+<li><code><a title="plotting.Input.find_time" href="#plotting.Input.find_time">find_time</a></code></li>
+<li><code><a title="plotting.Input.flux_vs_time_plotting" href="#plotting.Input.flux_vs_time_plotting">flux_vs_time_plotting</a></code></li>
+<li><code><a title="plotting.Input.log_axis" href="#plotting.Input.log_axis">log_axis</a></code></li>
+<li><code><a title="plotting.Input.open_value" href="#plotting.Input.open_value">open_value</a></code></li>
+<li><code><a title="plotting.Input.passage_counts_flux" href="#plotting.Input.passage_counts_flux">passage_counts_flux</a></code></li>
+<li><code><a title="plotting.Input.passage_counts_rate" href="#plotting.Input.passage_counts_rate">passage_counts_rate</a></code></li>
+<li><code><a title="plotting.Input.plot_spectrogram_counts" href="#plotting.Input.plot_spectrogram_counts">plot_spectrogram_counts</a></code></li>
+<li><code><a title="plotting.Input.plot_spectrogram_flux" href="#plotting.Input.plot_spectrogram_flux">plot_spectrogram_flux</a></code></li>
+<li><code><a title="plotting.Input.plot_spectrogram_rate" href="#plotting.Input.plot_spectrogram_rate">plot_spectrogram_rate</a></code></li>
+<li><code><a title="plotting.Input.plot_spectrum_counts" href="#plotting.Input.plot_spectrum_counts">plot_spectrum_counts</a></code></li>
+<li><code><a title="plotting.Input.plot_spectrum_flux" href="#plotting.Input.plot_spectrum_flux">plot_spectrum_flux</a></code></li>
+<li><code><a title="plotting.Input.plot_spectrum_rate" href="#plotting.Input.plot_spectrum_rate">plot_spectrum_rate</a></code></li>
+<li><code><a title="plotting.Input.radiox" href="#plotting.Input.radiox">radiox</a></code></li>
+<li><code><a title="plotting.Input.radioy" href="#plotting.Input.radioy">radioy</a></code></li>
+<li><code><a title="plotting.Input.rate_vs_time_plotting" href="#plotting.Input.rate_vs_time_plotting">rate_vs_time_plotting</a></code></li>
+<li><code><a title="plotting.Input.round_energy" href="#plotting.Input.round_energy">round_energy</a></code></li>
+<li><code><a title="plotting.Input.show_specgm" href="#plotting.Input.show_specgm">show_specgm</a></code></li>
+<li><code><a title="plotting.Input.specgm_lim" href="#plotting.Input.specgm_lim">specgm_lim</a></code></li>
+<li><code><a title="plotting.Input.sum_canal" href="#plotting.Input.sum_canal">sum_canal</a></code></li>
+<li><code><a title="plotting.Input.time_index" href="#plotting.Input.time_index">time_index</a></code></li>
+<li><code><a title="plotting.Input.win_log_spec" href="#plotting.Input.win_log_spec">win_log_spec</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

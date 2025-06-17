@@ -1,0 +1,13 @@
+__pycache__/
+Archives & fitting documentation/
+[2019] Do_FIT/
+Au cas où/
+Backup/
+data/
+Doc/
+Documentation/
+*.pyc
+*.pyo
+*.log
+*.zip
+.DS_Store

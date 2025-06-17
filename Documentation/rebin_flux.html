@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>rebin_flux API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>rebin_flux</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import numpy as np
+import numpy.typing
+import get_file_info as get
+import matplotlib.pyplot as plt
+from astropy.modeling.models import custom_model
+
+&#34;&#34;&#34;
+Perform a flux- (i.e. area-) conserving rebinning of a histogram,
+given its edges and a set of new edges.
+The __name__ ... section has an example using a power law.
+Credits to W Setterberg, Shane Maloney, Kris Cooper &amp; Dan Ryan, Jan 2023
+&#34;&#34;&#34;
+
+
+def flux_conserving_rebin(
+        old_edges: np.typing.ArrayLike,
+        old_values: np.typing.ArrayLike,
+        new_edges: np.typing.ArrayLike,
+) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Rebin a histogram by performing a flux-conserving rebinning.
+    The total area of the histogram is conserved.
+    Adjacent bins are proportionally interpolated for new edges that do not line up.
+    Don&#39;t make the new edges too finely spaced;
+    don&#39;t make a new bin fall inside of an old one completely.
+    &#34;&#34;&#34;
+    old_edges = np.array(np.sort(old_edges))
+    new_edges = np.array(np.sort(new_edges))
+    nd = np.diff(new_edges)
+    od = np.diff(old_edges)
+
+    if (new_edges[0] &lt; old_edges[0]) or (new_edges[-1] &gt; old_edges[-1]):
+        raise ValueError(&#39;New edges cannot fall outside range of old edges.&#39;)
+
+    if np.all(nd == od):
+        return old_values[:]
+
+    orig_flux = od * old_values
+    ret = np.zeros(new_edges.size - 1)
+    for i in range(ret.size):
+        ret[i] = interpolate_new_bin(
+            original_area=orig_flux,
+            old_edges=old_edges,
+            new_left=new_edges[i],
+            new_right=new_edges[i + 1]
+        )
+
+    return ret
+
+
+def proportional_interp_single_bin(
+        left_edge: float,
+        right_edge: float,
+        interp: float
+) -&gt; tuple[float, float]:
+    &#34;&#34;&#34;
+    say what portion of a histogram bin belongs on the left and right
+    of an edge to interpolate.
+    &#34;&#34;&#34;
+    denom = right_edge - left_edge
+    right_portion = (right_edge - interp) / denom
+    left_portion = (interp - left_edge) / denom
+    return left_portion, right_portion
+
+
+def bounding_interpolate_indices(
+        old_edges: np.ndarray,
+        left: float,
+        right: float
+) -&gt; tuple[int, int]:
+    &#34;&#34;&#34;
+    find the indices of the old edges that bound the new left
+    and right edges.
+    &#34;&#34;&#34;
+    indices = np.arange(old_edges.size)
+    new_left = indices[old_edges &lt;= left][-1]
+    new_right = indices[old_edges &gt;= right][0]
+    return new_left, new_right
+
+
+def interpolate_new_bin(
+        original_area: np.array,
+        old_edges: np.array,
+        new_left: float,
+        new_right: float
+) -&gt; float:
+    &#34;&#34;&#34;
+    interpolate the new bin value given old edges, new edges,
+    and the old flux (aka area).
+    &#34;&#34;&#34;
+    oa = original_area
+    oe = old_edges
+
+    old_start_idx, old_end_idx = bounding_interpolate_indices(
+        oe, new_left, new_right
+    )
+
+    # portion of edge bins that get grouped with the new bin
+    _, left_partial_prop = proportional_interp_single_bin(
+        left_edge=oe[old_start_idx],
+        right_edge=oe[old_start_idx + 1],
+        interp=new_left
+    )
+    left_partial_area = left_partial_prop * oa[old_start_idx]
+
+    right_partial_prop, _ = proportional_interp_single_bin(
+        left_edge=oe[old_end_idx - 1],
+        right_edge=oe[old_end_idx],
+        interp=new_right
+    )
+    right_partial_area = right_partial_prop * oa[old_end_idx - 1]
+
+    partial_slice = slice(old_start_idx + 1, old_end_idx - 1)
+    have_bad_slice = (partial_slice.start &gt; partial_slice.stop)
+    if have_bad_slice:
+        raise ValueError(&#39;Your new bins are too fine. Use coarser bins.&#39;)
+
+    between_area = oa[partial_slice].sum()
+
+    delta = new_right - new_left
+    new_bin_value = (left_partial_area + between_area + right_partial_area) / delta
+    return new_bin_value
+
+
+@custom_model
+def fitting_photons(x, method=0., p1=1., p2=1., p3=1, p4=1., p5=1., index_start=0.):
+    &#34;&#34;&#34;
+    :param x: energy bands data from spectrogram
+    :param method: corresponding number of method used:
+                0: Power Law
+                1: Broken Power Law
+                2: Gaussian
+                3: Polynomial
+                4: Exponential
+                5: Single Power Law x Exponential
+                6: Logistic regression
+                7: Lorentz
+                8: Moffat
+                9: Voigt Profile
+    :param p1: first parameter
+    :param p2: second parameter
+    :param p3: third parameter
+    :param p4: fourth parameter
+    :param p5: fifth parameter
+    :param index_start: index of the position of the first energy band
+    :return rebinned_counts:
+    &#34;&#34;&#34;
+
+    srm_file = &#39;./stx_srm_2021feb14_0140_0155.fits&#39;
+    fit_method = &#34;Power Law&#34;
+
+    photon_bins, channel_bins, srm, energy_bands = get.get_srm(srm_file)
+
+    low_bd = int(index_start) if index_start &gt; 0 else 0
+    num_old, num_new = np.size(x), energy_bands - low_bd
+    print(&#34;nums: &#34;, num_old, num_new)
+    up_bd = low_bd + num_old
+    print(&#34;bands: &#34;, low_bd, up_bd)
+
+    print(srm[0, 5:21])
+    srm = srm[:, low_bd:up_bd]
+    print(srm[0, :])
+
+    #if num_old &lt; num_new:
+    #    num_new = int(num_old)
+
+    # FIXME: Check if both limits O - 150 are correct to use
+    old_edges = np.linspace(0, 150, num=num_old + 1)  # num=32 + 1
+    new_edges = np.linspace(0, 150, num=num_new + 1)  # num=20 + 1
+
+    if method == 0:    # 0. Power Law
+        old_values = ((x / p1) ** (-p2))   # FIXME: If p1 is not fixed, the fitting tries to divide by 0 in Power Law
+    elif method == 1:  # 1. Broken Power Law
+        old_values = x
+        print(&#34;Not done yet.&#34;)
+    elif method == 2:  # 2. Gaussian
+        old_values = x
+        print(&#34;Not done yet.&#34;)
+    elif method == 3:  # 3. Polynomial
+        old_values = x
+        print(&#34;Not done yet.&#34;)
+    elif method == 4:  # 4. Exponential
+        old_values = np.exp(p1 - x / p2)
+    elif method == 5:  # 5. Single Power Law x Exponential
+        old_values = (p5 * (x / p2) ** p1) * (np.exp(p3 - x / p4))
+    elif method == 6:  # 6. Logistic regression
+        old_values = 1 / (1 + np.exp(-x))
+    elif method == 7:  # 7. Lorentz
+        old_values = x
+        print(&#34;Not done yet.&#34;)
+    elif method == 8:  # 8. Moffat
+        old_values = x
+        print(&#34;Not done yet.&#34;)
+    elif method == 9:  # 9. Voigt Profile
+        old_values = x
+        print(&#34;Not done yet.&#34;)
+    else:              # Else: if no method is recognized, keeps by default the input data.
+        old_values = x[:]
+        print(&#34;No method recognized. Try with another argument.&#34;)
+
+    plt.figure(2)
+    plt.plot(x, old_values)
+
+    print(np.size(x), energy_bands, low_bd, up_bd, np.size(srm, 0), np.size(srm, 1),
+          num_old, num_new, np.size(old_edges), np.size(new_edges))
+
+    new_values = flux_conserving_rebin(
+        old_edges=old_edges,
+        old_values=old_values,
+        new_edges=new_edges
+    )
+    new_counts = np.matrix(new_values) * srm.T
+    print(&#34;ICI : &#34;, np.size(old_values), np.size(new_counts))
+
+    rebinned_counts = np.zeros(num_old)
+    for eb in range(num_old):  # i in range(i.e. 20 or 32)
+        rebinned_counts[eb] = float(new_counts[0, eb])
+
+    plt.plot(x, rebinned_counts)
+    plt.show()
+
+    if __name__ == &#39;__main__&#39;:
+        original_flux = compute_binned_flux(old_edges, old_values)
+        new_flux = compute_binned_flux(new_edges, new_values)
+        mids = old_edges[:-1] + np.diff(old_edges) / 2
+
+        print(f&#39;original flux:     {original_flux:.4f}&#39;)
+        print(f&#39;rebinned flux:     {new_flux:.4f}&#39;)
+        print(f&#39;amount off:        {np.abs(original_flux - new_flux):.2e}&#39;)
+        print(f&#39;machine precision: {np.finfo(float).eps:.2e}&#39;)
+        print(&#39;;)&#39;)
+
+        fig, ax = plt.subplots(figsize=(8, 6), layout=&#39;constrained&#39;)
+        ax.stairs(mids, old_edges, label=&#39;original&#39;)
+        ax.stairs(new_values, new_edges, label=&#39;rebinned&#39;)
+        ax.stairs(rebinned_counts, new_edges, label=&#39;rebinned with srm&#39;)
+        ax.set(
+            xscale=&#39;log&#39;,
+            yscale=&#39;log&#39;,
+            xlabel=&#39;$x$&#39;,
+            ylabel=str(fit_method),
+            title=&#39;Rebin linear-spaced bins to log-spaced bins&#39;
+        )
+        ax.set_xlim(4, 150)
+        ax.set_ylim(10, 10 ** 6)
+        ax.legend()
+        plt.show()
+
+    return rebinned_counts
+
+
+if __name__ == &#39;__main__&#39;:
+
+    def compute_binned_flux(edges, values):
+        return np.sum(values * np.diff(edges))
+
+    stix_srm_file = &#39;./stx_srm_2021feb14_0140_0155.fits&#39;
+    fitting_method = &#34;Power Law&#34;
+
+    rebinned_counts_model_test = fitting_photons(p1=1., p2=1.)
+
+    print(rebinned_counts_model_test)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="rebin_flux.bounding_interpolate_indices"><code class="name flex">
+<span>def <span class="ident">bounding_interpolate_indices</span></span>(<span>old_edges: numpy.ndarray, left: float, right: float) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"><p>find the indices of the old edges that bound the new left
+and right edges.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bounding_interpolate_indices(
+        old_edges: np.ndarray,
+        left: float,
+        right: float
+) -&gt; tuple[int, int]:
+    &#34;&#34;&#34;
+    find the indices of the old edges that bound the new left
+    and right edges.
+    &#34;&#34;&#34;
+    indices = np.arange(old_edges.size)
+    new_left = indices[old_edges &lt;= left][-1]
+    new_right = indices[old_edges &gt;= right][0]
+    return new_left, new_right</code></pre>
+</details>
+</dd>
+<dt id="rebin_flux.flux_conserving_rebin"><code class="name flex">
+<span>def <span class="ident">flux_conserving_rebin</span></span>(<span>old_edges: Union[numpy.__array_like._SupportsArray[numpy.dtype[Any]], numpy.__nested_sequence._NestedSequence[numpy.__array_like._SupportsArray[numpy.dtype[Any]]], bool, int, float, complex, str, bytes, numpy.__nested_sequence._NestedSequence[Union[bool, int, float, complex, str, bytes]]], old_values: Union[numpy.__array_like._SupportsArray[numpy.dtype[Any]], numpy.__nested_sequence._NestedSequence[numpy.__array_like._SupportsArray[numpy.dtype[Any]]], bool, int, float, complex, str, bytes, numpy.__nested_sequence._NestedSequence[Union[bool, int, float, complex, str, bytes]]], new_edges: Union[numpy.__array_like._SupportsArray[numpy.dtype[Any]], numpy.__nested_sequence._NestedSequence[numpy.__array_like._SupportsArray[numpy.dtype[Any]]], bool, int, float, complex, str, bytes, numpy.__nested_sequence._NestedSequence[Union[bool, int, float, complex, str, bytes]]]) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rebin a histogram by performing a flux-conserving rebinning.
+The total area of the histogram is conserved.
+Adjacent bins are proportionally interpolated for new edges that do not line up.
+Don't make the new edges too finely spaced;
+don't make a new bin fall inside of an old one completely.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flux_conserving_rebin(
+        old_edges: np.typing.ArrayLike,
+        old_values: np.typing.ArrayLike,
+        new_edges: np.typing.ArrayLike,
+) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Rebin a histogram by performing a flux-conserving rebinning.
+    The total area of the histogram is conserved.
+    Adjacent bins are proportionally interpolated for new edges that do not line up.
+    Don&#39;t make the new edges too finely spaced;
+    don&#39;t make a new bin fall inside of an old one completely.
+    &#34;&#34;&#34;
+    old_edges = np.array(np.sort(old_edges))
+    new_edges = np.array(np.sort(new_edges))
+    nd = np.diff(new_edges)
+    od = np.diff(old_edges)
+
+    if (new_edges[0] &lt; old_edges[0]) or (new_edges[-1] &gt; old_edges[-1]):
+        raise ValueError(&#39;New edges cannot fall outside range of old edges.&#39;)
+
+    if np.all(nd == od):
+        return old_values[:]
+
+    orig_flux = od * old_values
+    ret = np.zeros(new_edges.size - 1)
+    for i in range(ret.size):
+        ret[i] = interpolate_new_bin(
+            original_area=orig_flux,
+            old_edges=old_edges,
+            new_left=new_edges[i],
+            new_right=new_edges[i + 1]
+        )
+
+    return ret</code></pre>
+</details>
+</dd>
+<dt id="rebin_flux.interpolate_new_bin"><code class="name flex">
+<span>def <span class="ident">interpolate_new_bin</span></span>(<span>original_area: <built-in function array>, old_edges: <built-in function array>, new_left: float, new_right: float) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>interpolate the new bin value given old edges, new edges,
+and the old flux (aka area).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpolate_new_bin(
+        original_area: np.array,
+        old_edges: np.array,
+        new_left: float,
+        new_right: float
+) -&gt; float:
+    &#34;&#34;&#34;
+    interpolate the new bin value given old edges, new edges,
+    and the old flux (aka area).
+    &#34;&#34;&#34;
+    oa = original_area
+    oe = old_edges
+
+    old_start_idx, old_end_idx = bounding_interpolate_indices(
+        oe, new_left, new_right
+    )
+
+    # portion of edge bins that get grouped with the new bin
+    _, left_partial_prop = proportional_interp_single_bin(
+        left_edge=oe[old_start_idx],
+        right_edge=oe[old_start_idx + 1],
+        interp=new_left
+    )
+    left_partial_area = left_partial_prop * oa[old_start_idx]
+
+    right_partial_prop, _ = proportional_interp_single_bin(
+        left_edge=oe[old_end_idx - 1],
+        right_edge=oe[old_end_idx],
+        interp=new_right
+    )
+    right_partial_area = right_partial_prop * oa[old_end_idx - 1]
+
+    partial_slice = slice(old_start_idx + 1, old_end_idx - 1)
+    have_bad_slice = (partial_slice.start &gt; partial_slice.stop)
+    if have_bad_slice:
+        raise ValueError(&#39;Your new bins are too fine. Use coarser bins.&#39;)
+
+    between_area = oa[partial_slice].sum()
+
+    delta = new_right - new_left
+    new_bin_value = (left_partial_area + between_area + right_partial_area) / delta
+    return new_bin_value</code></pre>
+</details>
+</dd>
+<dt id="rebin_flux.proportional_interp_single_bin"><code class="name flex">
+<span>def <span class="ident">proportional_interp_single_bin</span></span>(<span>left_edge: float, right_edge: float, interp: float) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"><p>say what portion of a histogram bin belongs on the left and right
+of an edge to interpolate.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def proportional_interp_single_bin(
+        left_edge: float,
+        right_edge: float,
+        interp: float
+) -&gt; tuple[float, float]:
+    &#34;&#34;&#34;
+    say what portion of a histogram bin belongs on the left and right
+    of an edge to interpolate.
+    &#34;&#34;&#34;
+    denom = right_edge - left_edge
+    right_portion = (right_edge - interp) / denom
+    left_portion = (interp - left_edge) / denom
+    return left_portion, right_portion</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="rebin_flux.bounding_interpolate_indices" href="#rebin_flux.bounding_interpolate_indices">bounding_interpolate_indices</a></code></li>
+<li><code><a title="rebin_flux.flux_conserving_rebin" href="#rebin_flux.flux_conserving_rebin">flux_conserving_rebin</a></code></li>
+<li><code><a title="rebin_flux.interpolate_new_bin" href="#rebin_flux.interpolate_new_bin">interpolate_new_bin</a></code></li>
+<li><code><a title="rebin_flux.proportional_interp_single_bin" href="#rebin_flux.proportional_interp_single_bin">proportional_interp_single_bin</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

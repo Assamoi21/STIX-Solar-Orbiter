@@ -1,0 +1,26 @@
+Metadata-Version: 2.1
+Name: gunzip
+Version: 0.1.10
+Summary: Microapp gunzip
+Home-page: UNKNOWN
+Author: Youngsung Kim
+Author-email: youngsung.kim.act2@gmail.com
+License: UNKNOWN
+Project-URL: Bug Reports, https://github.com/grnydawn/micro-gunzip/issues
+Project-URL: Source, https://github.com/grnydawn/micro-gunzip
+Keywords: microapp gunzip
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Requires-Dist: microapp (>=0.2.3)
+
+Microapp gunzip
+
+

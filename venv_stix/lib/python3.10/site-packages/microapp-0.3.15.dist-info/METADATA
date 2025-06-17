@@ -1,0 +1,25 @@
+Metadata-Version: 2.1
+Name: microapp
+Version: 0.3.15
+Summary: A command-line portal to Microapp apps.
+Home-page: https://github.com/grnydawn/microapp
+Author: Youngsung Kim
+Author-email: youngsung.kim.act2@gmail.com
+License: UNKNOWN
+Project-URL: Bug Reports, https://github.com/grnydawn/microapp/issues
+Project-URL: Source, https://github.com/grnydawn/microapp
+Keywords: microapp
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+
+A command-line portal to Microapp apps.
+
+

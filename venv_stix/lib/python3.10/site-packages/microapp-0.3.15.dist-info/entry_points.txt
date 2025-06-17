@@ -1,0 +1,3 @@
+[console_scripts]
+microapp = microapp.__main__:main
+
