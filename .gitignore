@@ -6,6 +6,7 @@ Backup/
 data/
 Doc/
 Documentation/
+.idea/
 *.pyc
 *.pyo
 *.log
