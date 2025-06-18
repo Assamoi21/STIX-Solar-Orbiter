@@ -35,9 +35,9 @@ The Tkinter GUI allows you to:
 
 ### Setup
 
-git clone https://github.com/Assamoi21/STIX-Solar-Orbiter.git
-cd STIX-Solar-Orbiter
-pip install -r requirements.txt
+    git clone https://github.com/Assamoi21/STIX-Solar-Orbiter.git
+    cd STIX-Solar-Orbiter
+    pip install -r requirements.txt
 
 
 ## 📁 Data
