@@ -16,7 +16,7 @@ This project provides tools to fit spectra measured by the STIX instrument (Sola
 ## 🖥️ Interface
 
 The Tkinter GUI allows you to:
-- Load FITS files (spectra and SRM).
+- Load FITS files (spectrum and SRM).
 - Select energy intervals.
 - Add and configure spectral models.
 - Perform fitting and display results.
