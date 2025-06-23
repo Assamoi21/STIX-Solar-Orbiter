@@ -27,9 +27,9 @@ class Fitting:
     #         '-2102140001_20210214T014006-20210214T015515_008648_V01.fits'
     # rname = 'stx_srm_2021feb14_0140_0155.fits'
 
-    fname = 'solo_L1_stix-sci-xray' \
+    fname = 'data/solo_L1_stix-sci-xray' \
             '-spec_20230319T175504-20230320T000014_V02_2303197888-65462.fits'
-    rname = 'stx_srm_2303197888.fits'
+    rname = 'data/stx_srm_2303197888.fits'
 
     # create a new window called 'SPEX Fit Options'
     def __init__(self, root):

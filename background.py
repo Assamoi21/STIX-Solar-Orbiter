@@ -17,7 +17,7 @@ class BackgroundWindow:
     # fname = 'solo_L1A_stix-sci-spectrogram' \
     #         '-2102140001_20210214T014006-20210214T015515_008648_V01.fits'
     
-    fname = 'solo_L1_stix-sci-xray-spec_20230319T175504-20230320T000014_V02_2303197888-65462.fits'
+    fname = 'data/solo_L1_stix-sci-xray-spec_20230319T175504-20230320T000014_V02_2303197888-65462.fits'
 
     def __init__(self, root, show=True):
         """The main interest of this class is to calculate background caused by instruments and plot the data after
