@@ -8,6 +8,7 @@ import numpy as np
 import new_window
 import background
 import rebin_flux as rebin
+import second
 from matplotlib.ticker import LogLocator, NullFormatter, AutoMinorLocator
 
 register_matplotlib_converters()
@@ -94,7 +95,8 @@ class Fitting:
 
         else:
             hdulist = fits.open(fname)
-            energies = hdulist[3].data
+            # energies = hdulist[3].data
+            energies = second.SecondWindow.extract_stix_data(hdulist)
 
             self.text_min_energy = Label(self.top2, text="Min energy")
             self.text_min_energy.place(relx=0.75, rely=0.40, anchor=N)
@@ -104,7 +106,8 @@ class Fitting:
             e_low_values = sorted(set(energies['e_low'])) 
             e_high_values = sorted(set(energies['e_high'])) 
 
-            e_high_values = [e for e in e_high_values if e != float('inf') and e != float('-inf')]
+            e_high_values = [e for e in e_high_values 
+                if not np.isinf(e) and not np.isnan(e)]
 
             e_low_values_int = [int(e) for e in e_low_values if e != 0]
             e_high_values_int = [int(e) for e in e_high_values]
