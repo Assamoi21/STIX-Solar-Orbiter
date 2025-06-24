@@ -9,6 +9,8 @@ from entry_int import EntryInt
 from tkinter.filedialog import askopenfilename
 from interval_selector import IntervalSelector
 import second
+import os
+import sys
 
 
 class BackgroundWindow:
@@ -17,7 +19,15 @@ class BackgroundWindow:
     # fname = 'solo_L1A_stix-sci-spectrogram' \
     #         '-2102140001_20210214T014006-20210214T015515_008648_V01.fits'
     
-    fname = 'data/solo_L1_stix-sci-xray-spec_20230319T175504-20230320T000014_V02_2303197888-65462.fits'
+    fname_r = 'data/solo_L1_stix-sci-xray-spec_20230319T175504-20230320T000014_V02_2303197888-65462.fits'
+
+    def resource_path(relative_path):
+        """Renvoie le chemin absolu même si l'app est congelée avec PyInstaller"""
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.abspath("."), relative_path)
+    
+    fname = resource_path(fname_r)  # Default file to open
 
     def __init__(self, root, show=True):
         """The main interest of this class is to calculate background caused by instruments and plot the data after

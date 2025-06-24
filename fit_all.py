@@ -14,6 +14,8 @@ import rebin_flux as rebin
 from matplotlib.ticker import LogLocator, NullFormatter, AutoMinorLocator
 import tkinter as tk
 from matplotlib.widgets import SpanSelector
+import os
+import sys
 
 register_matplotlib_converters()
 
@@ -27,9 +29,18 @@ class Fitting:
     #         '-2102140001_20210214T014006-20210214T015515_008648_V01.fits'
     # rname = 'stx_srm_2021feb14_0140_0155.fits'
 
-    fname = 'data/solo_L1_stix-sci-xray' \
+    fname_r = 'data/solo_L1_stix-sci-xray' \
             '-spec_20230319T175504-20230320T000014_V02_2303197888-65462.fits'
-    rname = 'data/stx_srm_2303197888.fits'
+    rname_r = 'data/stx_srm_2303197888.fits'
+
+    def resource_path(relative_path):
+        """Renvoie le chemin absolu même si l'app est congelée avec PyInstaller"""
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.abspath("."), relative_path)
+    
+    fname = resource_path(fname_r)
+    rname = resource_path(rname_r)
 
     # create a new window called 'SPEX Fit Options'
     def __init__(self, root):

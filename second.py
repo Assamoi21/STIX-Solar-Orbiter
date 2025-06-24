@@ -4,6 +4,8 @@ from astropy.io import fits
 from astropy.table import Table
 import plotting
 import background
+import os
+import sys
 
 
 class SecondWindow:
@@ -15,7 +17,15 @@ class SecondWindow:
     #         '-2102140001_20210214T014006-20210214T015515_008648_V01.fits'
     # rname = 'stx_srm_2021feb14_0140_0155.fits'
 
-    fname = 'data/solo_L1_stix-sci-xray-spec_20230319T175504-20230320T000014_V02_2303197888-65462.fits'
+    fname_r = 'data/solo_L1_stix-sci-xray-spec_20230319T175504-20230320T000014_V02_2303197888-65462.fits'
+
+    def resource_path(relative_path):
+        """Renvoie le chemin absolu même si l'app est congelée avec PyInstaller"""
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.abspath("."), relative_path)
+    
+    fname = resource_path(fname_r) 
 
     def __init__(self, root):
         """Creating a new window for 'Select Input' part, using the 'place' geometry manager, allowing to explicitly

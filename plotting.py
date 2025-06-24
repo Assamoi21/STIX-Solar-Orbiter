@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use("TkAgg") # Use TkAgg backend for matplotlib
 import numpy as np
 import pandas as pd
 import datetime

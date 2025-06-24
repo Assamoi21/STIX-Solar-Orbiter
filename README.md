@@ -44,6 +44,35 @@ The Tkinter GUI allows you to:
 
 Example FITS files (spectra and SRM) are included in the repository. You can also download them from the official Solar Orbiter data sources.
 
+## 🔖 Build Executable (Windows)
+
+You can build a standalone .exe to run the application.
+
+Steps:
+
+1. Install PyInstaller:
+
+    pip install pyinstaller
+
+2. Build the executable:
+
+From the root of the project, run:
+
+    pyinstaller main.py --onefile --noconsole --add-data "data;data" --name "STIX Solar Orbitor" --hidden-import matplotlib.backends.backend_tkagg
+
+This will:
+
+- Create a single .exe file in the dist/ folder
+
+- Bundle the data/ directory (which includes FITS files)
+
+- Ensure the GUI (Tkinter and Matplotlib) works correctly
+
+3. Run the application:
+
+Navigate to dist/ and double-click STIX Solar Orbitor.exe.
+
+
 ## 📜 Licence
 
 This project is licensed under the MIT License.
