@@ -41,18 +41,17 @@ The Tkinter GUI allows you to:
 
 ### Mac Installation 
 If you encounter issues on macOS where Tkinter elements (buttons, windows, etc.) do not display correctly, follow these steps:
-python3 -m venv venv_stix
-source venv_stix/bin/activate    
 
-Install Python dependencies:
-pip install -r requirements.txt 
+- python3 -m venv venv_stix
+- source venv_stix/bin/activate    
 
-Install Tcl/Tk and Python with Tkinter support:
+- Install Python dependencies: pip install -r requirements.txt 
 
+- Install Tcl/Tk and Python with Tkinter support:
 brew install tcl-tk 
 brew install python-tk@3
 
-Call: 
+-Call: 
 python3 main.py 
 
 ## 📁 Data
