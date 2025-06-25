@@ -315,7 +315,7 @@ class Input:
             self.grid_var2 = BooleanVar()
             self.grid_check2 = Checkbutton(self.canvas_plot, text="Show grid", variable=self.grid_var2)
             self.grid_check2.place(relx=0.21, rely=0.82)
-            self.grid_var2.trace_add('write', self.__update_grid_2)
+            # self.grid_var2.trace_add('write', self.__update_grid_2)
 
             # To print information about the canal sum
             self.btn_info = Checkbutton(self.canvas_plot, text="Show Information",
@@ -668,16 +668,20 @@ class Input:
         if self.scaley.get() == 'log':
             plt.yscale('log')
 
-        # if hasattr(self, 'grid_var2') and self.grid_var2.get():
-        #     plt.grid(True)
-        # else:
-        #     plt.grid(False)
-
-        if hasattr(self, 'grid_var2') and self.grid_var2.get():
-            self.__update_grid_2()
-        else:
+        if self.grid_var2.get():
+            plt.grid(True, which='major', linestyle='-', linewidth=0.5, alpha=0.5)
             plt.minorticks_on()
             plt.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
+        else:
+            plt.grid(False)
+
+        # if hasattr(self, 'grid_var2') and self.grid_var2.get():
+        #     # self.__update_grid_2()
+        #     plt.grid(True, which='major', linestyle='-', linewidth=0.5, alpha=0.5)
+        # else:
+        #     # plt.minorticks_on()
+        #     # plt.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
+        #     plt.grid(False)
 
         plt.xticks(rotation=45)
         if show:
@@ -879,20 +883,20 @@ class Input:
         except Exception as e:
             print("Grille non modifiable :", e)
 
-    def __update_grid_2(self, *args):
-        """Updates the grid display when the checkbox is checked or unchecked."""
-        try:
-            ax = plt.gca()
-            show_grid = self.grid_var2.get()
+    # def __update_grid_2(self, *args):
+    #     """Updates the grid display when the checkbox is checked or unchecked."""
+    #     try:
+    #         ax = plt.gca()
+    #         show_grid = self.grid_var2.get()
 
-            ax.grid(show_grid, which='major')
+    #         ax.grid(show_grid, which='major')
 
-            ax.minorticks_on() 
-            ax.grid(show_grid, which='minor', linestyle=':', linewidth=0.5, alpha=0.7)
+    #         ax.minorticks_on() 
+    #         ax.grid(show_grid, which='minor', linestyle=':', linewidth=0.5, alpha=0.7)
 
-            plt.draw()
-        except Exception as e:
-            print("Grille non modifiable :", e)
+    #         plt.draw()
+    #     except Exception as e:
+    #         print("Grille non modifiable :", e)
 
 
 
@@ -1066,8 +1070,8 @@ class Input:
 
         # ax.grid(False, which='major')  # principal grid
 
-        ax.minorticks_on()  # Active ticks secondaires
-        ax.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.7)
+        # ax.minorticks_on()  # Active ticks secondaires
+        # ax.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.7)
 
         # plt.draw()
 

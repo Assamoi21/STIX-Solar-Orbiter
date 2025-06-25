@@ -1322,8 +1322,9 @@ class BackgroundWindow:
             plt.minorticks_on()
             plt.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
         else:
-            plt.minorticks_on()
-            plt.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
+            # plt.minorticks_on()
+            # plt.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
+            plt.grid(False)
 
         # Labels
         plt.xlabel(self.xlabel)
