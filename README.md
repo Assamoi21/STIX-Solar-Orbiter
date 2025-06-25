@@ -48,7 +48,8 @@ If you encounter issues on macOS where Tkinter elements (buttons, windows, etc.)
 - Install Python dependencies: pip install -r requirements.txt 
 
 - Install Tcl/Tk and Python with Tkinter support:
-brew install tcl-tk 
+brew install tcl-tk
+
 brew install python-tk@3
 
 -Call: 
