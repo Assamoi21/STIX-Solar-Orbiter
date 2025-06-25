@@ -44,10 +44,10 @@ If you encounter issues on macOS where Tkinter elements (buttons, windows, etc.)
 python3 -m venv venv_stix
 source venv_stix/bin/activate    
 
-# Install Python dependencies:
+Install Python dependencies:
 pip install -r requirements.txt 
 
-# Install Tcl/Tk and Python with Tkinter support:
+Install Tcl/Tk and Python with Tkinter support:
 
 brew install tcl-tk 
 brew install python-tk@3
