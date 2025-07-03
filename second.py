@@ -267,45 +267,73 @@ class SecondWindow:
         self.Times_range = []
         self.start_time_plotting = self.start_date_var.get()
         self.end_time_plotting = self.end_date_var.get()
-        print('Start time: ' + self.start_time_plotting)
-        print('End time: ' + self.end_time_plotting)
+        # print('Start time: ' + self.start_time_plotting)
+        # print('End time: ' + self.end_time_plotting)
 
         # Updating new text
-        self.textStart = self.start_time_plotting
-        self.textEnd = self.end_time_plotting
+        # self.textStart = self.start_time_plotting
+        # self.textEnd = self.end_time_plotting
 
         # Creation of value of editInterval_times
         self.Times_range.append(self.start_time_plotting)
         self.Times_range.append(self.end_time_plotting)
 
+    # def checked(self):
+    #     """ 'Set From' button activation.
+    #     Allows user to select between two distinct values (e.g. on/off)."""
+    #     if self.SetFromButton['state'] == 'disabled':
+    #         self.SetFromButton['state'] = 'normal'
+    #         self.StartButton['state'] = 'normal'
+    #         self.EndButton['state'] = 'normal'
+
+    #         self.textStart['state'] = 'normal'
+    #         self.textEnd['state'] = 'normal'
+
+    #         # Delete content from position 0 to end
+    #         self.textStart.delete(0, 'end')
+    #         self.textEnd.delete(0, 'end')
+
+    #         # Insert new_text at position 0
+    #         self.textStart.insert(0, self.time_summarize[1])
+    #         self.textEnd.insert(0, self.time_summarize[2])
+
+    #     else:
+    #         # Delete content from position 0 to end
+    #         self.textStart.delete(0, 'end')
+    #         self.textEnd.delete(0, 'end')
+            
+    #         self.SetFromButton['state'] = 'disabled'
+    #         self.StartButton['state'] = 'disabled'
+    #         self.EndButton['state'] = 'disabled'
+
+    #         self.textStart['state'] = 'disabled'
+    #         self.textEnd['state'] = 'disabled'
+
     def checked(self):
         """ 'Set From' button activation.
         Allows user to select between two distinct values (e.g. on/off)."""
         if self.SetFromButton['state'] == 'disabled':
+            # ACTIVER
             self.SetFromButton['state'] = 'normal'
             self.StartButton['state'] = 'normal'
             self.EndButton['state'] = 'normal'
-
             self.textStart['state'] = 'normal'
             self.textEnd['state'] = 'normal'
 
-            # Delete content from position 0 to end
+            # REMPLIR
             self.textStart.delete(0, 'end')
             self.textEnd.delete(0, 'end')
-
-            # Insert new_text at position 0
             self.textStart.insert(0, self.time_summarize[1])
             self.textEnd.insert(0, self.time_summarize[2])
 
         else:
-            # Delete content from position 0 to end
+            # DESELECTION = VIDER et DESACTIVER
             self.textStart.delete(0, 'end')
             self.textEnd.delete(0, 'end')
-            
+
             self.SetFromButton['state'] = 'disabled'
             self.StartButton['state'] = 'disabled'
             self.EndButton['state'] = 'disabled'
-
             self.textStart['state'] = 'disabled'
             self.textEnd['state'] = 'disabled'
 

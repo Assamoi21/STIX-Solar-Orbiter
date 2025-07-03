@@ -5,6 +5,7 @@ import pandas as pd
 import datetime
 import re
 from tkinter import *
+from tkinter import messagebox
 from astropy.io import fits
 from matplotlib import pyplot as plt
 from matplotlib import ticker as tck
@@ -35,7 +36,7 @@ class Input:
             start: starting time of the plotting; optionnal; \n
             end: ending time of the plotting; optionnal; \n
             hours: keeps the old value for data time for future comparisons; optionnal."""
-
+        
         self.show = True                                # Shows the plots only if this variable is True
         if start and end and hours:                     # If "Entire File" checkbox is unticked:
             self.entire_file = False                        # Class will plot data for a reduced time range
@@ -82,6 +83,10 @@ class Input:
 
         self.data_start = self.find_time(headers.get('DATE_BEG', headers.get('DATE-BEG', 'Unknown')))  # Starting time of data in seconds
         self.data_end = self.find_time(headers.get('DATE_END', headers.get('DATE-END', 'Unknown')))    # Ending time of data in seconds
+
+        ## uses the entire file dates
+        self.start_date_file = headers.get('DATE_BEG', headers.get('DATE-BEG', 'Unknown'))
+        self.end_date_file = headers.get('DATE_END', headers.get('DATE-END', 'Unknown'))
 
         self.index_start_list = []                  # List of all indexes included in reduced file
         self.index_end_list = []                    # List of all indexes included in reduced file
@@ -183,6 +188,28 @@ class Input:
         if day and self.data_end < 3600:  # If acquisition time > 24 h
             endIndexh += 86400  # Adding 24 h
         self.index_start, self.index_end = self.time_index(self.times, startIndexh, endIndexh)
+
+
+    # def acq_time(self, label):
+    #     day = False
+    #     for i in label:
+    #         if i > 86400:
+    #             day = True
+
+    #     # Correct: use self.start_time and self.end_time directly
+    #     startIndexh = self.start_time
+    #     endIndexh = self.end_time
+
+    #     if day and self.start_time < 3600:
+    #         startIndexh += 86400
+    #     if day and self.end_time < 3600:
+    #         endIndexh += 86400
+
+    #     self.index_start, self.index_end = self.time_index(self.times, startIndexh, endIndexh)
+    #     print(f"Acquisition time adjusted: start index {self.index_start}, end index {self.index_end}")
+    #     print(f"Start time: {self.start_time}, End time: {self.end_time}")
+    #     print(f"Adjusted start index: {startIndexh}, Adjusted end index: {endIndexh}")
+
 
     def log_axis(self, window, relx, rely):
         """Displays the radio boxes allowing the user to choose between linear and logarithmic axis. \n
@@ -429,7 +456,6 @@ class Input:
                 self.rounded = self.round_energy(self.lower_bands, int(self.energy_min_list[i].get()))
                 a_index = (np.where(self.lower_bands == float(self.rounded)))[0][0]
                 self.energies_low.append(int(self.energy_min_list[i].get()))
-                print('energies low:', self.energies_low)
                 self.energies_low_index.append(int(a_index))
 
             if self.energy_max_var.get() != '':
@@ -607,25 +633,46 @@ class Input:
         self.columns_label.append('Times')
         color = ['blue', 'red', 'green', 'black', 'orange']
 
+        # Convert instrument time indices (self.times) to real UTC datetimes.
+        # The FITS file only stores arbitrary index values (e.g., 640 ... 2,190,010), not absolute times.
+        # This formula linearly scales those indices between the actual start_datetime and end_datetime:
+        #   - t_min maps to start_datetime
+        #   - t_max maps to end_datetime
+        # Each t is proportionally converted to its corresponding real datetime within the file's time range.
+            
+
+        # Conversion en datetime
+        start_datetime = datetime.strptime(self.start_date_file, "%Y-%m-%dT%H:%M:%S.%f")
+        end_datetime = datetime.strptime(self.end_date_file, "%Y-%m-%dT%H:%M:%S.%f")
+        t_min = min(self.times)
+        t_max = max(self.times)
+        total_seconds = (end_datetime - start_datetime).total_seconds()
+
         if self.entire_file:
             data_reduced = data
             times_reduced = self.times
         else:
+            if self.start_date < self.start_date_file or self.end_date > self.end_date_file:
+                messagebox.showwarning("❌", "Start date or end date is outside the file's date range.")
+                return
+            elif self.start_date > self.end_date:
+                messagebox.showwarning("❌", "Start date cannot be after end date.")
+                return
+            
             self.acq_time(np.asarray(self.times) + self.start_time)
-            times_reduced = data[self.index_start:self.index_end + 1, -1]
-            data_reduced = data[self.index_start:self.index_end + 1, :]
-
-        # Conversion en datetime
-        start_datetime = datetime.strptime(self.start_date, "%Y-%m-%dT%H:%M:%S.%f")
-        end_datetime = datetime.strptime(self.end_date, "%Y-%m-%dT%H:%M:%S.%f")
-        t_min = min(self.times)
-        t_max = max(self.times)
-        total_seconds = (end_datetime - start_datetime).total_seconds()
+            index_start = self.date_to_times_index(self.start_date)
+            index_end = self.date_to_times_index(self.end_date)
+            # print(f"Index start: {index_start}, Index end: {index_end}")  
+            times_reduced = data[index_start:index_end + 1, -1]
+            data_reduced = data[index_start:index_end + 1, :]
+            print('index start:', index_start, 'index end:', index_end)
+            print('times reduced:', times_reduced[index_end])
 
         times_datetime = [
             start_datetime + timedelta(seconds=(t - t_min) / (t_max - t_min) * total_seconds)
             for t in times_reduced
         ]
+        print('last times :', times_datetime[-1])
 
         if len(times_datetime) != data_reduced.shape[0]:
             print("❌ Times and data size mismatch.")
@@ -655,10 +702,12 @@ class Input:
 
         ax = plt.gca()
         ax.set_xlim([times_datetime[0], times_datetime[-1]])  # Bien aligner le graphe
+        ax.minorticks_on()  
+        ax.grid(True, which='minor', linestyle=':', linewidth=0.1, alpha=0.1)
 
         # Format de temps automatique
         locator = AutoDateLocator()
-        formatter = DateFormatter('%H:%M' if total_seconds <= 86400 else '%m-%d\n%H:%M')
+        formatter = DateFormatter('%H:%M:%S' if total_seconds <= 86400 else '%m-%d\n%H:%M')
         ax.xaxis.set_major_locator(locator)
         ax.xaxis.set_major_formatter(formatter)
 
@@ -687,6 +736,28 @@ class Input:
         if show:
             plt.show()
  
+    def date_to_times_index(self, date_value):
+        """
+        Calcule la valeur de self.times approximative (via proportionnalité) pour une date donnée.
+        """
+        t_min = np.min(self.times)
+        t_max = np.max(self.times)
+
+        start_datetime = datetime.strptime(self.start_date_file, "%Y-%m-%dT%H:%M:%S.%f")
+        end_datetime = datetime.strptime(self.end_date_file, "%Y-%m-%dT%H:%M:%S.%f")
+        date_value = datetime.strptime(date_value, "%Y-%m-%dT%H:%M:%S.%f")
+
+        total_seconds = (end_datetime - start_datetime).total_seconds()
+        delta_seconds = (date_value - start_datetime).total_seconds()
+
+        # Proportionnalité linéaire
+        t_estimated = t_min + (delta_seconds / total_seconds) * (t_max - t_min)
+
+        # Pour obtenir un index le plus proche dans self.times
+        index = (np.abs(self.times - t_estimated)).argmin()
+
+        return index
+
     
     def time_index(self, index_times, value_start, value_end):
         """Finds the index of start time corresponding to the chosen data. \n
@@ -954,9 +1025,16 @@ class Input:
         Parameters: \n
             typ: data type: rate, counts, or flux."""
         # pcolormesh function(below) does not work with pandas time conversion function(TimeNew), we have to rewrite it.
+        # Convert instrument time indices (self.times) to real UTC datetimes.
+        # The FITS file only stores arbitrary index values (e.g., 640 ... 2,190,010), not absolute times.
+        # This formula linearly scales those indices between the actual start_datetime and end_datetime:
+        #   - t_min maps to start_datetime
+        #   - t_max maps to end_datetime
+        # Each t is proportionally converted to its corresponding real datetime within the file's time range.
 
-        start_datetime = datetime.strptime(self.start_date, "%Y-%m-%dT%H:%M:%S.%f")
-        end_datetime = datetime.strptime(self.end_date, "%Y-%m-%dT%H:%M:%S.%f")
+
+        start_datetime = datetime.strptime(self.start_date_file, "%Y-%m-%dT%H:%M:%S.%f")
+        end_datetime = datetime.strptime(self.end_date_file, "%Y-%m-%dT%H:%M:%S.%f")
         total_seconds = (end_datetime - start_datetime).total_seconds()
 
         t_min = min(self.times)
@@ -973,8 +1051,18 @@ class Input:
         if self.entire_file:
             self.times_sequences = self.times_datetime
         else:
+            if self.start_date < self.start_date_file or self.end_date > self.end_date_file:
+                messagebox.showwarning("❌", "Start date or end date is outside the file's date range.")
+                return
+            elif self.start_date > self.end_date:
+                messagebox.showwarning("❌", "Start date cannot be after end date.")
+                return
+            
             self.acq_time(self.label_time_plot_spectro)
-            self.times_sequences = self.times_datetime[self.index_start:self.index_end + 1]
+            self.index_chosen = self.date_to_times_index(self.start_date)
+            self.end_chosen = self.date_to_times_index(self.end_date)
+            self.times_sequences = self.times_datetime[self.index_chosen:self.end_chosen + 1]
+
 
         fig, self.ax = plt.subplots(1, 1, figsize=(15, 5), sharey="all", facecolor='w')
         fig.canvas.draw()
@@ -990,10 +1078,10 @@ class Input:
                 plt.pcolormesh(self.times_datetime, self.lower_bands, np.log10(np.transpose(self.data_plot)),
                                shading='auto', cmap='coolwarm')
             else:
-                data_sequences = self.data_plot[self.index_start:self.index_end + 1, :]
+                data_sequences = self.data_plot[self.index_chosen:self.end_chosen + 1, :]
                 plt.pcolormesh(self.times_sequences, self.lower_bands, np.log10(np.transpose(data_sequences)),
                                shading='auto', cmap='coolwarm')
-            plt.title('STIX SOLAR Rates Spectrogram')
+            plt.title('STIX SOLAR Rate Spectrogram')
             self.spgm_label = 'Counts/sec'
 
         # Plotting counts
@@ -1002,7 +1090,7 @@ class Input:
                 plt.pcolormesh(self.times_datetime, self.lower_bands, np.log10(np.transpose(self.counts)),
                                shading='auto', cmap='coolwarm')
             else:
-                data_sequences = self.counts[self.index_start:self.index_end + 1, :]
+                data_sequences = self.counts[self.index_chosen:self.end_chosen + 1, :]
                 plt.pcolormesh(self.times_sequences, self.lower_bands, np.log10(np.transpose(data_sequences)),
                                shading='auto', cmap='coolwarm')
             plt.title('STIX SOLAR Counts Spectrogram')
@@ -1015,7 +1103,7 @@ class Input:
                 plt.pcolormesh(self.times_datetime, self.lower_bands, np.log10(np.transpose(self.data_plot)),
                                shading='auto', cmap='coolwarm')
             else:
-                data_sequences = self.data_plot[self.index_start:self.index_end + 1, :]
+                data_sequences = self.data_plot[self.index_chosen:self.end_chosen + 1, :]
                 plt.pcolormesh(self.times_sequences, self.lower_bands, np.log10(np.transpose(data_sequences)),
                                shading='auto', cmap='coolwarm')
             plt.title('STIX SOLAR Flux Spectrogram')
@@ -1070,8 +1158,9 @@ class Input:
 
         # ax.grid(False, which='major')  # principal grid
 
-        # ax.minorticks_on()  # Active ticks secondaires
+        ax.minorticks_on()  # Active ticks secondaires
         # ax.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.7)
+        ax.grid(True, which='minor', linestyle=':', linewidth=0.1, alpha=0.1)
 
         # plt.draw()
 

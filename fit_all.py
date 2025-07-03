@@ -16,6 +16,9 @@ import tkinter as tk
 from matplotlib.widgets import SpanSelector
 import os
 import sys
+import torch
+import torch.nn as nn
+
 
 register_matplotlib_converters()
 
@@ -308,7 +311,7 @@ class Fitting:
         self.closeButton5 = Button(self.top2, text="Close", command=self.destroy5)  # add Close button
         # Close "Fit Options" window
         self.closeButton5.place(relx=0.5, rely=0.94)
-        self.models = ['PowerLaw1D', 'BrokenPowerLaw1D','Single Power Law Times an Exponential', 'V_TH', 'V_TH + PowerLaw']  # function names
+        self.models = ['PowerLaw1D', 'BrokenPowerLaw1D','Single Power Law Times an Exponential', 'V_TH', 'V_TH + PowerLaw']  # , 'Neural Network' function names
         for p in self.models:
             """On the right: place an 'entry text' Scrollbar widget (scrollbar) When user highlight the function, 
             displays the text information about function description and input parameters"""
@@ -360,7 +363,9 @@ class Fitting:
                                     'EM - Emission Measure (cm^-3)', '\n',
                                     'Amplitude - Model amplitude at the reference energy', '\n',
                                     'Alpha - Power law index'
-                                    }
+                                    },
+                    'Neural Network': {'Neural Network model', '\n',       }
+                     
                      }
                     
         self.list_selection = Listbox(self.top2, highlightcolor='red', bd=4)
@@ -760,6 +765,35 @@ class Fitting:
             folded = np.dot(true_fluxes, self.matrix) / self.exposure
             return folded
 
+    class NeuralNetReconstruction:
+        """
+        Classe pour utiliser un réseau neuronal entraîné pour estimer
+        le spectre photonique à partir des counts et de la SRM.
+        """
+
+        def __init__(self, model_path):
+            self.device = torch.device("cpu")
+            self.model = torch.load(model_path, map_location=self.device)
+            self.model.eval()
+
+        def prepare_input(self, counts, SRM):
+            """
+            Prépare l'entrée du réseau : concatène counts et SRM aplatie
+            """
+            srm_flat = SRM.flatten()
+            x_input = np.concatenate([counts, srm_flat])
+            return torch.tensor(x_input, dtype=torch.float32).unsqueeze(0)
+
+        def predict_photons(self, counts, SRM):
+            """
+            Utilise le réseau pour prédire le spectre photonique
+            """
+            with torch.no_grad():
+                x_input = self.prepare_input(counts, SRM)
+                pred = self.model(x_input)
+            return pred.numpy().flatten()
+
+
     def ask_photon_axes_scale(self):
         """Ouvre une popup centrée pour choisir les échelles X et Y du graphe photonique."""
         def confirm():
@@ -1122,6 +1156,13 @@ class Fitting:
             matrix = matrix[:, valid]       # matrix is 2D array, so we need to remove the same channels from it
             e_low_det = e_low_det[valid]
             e_high_det = e_high_det[valid]
+
+            print('matrix shape:', matrix.shape)
+            print('counts shape:', counts.shape)
+
+            print('counts:', counts)
+            print('matrix:', matrix)
+
 
             edges_det = np.append(e_low_det, e_high_det[-1])
             dE_det = np.diff(edges_det)
@@ -1648,5 +1689,21 @@ class Fitting:
                         )
 
                     plt.tight_layout()
+
+            elif self.lbox.curselection()[0] == 5:
+                self.fit_model = 'Neural Network'
+
+                # Load the neural network model
+                model_path = "model.pt"  # chemin vers ton modèle
+                nn_model = Fitting.NeuralNetReconstruction(model_path)
+                photons_estimates = nn_model.predict_photons(counts, matrix)
+                # self.plot_photon_result(photons_estimates)
+
+                print("Photon spectrum (NN):", photons_estimates)
+                plt.figure()
+                plt.plot(edges_det[:-1], photons_estimates, label="NN prediction")
+                plt.xlabel("Energy (keV)")
+                plt.ylabel("Photon Flux")
+                plt.legend()
 
             plt.show()

@@ -11,3 +11,4 @@ Documentation/
 *.log
 *.zip
 .DS_Store
+model.pt

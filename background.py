@@ -1322,9 +1322,9 @@ class BackgroundWindow:
             plt.minorticks_on()
             plt.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
         else:
-            # plt.minorticks_on()
-            # plt.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.5)
             plt.grid(False)
+            plt.minorticks_on()
+            plt.grid(True, which='minor', linestyle=':', linewidth=0.1, alpha=0.1)
 
         # Labels
         plt.xlabel(self.xlabel)
@@ -1339,7 +1339,7 @@ class BackgroundWindow:
         # ax.grid(False, which='major')  # principal grid
 
         # ax.minorticks_on()  # Active ticks secondaires
-        # ax.grid(True, which='minor', linestyle=':', linewidth=0.5, alpha=0.7)
+        # ax.grid(True, which='minor', linestyle=':', linewidth=0.1, alpha=0.1)
 
         # plt.draw()
 
