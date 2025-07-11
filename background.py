@@ -29,7 +29,12 @@ class BackgroundWindow:
     
     fname = resource_path(fname_r)  # Default file to open
 
-    def __init__(self, root, show=True):
+    DATA_BKG_SELECTED = False  # If background data has been selected by user
+    DATA_BKG_RESULT = None     # Result of the background calculation, to be used in other windows
+    DATA_BKG_START = None  # Starting time of the background data, to be used in other windows
+    DATA_BKG_END = None    # Ending time of the background data, to be used in other windows
+
+    def __init__(self, root=None, show=True):
         """The main interest of this class is to calculate background caused by instruments and plot the data after
         removal of the background. As for plotting.py, this class opens a new window (if show=True) to let the user
         decide plotting options such as unit type, data type, energy bands, time intervals, and calculation method for
@@ -124,6 +129,7 @@ class BackgroundWindow:
             self.time_min = list()                  # Entry boxes for lower bounds of time intervals
             self.time_max = list()                  # Entry boxes for upper bounds of time intervals
             self.btn_graphical = list()             # Buttons to select time intervals on the time profile plot
+            self.btn_spectrogram = list()            # Buttons to select energy bands on the spectrogram plot
             self.method_selection = list()  
             self.energy_min_var = []
             self.energy_max_var = []        # Dropdown lists to select method for background calculation
@@ -323,11 +329,13 @@ class BackgroundWindow:
             self.time_min[0].config(state=self.state_bkg)
             self.time_max[0].config(state=self.state_bkg)
             self.btn_graphical[0].config(state=self.state_bkg)
+            self.btn_spectrogram[0].config(state=self.state_bkg)
             self.method_selection[0].config(state=self.state_bkg)
             for i in range(1, int(self.nb_bands.get())):
                 self.time_min[i].config(state=self.state_time)
                 self.time_max[i].config(state=self.state_time)
                 self.btn_graphical[i].config(state=self.state_time)
+                self.btn_spectrogram[i].config(state=self.state_time)
                 self.method_selection[i].config(state=self.state_time)
 
             if self.time_min[0].get() == '':
@@ -338,6 +346,7 @@ class BackgroundWindow:
         # Backup variable is used to compare old state of background checkboxes;
         # So if user ticks both background & data-background, background frames will remain active.
         self.backup_bkg = self.var_bkg.get() + self.var_data_bkg.get()
+
 
     def disable_times(self):
         """Allows user to set different time intervals for each band for background calculation. If the checkbutton
@@ -359,6 +368,7 @@ class BackgroundWindow:
             self.time_min[i].config(state=self.state_time)
             self.time_max[i].config(state=self.state_time)
             self.btn_graphical[i].config(state=self.state_time)
+            self.btn_spectrogram[i].config(state=self.state_time)
             self.method_selection[i].config(state=self.state_time)
 
             if self.time_min[i].get() == '':
@@ -528,6 +538,7 @@ class BackgroundWindow:
             self.method_list = [''] * int(self.nb_bands.get())
 
             self.btn_graphical = [''] * int(self.nb_bands.get())
+            self.btn_spectrogram = [''] * int(self.nb_bands.get())
 
             self.energy_min_var = []
             self.energy_max_var = []
@@ -592,9 +603,13 @@ class BackgroundWindow:
         self.bkg_start_index[i] = 0
         self.bkg_end_index[i] = len(self.times)
 
-        self.btn_graphical[i] = Button(self.frame4, text="Graphical", state=self.state_time,
+        self.btn_graphical[i] = Button(self.frame4, text="Time Profile", state=self.state_time,
                                        command=lambda: self.graphical_interval(i))
-        self.btn_graphical[i].place(relx=0.6, rely=0.35 + 0.14 * i, anchor=W)
+        self.btn_graphical[i].place(relx=0.59, rely=0.35 + 0.14 * i, anchor=W)
+
+        self.btn_spectrogram[i] = Button(self.frame4, text="Spectrogram", state=self.state_time,
+                                       command=lambda: self.spectrogram_interval(i))
+        self.btn_spectrogram[i].place(relx=0.68, rely=0.35 + 0.14 * i, anchor=W)
 
         self.method_selection[i] = OptionMenu(self.frame4, self.method_var[i], *self.method_choices)
         self.method_selection[i].place(relx=0.85, rely=0.35 + 0.14 * i, anchor="center")
@@ -603,6 +618,7 @@ class BackgroundWindow:
         self.time_min[0].config(state=self.state_bkg)
         self.time_max[0].config(state=self.state_bkg)
         self.btn_graphical[0].config(state=self.state_bkg)
+        self.btn_spectrogram[0].config(state=self.state_bkg)
         self.method_selection[0].config(state=self.state_bkg)
 
     # def graphical_interval(self, i):
@@ -648,6 +664,30 @@ class BackgroundWindow:
     #     self.bkg_start_index[i] = self.round_value(self.times, self.bkg_start_time[i])
     #     self.bkg_end_index[i] = self.round_value(self.times, self.bkg_end_time[i])
 
+    def date_to_times_index(self, date_value):
+        """
+        Calcule la valeur de self.times approximative (via proportionnalité) pour une date donnée.
+        """
+        t_min = np.min(self.times)
+        t_max = np.max(self.times)
+
+        start_datetime = datetime.datetime.strptime(self.start_date, "%Y-%m-%dT%H:%M:%S.%f")
+        end_datetime = datetime.datetime.strptime(self.end_date, "%Y-%m-%dT%H:%M:%S.%f")
+        date_value = datetime.datetime.strptime(date_value, "%Y-%m-%dT%H:%M:%S.%f")
+
+        total_seconds = (end_datetime - start_datetime).total_seconds()
+        delta_seconds = (date_value - start_datetime).total_seconds()
+
+        # linear mapping from date_value to self.times
+        t_estimated = t_min + (delta_seconds / total_seconds) * (t_max - t_min)
+
+        # to get the closest index in self.times
+        index = (np.abs(self.times - t_estimated)).argmin()
+
+        print('index:', index, 't_estimated:', t_estimated, 'date_value:', date_value  )
+
+        return index
+
     def graphical_interval(self, i):
         """Affiche le graphique interactif pour sélectionner un intervalle de temps, avec axe X en datetime."""
 
@@ -670,6 +710,10 @@ class BackgroundWindow:
             samefig=self.var_sep_times.get(),
             band=i
         ).graphical_selection()
+
+        if dt_start is not None and dt_end is not None:
+            BackgroundWindow.DATA_BKG_SELECTED = True
+            print('background selection enabled', BackgroundWindow)
 
         # Paramètres temporels
         start_dt = BackgroundWindow.parse_datetime_string(self.start_date)
@@ -695,9 +739,9 @@ class BackgroundWindow:
         # rel_start = (dt_start - start_dt).total_seconds()
         # rel_end = (dt_end - start_dt).total_seconds()
 
-        print(f"Graphical selection raw (datetime): start={dt_start}, end={dt_end}")
-        print(f"Relative seconds: start={rel_start}, end={rel_end}")
-        print(f"Start_time ref: {self.start_time}, End_time ref: {self.end_time}")
+        # print(f"Graphical selection raw (datetime): start={dt_start}, end={dt_end}")
+        # print(f"Relative seconds: start={rel_start}, end={rel_end}")
+        # print(f"Start_time ref: {self.start_time}, End_time ref: {self.end_time}")
 
         
         # Clamp les valeurs dans les bornes
@@ -716,8 +760,12 @@ class BackgroundWindow:
         self.time_min[i].insert(0, self.convert_time_to_date(rel_start))
         self.time_max[i].insert(0, self.convert_time_to_date(rel_end))
 
-        print(" start selection on graph : ", self.convert_time_to_date(rel_start))
-        print(" end selection on graph   : ", self.convert_time_to_date(rel_end))
+        # Send rel_start and rel_end to the fit_all
+        BackgroundWindow.DATA_BKG_START = self.date_to_times_index(self.convert_time_to_date(rel_start))
+        BackgroundWindow.DATA_BKG_END = self.date_to_times_index(self.convert_time_to_date(rel_end))
+
+        # print(" start selection on graph : ", self.convert_time_to_date(rel_start))
+        # print(" end selection on graph   : ", self.convert_time_to_date(rel_end))
 
         # Index dans self.times
         self.bkg_start_index[i] = self.round_value(self.times, rel_start)
@@ -908,6 +956,12 @@ class BackgroundWindow:
                         self.data_err[i, j] = sum(self.counts_err[i, a:(b + 1)]) / self.del_times[i] / e_diff
                     else:
                         print("No matching unit plotting type found")
+        print('self.data shape:', self.data.shape)
+        print('self.data values:', self.data)
+        print('self.times shape:', self.times.shape)
+        print('self.times values:', self.times)
+        print('self.counts shape:', self.counts.shape )
+        print('self.counts values:', self.counts)
 
     def get_bkg(self):
         """Plots the function of time by selected Unit. Uses the colormesh function provided by matplotlib library."""
@@ -978,8 +1032,11 @@ class BackgroundWindow:
                     self.data_bkg[time, band] = self.data[time, band] - self.bkg[time, band]
                     if self.data_bkg[time, band] < 0:
                         self.data_bkg[time, band] = 0
-        print("Data-Background calculated for all bands :", self.data_bkg)
-        print("Data-Background values :", self.data)
+        # print("Data-Background calculated for all bands :", self.data_bkg)
+        # print("Data-Background values :", self.data)
+        # ✅ NEW: Share Data-Background globally
+        # Store the background result
+        BackgroundWindow.DATA_BKG_RESULT = self.data_bkg
 
     # def plot_options(self):
     #     """Saves using matplotlib all options to plot the graph to later display it. \n
@@ -1361,3 +1418,89 @@ class BackgroundWindow:
         plt.gcf().autofmt_xdate()
 
         plt.show()
+
+
+    # def spectrogram_interval(self, i):
+    #     """Open spectrogram plot with graphical selection for background definition."""
+    #     import plotting
+    #     import second
+
+    #     # Create plotting instance using selected FITS file
+    #     plot_instance = plotting.Input(second.SecondWindow.fname)
+
+    #     # Call the spectrogram plotting
+    #     plot_instance._Input__plot_spectrogram('rate')  # Or 'counts' or 'flux'
+
+    #     # ⚠️ OPTIONAL : Here you could add your custom RectangleSelector to define the interval
+    #     # For example, if you want to store selection in self.time_min[i] / self.time_max[i]
+    #     # But this part depends on how your plotting.py supports graphical selection
+
+    def spectrogram_interval(self, i):
+        """Open spectrogram plot with graphical selection for background definition, bypassing the popup."""
+        import plotting
+        import second
+        import matplotlib.pyplot as plt
+        from matplotlib.widgets import SpanSelector
+        import numpy as np
+
+        # Create plotting instance using selected FITS file
+        current_fname = BackgroundWindow.fname if BackgroundWindow.fname else second.SecondWindow.fname
+        print('fname:', BackgroundWindow.fname)
+        plot_instance = plotting.Input(current_fname)
+        # plot_instance = plotting.Input(second.SecondWindow.fname)
+
+        # ✅ Monkey-patch specgm_lim to avoid popup!
+        def no_popup_specgm_lim():
+            lower_clean = plot_instance.lower_bands[np.isfinite(plot_instance.lower_bands)]
+            upper_clean = plot_instance.upper_bands[np.isfinite(plot_instance.upper_bands)]
+            if lower_clean.size == 0 or upper_clean.size == 0:
+                plot_instance.energy_min = 0.0
+                plot_instance.energy_max = 20.0
+                print("[NO POPUP] Warning: Bands contained only NaNs. Defaulting to 0-20 keV")
+            else:
+                plot_instance.energy_min = np.min(lower_clean)
+                plot_instance.energy_max = np.max(upper_clean)
+                print(f"[NO POPUP] Energy bounds set to: {plot_instance.energy_min} - {plot_instance.energy_max}")
+
+
+        plot_instance.specgm_lim = no_popup_specgm_lim
+
+        # ✅ Now call the spectrogram plotting - will use our no-popup version
+        plot_instance._Input__plot_spectrogram('rate')
+
+        # Add selector for time
+        from matplotlib import dates as mdates
+        from datetime import datetime
+
+        def onselect(xmin, xmax):
+            print(f"Raw selected X: {xmin} - {xmax}")
+
+            # Convert matplotlib float date to datetime
+            dt_start = mdates.num2date(xmin)
+            dt_end = mdates.num2date(xmax)
+            dt_start = dt_start.replace(tzinfo=None)  # Remove timezone info if present
+            dt_end = dt_end.replace(tzinfo=None) 
+            print(f"Selected region (datetime): {dt_start} - {dt_end}")
+
+            # Write into your Entry widgets
+            self.time_min[i].delete(0, 'end')
+            self.time_max[i].delete(0, 'end')
+            self.time_min[i].insert(0, dt_start.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3])
+            self.time_max[i].insert(0, dt_end.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3])
+
+            # ✅ Close the plot window
+            plt.close()
+
+
+        fig = plt.gcf()
+        ax = plt.gca()
+        span = SpanSelector(ax, onselect, 'horizontal', useblit=True,
+                            props=dict(alpha=0.5, facecolor='red'))
+        
+
+        plt.show()
+
+
+
+
+

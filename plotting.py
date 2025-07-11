@@ -45,7 +45,7 @@ class Input:
 
         data, data_energies, header_dates, header_energy = self.__load_data(file)  # Loading data
 
-        hdu = fits.open(second.SecondWindow.fname)  # Opening the file
+        hdu = fits.open(file)  # Opening the file
         data = second.SecondWindow.extract_stix_data(hdu)  # Extracting data from the file
         headers = second.SecondWindow.extract_stix_header(hdu)  # Extracting header from the file
 

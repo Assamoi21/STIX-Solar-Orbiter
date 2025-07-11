@@ -10,6 +10,7 @@ from pandas.plotting import register_matplotlib_converters
 import numpy as np
 import new_window
 import background
+import second
 import rebin_flux as rebin
 from matplotlib.ticker import LogLocator, NullFormatter, AutoMinorLocator
 import tkinter as tk
@@ -279,7 +280,7 @@ class Fitting:
             self.frameFit,
             text="Data-Background",
             variable=self.show_db_var,
-            command=self.on_background_check
+            command=self.on_background_clicked
         )
 
         self.show_db_check.place(relx=0.35, rely=0.5)
@@ -381,6 +382,9 @@ class Fitting:
         # print("e_low_true: ", self.e_low_true.shape)
         # print("e_high_true: ", self.e_high_true.shape)
 
+        if background.BackgroundWindow.DATA_BKG_SELECTED :
+            self.show_db_var.set(1)  # Set the checkbox to checked if background data is selected
+
     def open_file(self, file=None):
         """Reads the input data using Astropy library. It can be any extension. RHESSI .fits files are analysed. \n
         Parameters: \n
@@ -409,7 +413,7 @@ class Fitting:
             self.time_del = data1['timedel']
             self.update_energy_range()
         else:
-            self.text_filename.insert(0, "No file chosen")  
+            self.text_filename.insert(0, "No file chosen") 
 
     def open_srm_file(self, file=None):
         """Reads the input data using Astropy library. It can be any extension. RHESSI .fits files are analysed. \n
@@ -793,6 +797,44 @@ class Fitting:
                 pred = self.model(x_input)
             return pred.numpy().flatten()
 
+    def ask_custom_yesno(title, message):
+        win = Toplevel()
+        win.title(title)
+        win.resizable(False, False)
+        win.grab_set()  # modal
+
+        # Contenu
+        Label(win, text=message, padx=20, pady=20, justify='center').pack()
+
+        result = {"value": False}
+
+        def on_yes():
+            result["value"] = True
+            win.destroy()
+
+        def on_no():
+            win.destroy()
+
+        button_frame = Frame(win)
+        button_frame.pack(pady=10)
+
+        Button(button_frame, text="Yes", width=10, command=on_yes).pack(side=LEFT, padx=5)
+        Button(button_frame, text="No", width=10, command=on_no).pack(side=LEFT, padx=5)
+
+        # ✅ Center the window on the screen
+        win.update_idletasks()
+        w = win.winfo_width()
+        h = win.winfo_height()
+        ws = win.winfo_screenwidth()
+        hs = win.winfo_screenheight()
+        x = (ws // 2) - (w // 2)
+        y = (hs // 2) - (h // 2)
+        win.geometry(f'+{x}+{y}')
+
+        win.wait_window()
+        return result["value"]
+
+    
 
     def ask_photon_axes_scale(self):
         """Ouvre une popup centrée pour choisir les échelles X et Y du graphe photonique."""
@@ -834,247 +876,37 @@ class Fitting:
 
     def on_background_check(self):
         if self.show_db_var.get():  # Si check activé
-            # self.select_background_range()
-            messagebox.showwarning("Data-Background", "Not yet ready.")
-            self.show_db_var.set(0)  # Désactiver le check
-            return
+            if not background.BackgroundWindow.DATA_BKG_SELECTED:
+                answer = Fitting.ask_custom_yesno(
+                "Background Not Selected",
+                "You have not yet generated the Background.\n"
+                "Would you like to open the Background window now?"
+                )
+                if answer:
+                    # ✅ Fermer la fenêtre actuelle et Ouvrir la fenêtre Background
+                    self.show_db_var.set(0)
+                    self.top2.destroy()
+                    background.BackgroundWindow()
+                else:
+                    # ✅ Décoche la case si refus
+                    self.show_db_var.set(0)
+                return
 
-
-    # def select_background_range(self):
-    #     """Affiche une fenêtre pour sélectionner la plage d’énergie de fond"""
-
-    #     # Données nécessaires
-    #     background_counts = np.mean(self.counts, axis=0)
-    #     e_low = self.e_low_det
-    #     e_high = self.e_high_det
-    #     edges = np.append(e_low, e_high[-1])
-    #     exposure = np.mean(self.time_del)
-    #     dE_det = np.diff(edges)
-
-    #     fig, ax = plt.subplots(figsize=(10, 5))  # taille agrandie
-    #     plt.subplots_adjust(bottom=0.2)
-
-    #     # Counts
-    #     mean_counts = background_counts
-
-    #     # Rate
-    #     rate = mean_counts / exposure
-
-    #     # Flux (photons / s / cm² / keV)
-    #     flux = rate / (self.area * dE_det)
-
-    #     # Unit selection
-    #     unit = self.var.get()
-        
-    #     if unit == 'Rate':
-    #         self.data = rate
-    #     elif unit == 'Counts':
-    #         self.data = mean_counts
-    #     elif unit == 'Flux':
-    #         self.data = flux
-    #     else:
-    #         raise ValueError("Choose unit = 'rate', 'counts' ou 'flux'")
-
-    #     ax.step(edges[:-1], self.data, where='mid', color='red', label='Data')
-
-    #     def onselect(xmin, xmax):
-    #         self.background_start = xmin
-    #         self.background_end = xmax
-    #         print(f"✔️ Background interval selected: [{xmin:.2f}, {xmax:.2f}] keV")
-    #         plt.close(fig)
-
-    #     span = SpanSelector(
-    #         ax, onselect, 'horizontal', useblit=True,
-    #         props=dict(alpha=0.5, facecolor='gray')
-    #     )
-
-    #     ax.set_title("Select Background Energy Range and Close Window")
-    #     ax.set_xlabel("Energy (keV)")
-    #     ax.set_ylabel("Counts")
-    #     ax.grid(True)
-    #     ax.legend()
-    #     plt.show()
-     
-    # def get_data_bkg(self):
-    #     """Soustrait le fond au signal, canal par canal et temps par temps."""
-    #     self.data_bkg = np.zeros_like(self.counts)
-
-    #     for band in range(len(self.e_low_det)):
-    #         for time in range(len(self.times)):
-    #             self.data_bkg[time, band] = self.counts[time, band] - self.bkg[time, band]
-    #             if self.data_bkg[time, band] < 0:
-    #                 self.data_bkg[time, band] = 0
-
-    #     print("✅ Données - Fond calculées :", self.data_bkg.shape)
-
-    # def get_bkg(self):
-    #     """Calcule le fond pour chaque canal énergétique selon un intervalle temporel spécifié."""
-    #     self.bkg = np.zeros_like(self.counts)
-
-    #     for band in range(len(self.e_low_det)):
-    #         # Par défaut : même méthode et intervalle pour tous les canaux
-    #         if self.var_sep_times.get() == 1 and band != 0:
-    #             self.bkg_start_index[band] = self.bkg_start_index[0]
-    #             self.bkg_end_index[band] = self.bkg_end_index[0]
-
-    #         start = self.bkg_start_index[band]
-    #         end = self.bkg_end_index[band]
-
-    #         mean_bkg = np.mean(self.counts[start:end, band])
-    #         self.bkg[:, band] = mean_bkg
-
-    #         # Mettre à zéro les valeurs négatives
-    #         self.bkg[:, band][self.bkg[:, band] < 0] = 0
-
-    #     print("✅ Background calculé pour tous les canaux :", self.bkg.shape)
-
-
-    # def select_background_range(self):
-    #     """Sélectionne la plage d’énergie pour le fond via graphique"""
-
-    #     # data used
-    #     background_counts = np.mean(self.counts, axis=0)
-    #     e_low = self.e_low_det
-    #     e_high = self.e_high_det
-    #     edges = np.append(e_low, e_high[-1])
-    #     exposure = np.mean(self.time_del)
-    #     dE_det = np.diff(edges)
-
-    #     fig, ax = plt.subplots(figsize=(10, 5))
-    #     plt.subplots_adjust(bottom=0.2)
-
-    #     # calculating data according to the selected unit
-    #     mean_counts = background_counts
-    #     rate = mean_counts / exposure
-    #     flux = rate / (self.area * dE_det)
-
-    #     unit = self.var.get()
-    #     if unit == 'Rate':
-    #         self.data = rate
-    #         y_label = "Rate"
-    #     elif unit == 'Counts':
-    #         self.data = mean_counts
-    #         y_label = "Counts"
-    #     elif unit == 'Flux':
-    #         self.data = flux
-    #         y_label = "Flux"
-    #     else:
-    #         raise ValueError("Choose unit = 'rate', 'counts' ou 'flux'")
-
-    #     ax.step(edges[:-1], self.data, where='mid', color='red', label='Data')
-    #     ax.set_title("Select Background Energy Range and Close Window")
-    #     ax.set_xlabel("Energy (keV)")
-    #     ax.set_ylabel(y_label)
-    #     ax.grid(True)
-    #     ax.legend()
-
-    #     def onselect(xmin, xmax):
-    #         # Convertir la sélection en indices
-    #         start_idx = np.searchsorted(edges[:-1], xmin, side='left')
-    #         end_idx = np.searchsorted(edges[1:], xmax, side='right')
-
-    #         self.background_channel_start = start_idx
-    #         self.background_channel_end = end_idx
-
-    #         print(f"✔️ Background interval selected: {xmin:.2f}–{xmax:.2f} keV")
-    #         print(f"↪️ Channels: {start_idx} to {end_idx}")
-    #         plt.close(fig)
-
-    #     span = SpanSelector(ax, onselect, 'horizontal', useblit=True,
-    #                         props=dict(alpha=0.5, facecolor='gray'))
-
-    #     plt.show()
-
-    # def get_bkg(self):
-    #     """calculate the background for each energy channel according to a specified time interval."""
-    #     if not hasattr(self, 'background_channel_start') or not hasattr(self, 'background_channel_end'):
-    #         print("❌ No background range selected. Use select_background_range() first.")
-    #         return
-
-    #     start = self.background_channel_start
-    #     end = self.background_channel_end
-
-    #     # mean background for all times
-    #     # self.bkg = np.median(self.counts[:, start:end], axis=1).reshape(-1, 1)  # (time, 1)
-    #     # self.bkg = np.repeat(self.bkg, self.counts.shape[1], axis=1)  # Broadcast (time, channel)
-
-    #     # Moyenne sur les canaux sélectionnés pour chaque instant de temps
-    #     background_per_time = np.median(self.counts[:, start:end], axis=1)  # shape (N_times,)
-
-    #     # Étendre à tous les canaux (broadcasting)
-    #     self.bkg = np.tile(background_per_time[:, np.newaxis], (1, self.counts.shape[1]))  # shape (N_times, N_channels)
-
-    #     print(f"✅ Background calculated from channels {start} to {end} for all times.")
-
-    # def get_data_bkg(self):
-    #     """subtract the background from the signal, channel by channel and time by time."""
-    #     self.data_bkg = self.counts - self.bkg
-    #     self.data_bkg[self.data_bkg < 0] = 0  # change negative values to 0
-    #     print("✅ Data - Background calculated.")
-    #     print("Data - Background shape: ", self.data_bkg.shape)
-    #     print(f"Background shape: {self.bkg.shape}")
-    #     print(f"Data original: {self.counts.shape}")
-    #     print("_______________________________")
-    #     print("Data - Background shape: ", self.data_bkg)
-    #     print(f"Background shape: {self.bkg}")
-    #     print(f"Data original: {self.counts}")
-
-    def select_background_range(self):
-        """Permet de sélectionner une plage de temps pour estimer le fond (background)."""
-
-        # Moyenne des counts sur tous les canaux pour chaque temps
-        mean_counts_per_time = np.mean(self.counts, axis=1)
-        times = self.times
-        exposure = np.mean(self.time_del)
-
-        fig, ax = plt.subplots(figsize=(10, 5))
-        ax.plot(times, mean_counts_per_time/exposure, color='red', label='Mean Counts vs Time')
-
-        ax.set_title("Select Time Interval for Background")
-        ax.set_xlabel("Time [s]")
-        ax.set_ylabel("Mean Counts")
-        ax.grid(True)
-        ax.legend()
-
-        def onselect(xmin, xmax):
-            self.background_time_start = xmin
-            self.background_time_end = xmax
-
-            print(f"✔️ Background time interval selected: {xmin:.2f} to {xmax:.2f} seconds")
-            plt.close(fig)
-
-        span = SpanSelector(ax, onselect, 'horizontal', useblit=True,
-                            props=dict(alpha=0.5, facecolor='gray'))
-
-        plt.show()
-
-
-    def get_bkg(self):
-        """Calcule le fond pour chaque canal à partir d’un intervalle de temps sélectionné."""
-
-        if not hasattr(self, 'background_time_start') or not hasattr(self, 'background_time_end'):
-            print("❌ Aucun intervalle de temps sélectionné pour le fond.")
-            return
-
-        # Trouver les indices de temps correspondants
-        time_start_idx = np.searchsorted(self.times, self.background_time_start)
-        time_end_idx = np.searchsorted(self.times, self.background_time_end)
-
-        # Sélection de l’intervalle
-        selected_counts = self.counts[time_start_idx:time_end_idx + 1, :]  # shape (N_t_bg, N_channels)
-
-        # Moyenne temporelle du fond
-        self.bkg = np.mean(selected_counts, axis=0)  # shape (N_channels,)
-        self.bkg = np.tile(self.bkg, (self.counts.shape[0], 1))  # shape (N_times, N_channels)
-
-        print(f"✅ Background computed from time index {time_start_idx} to {time_end_idx} ({self.background_time_start:.2f}–{self.background_time_end:.2f} s)")
-
-    def get_data_bkg(self):
-        """Soustrait le fond au signal sur tous les temps et canaux."""
-        self.data_bkg = self.counts - self.bkg
-        self.data_bkg[self.data_bkg < 0] = 0
-        print("✅ Data - Background calculated.")
-
+    def on_background_clicked(self):
+        if self.show_db_var.get():
+            if background.BackgroundWindow.DATA_BKG_SELECTED:
+                answer = messagebox.askyesno(
+                    "Background already selected",
+                    "A background has already been selected.\nWould you like to select a new one?"
+                )
+                if answer:
+                    background.BackgroundWindow.DATA_BKG_SELECTED = False
+                    self.top2.destroy()  # Close current Fit Options window
+                    background.BackgroundWindow()  # Open new Background selection
+                else:
+                    self.show_db_var.set(1)  # Keep checkbox checked
+            else:
+                self.on_background_check()  # Original logic (first-time case)
 
 
     def _selective_fit(self):
@@ -1093,39 +925,37 @@ class Fitting:
         fname = Fitting.fname
         rname = Fitting.rname
         if fname is None and rname is None:  # if file not choosen, print
-            print('Please, choose input file')
+            messagebox.showwarning("No File Selected", "Please, choose input file.")
 
         else:
-            # --- Read Counts data ---
-            # if self.show_db_var.get() and self.background_start is not None and self.background_end is not None:
-            #     # Crée un masque pour le background
-            #     bkg_mask = (self.e_low_det >= self.background_start) & (self.e_high_det <= self.background_end)
-            #     background = np.mean(self.counts[:, bkg_mask], axis=0)
-
-            #     # Attention à la forme de background vs counts
-            #     background = np.mean(background)  # moyenne plate si nécessaire
-            #     new_data = self.counts - background
-            #     new_data[new_data < 0] = 0
-
-            #     used_data = new_data
-            #     absolute_name = "Data - Background"
-            # else:
-            #     used_data = self.counts
-            #     absolute_name = "Data"
 
             if self.show_db_var.get():
-                self.get_bkg()
-                self.get_data_bkg()
-                used_data = self.data_bkg
+
+                index_start = background.BackgroundWindow.DATA_BKG_START
+                index_end = background.BackgroundWindow.DATA_BKG_END
+                # print(f"✔️ Background range selected: {index_start} to {index_end} ")
+                # print('--------------------------------')
+                background_slice = self.counts[index_start:index_end + 1, :] 
+                bkg_vector = np.mean(background_slice, axis=0) 
+                counts_bkg_removed = self.counts - bkg_vector 
+                self.data_background = np.where(counts_bkg_removed > 0, counts_bkg_removed, 1e-5)
+
+                # print('bkg_vector :', bkg_vector)
+                # print('counts_bkg_removed :', counts_bkg_removed)
+                # print('background_slice :', self.data_background)
+                used_data = self.data_background
                 absolute_name = "Data - Background"
+                # print("test data - background:")
+
             else:
+
                 used_data = self.counts
                 absolute_name = "Data"
-
-
-
+                # print("test data:")
+            
 
             counts_all = np.mean(used_data, axis=0)
+            print("Counts :", counts_all)
             counts_err_all = np.mean(self.counts_err, axis=0)
             exposure = np.mean(self.time_del)
             e_low_det_all = self.e_low_det
@@ -1137,7 +967,6 @@ class Fitting:
             matrix = self.matrix
 
             # --- use mask channel to avoid shape problem ---
-
             usable_channels = np.arange(min(matrix.shape[1], len(e_low_det_all)))
 
             counts = counts_all[usable_channels]
@@ -1157,11 +986,11 @@ class Fitting:
             e_low_det = e_low_det[valid]
             e_high_det = e_high_det[valid]
 
-            print('matrix shape:', matrix.shape)
-            print('counts shape:', counts.shape)
+            # print('matrix shape:', matrix.shape)
+            # print('counts shape:', counts.shape)
 
-            print('counts:', counts)
-            print('matrix:', matrix)
+            # print('counts:', counts)
+            # print('matrix:', matrix)
 
 
             edges_det = np.append(e_low_det, e_high_det[-1])
