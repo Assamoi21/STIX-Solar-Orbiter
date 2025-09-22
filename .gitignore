@@ -12,3 +12,7 @@ Documentation/
 *.zip
 .DS_Store
 model.pt
+STIX Solar Orbitor.spec
+build/
+dist/
+justfortest.py

@@ -1488,6 +1488,10 @@ class BackgroundWindow:
             self.time_min[i].insert(0, dt_start.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3])
             self.time_max[i].insert(0, dt_end.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3])
 
+            # Send Start and End data to the fit_all
+            BackgroundWindow.DATA_BKG_START = dt_start.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+            BackgroundWindow.DATA_BKG_END = dt_end.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+
             # ✅ Close the plot window
             plt.close()
 

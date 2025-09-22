@@ -19,9 +19,12 @@ import os
 import sys
 import torch
 import torch.nn as nn
+import copy
+from scipy.optimize import least_squares
 
 
 register_matplotlib_converters()
+
 
 
 class Fitting:
@@ -46,6 +49,68 @@ class Fitting:
     fname = resource_path(fname_r)
     rname = resource_path(rname_r)
 
+    # === default parameter bounds for each model ===
+    default_param_bounds = {
+        "PowerLaw1D": {
+            "amplitude": (None, None),
+            "alpha": (None, None)
+        },
+        "BrokenPowerLaw1D": {
+            "amplitude": (1e-5, 1e3),
+            "E_break": (1.0, 100.0),
+            "alpha_1": (0.1, 10.0),
+            "alpha_2": (0.1, 10.0)
+        },
+        "Single Power Law Times an Exponential": {
+            "p0": (1e-3, 1e5),
+            "p1": (-5, 5),
+            "p2": (1e-2, 100),
+            "e3": (-10, 10),
+            "e4": (0.1, 100)
+        },
+        "V_TH": {
+            "EM": (1e44, 1e52),
+            "T": (0.1, 50.0)
+        },
+        "V_TH + PowerLaw": {
+            "EM": (1e44, 1e52),
+            "T": (0.1, 50.0),
+            "amplitude": (1e-2, 1e2),
+            "alpha": (2, 10.0)
+        }
+    }
+
+    default_param_values = {
+        "PowerLaw1D": {
+            "amplitude": 1e-2,
+            "alpha": 2.0
+        },
+        "BrokenPowerLaw1D": {
+            "amplitude": 1e-2,
+            "E_break": 10.0,
+            "alpha_1": 2.0,
+            "alpha_2": 3.0
+        },
+        "Single Power Law Times an Exponential": {
+            "p0": 1.0,
+            "p1": -2.0,
+            "p2": 20.0,
+            "e3": 1.0,
+            "e4": 10.0
+        },
+        "V_TH": {
+            "EM": 6e48, #5.71e+48
+            "T": 1.0,  # 1.23
+        },
+        "V_TH + PowerLaw": {
+            "EM": 1e48,
+            "T": 1.0,
+            "amplitude": 1e-2,
+            "alpha": 2.0
+        }
+    }
+
+    
     # create a new window called 'SPEX Fit Options'
     def __init__(self, root):
         """Creates a new window, providing widgets to perform fitting analysis"""
@@ -152,17 +217,415 @@ class Fitting:
 
         self.fit_model = str()
 
+        self.user_param_bounds = {}  # bounds set by user in Set_Function
+        self.user_param_values = {} # initial values set by user in Set_Function
+        self.user_param_modified = {} # True if user modified bounds/values from default
+
         # self.X_Label = Label(self.top2, text="Energy range to fit: ")  # name "Energy range(s) to fit"
         # self.X_Label.place(relx=0.75, rely=0.32)  # locate
 
         # FIXME: Empty Window, surely to be removed later on
-        def Set_Function():  # new window Set_Function definition
-            """Creates a new window for "Set spec_data axis" part"""
+        # def Set_Function():  # new window Set_Function definition
+        #     """Creates a new window for "Set spec_data axis" part"""
+        #     newwin = Toplevel(root)
+        #     newwin.title('Function values')  # title of the window
+        #     newwin.geometry("600x400")  # size of the new window
+        #     display = Label(newwin, text="Choose function values: ", fg='blue', font=("Helvetica", 11, "bold"))
+        #     display.place(relx=0.04, rely=0.07)
+
+        def Set_Function1():
+            """Fenêtre popup pour définir les bornes des paramètres du modèle sélectionné"""
+            if not self.fit_model:
+                messagebox.showwarning("No Model Selected", "Please select a model first.")
+                return
+
             newwin = Toplevel(root)
-            newwin.title('Function values')  # title of the window
-            newwin.geometry("600x400")  # size of the new window
-            display = Label(newwin, text="Choose function values: ", fg='blue', font=("Helvetica", 11, "bold"))
-            display.place(relx=0.04, rely=0.07)
+            newwin.title(f'{self.fit_model} - Parameter Ranges')
+            newwin.geometry("500x400")
+
+            Label(newwin, text=f"Set parameter ranges for {self.fit_model}:",
+                fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
+
+            # Dictionnaire des paramètres par modèle
+            model_params = {
+                "PowerLaw1D": ["amplitude", "alpha"],
+                "BrokenPowerLaw1D": ["amplitude", "E_break", "alpha_1", "alpha_2"],
+                "Single Power Law Times an Exponential": ["p0", "p1", "p2", "e3", "e4"],
+                "V_TH": ["EM", "T"],
+                "V_TH + PowerLaw": ["EM", "T", "amplitude", "alpha"]
+            }
+
+            self.param_entries = {}  # stocker les entrées
+
+            if self.fit_model in model_params:
+                for param in model_params[self.fit_model]:
+                    frame = Frame(newwin)
+                    frame.pack(pady=5, fill="x")
+
+                    Label(frame, text=f"{param} min:", width=12, anchor="w").pack(side=LEFT)
+                    min_entry = Entry(frame, width=10)
+                    min_entry.pack(side=LEFT, padx=5)
+
+                    Label(frame, text=f"{param} max:", width=12, anchor="w").pack(side=LEFT)
+                    max_entry = Entry(frame, width=10)
+                    max_entry.pack(side=LEFT, padx=5)
+
+                    self.param_entries[param] = (min_entry, max_entry)
+
+            def save_params():
+                self.param_bounds = {}
+                for param, (min_e, max_e) in self.param_entries.items():
+                    try:
+                        min_val = float(min_e.get())
+                        max_val = float(max_e.get())
+                        self.param_bounds[param] = (min_val, max_val)
+                    except ValueError:
+                        messagebox.showerror("Invalid input", f"Invalid bounds for {param}")
+                        return
+                newwin.destroy()
+
+            Button(newwin, text="Save", command=save_params, bg="green", fg="white").pack(pady=15)
+
+        def Set_Function2():
+            """Fenêtre popup pour définir les bornes des paramètres du modèle sélectionné"""
+            if not self.fit_model:
+                messagebox.showwarning("No Model Selected", "Please select a model first.")
+                return
+
+            newwin = Toplevel(root)
+            newwin.title(f'{self.fit_model} - Parameter Ranges')
+            newwin.geometry("500x400")
+
+            Label(newwin, text=f"Set parameter ranges for {self.fit_model}:",
+                fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
+
+            # Charger les bornes par défaut
+            default_bounds = Fitting.default_param_bounds.get(self.fit_model, {})
+
+            self.param_entries = {}
+
+            if default_bounds:
+                for param, (pmin, pmax) in default_bounds.items():
+                    frame = Frame(newwin)
+                    frame.pack(pady=5, fill="x")
+
+                    Label(frame, text=f"{param} min:", width=12, anchor="w").pack(side=LEFT)
+                    min_entry = Entry(frame, width=10)
+                    min_entry.insert(0, str(pmin))  # pré-rempli avec valeur par défaut
+                    min_entry.pack(side=LEFT, padx=5)
+
+                    Label(frame, text=f"{param} max:", width=12, anchor="w").pack(side=LEFT)
+                    max_entry = Entry(frame, width=10)
+                    max_entry.insert(0, str(pmax))  # pré-rempli avec valeur par défaut
+                    max_entry.pack(side=LEFT, padx=5)
+
+                    self.param_entries[param] = (min_entry, max_entry)
+
+            def save_params():
+                self.param_bounds = {}
+                for param, (min_e, max_e) in self.param_entries.items():
+                    try:
+                        min_val = float(min_e.get())
+                        max_val = float(max_e.get())
+                        self.param_bounds[param] = (min_val, max_val)
+                    except ValueError:
+                        messagebox.showerror("Invalid input", f"Invalid bounds for {param}")
+                        return
+                newwin.destroy()
+
+            Button(newwin, text="Save", command=save_params, bg="green", fg="white").pack(pady=15)
+
+        def Set_Function3():
+            """Fenêtre pour définir les bornes des paramètres du modèle sélectionné"""
+            # Vérifier qu'un modèle est bien sélectionné
+            try:
+                idx = self.lbox.curselection()[0]
+                model_key = self.lbox.get(idx)  # ex: "PowerLaw1D"
+            except Exception:
+                messagebox.showwarning("No Model Selected", "Please select a model first.")
+                return
+
+            newwin = Toplevel(self.top2)
+            newwin.title(f"{model_key} - Parameter Ranges")
+            newwin.geometry("520x420")
+
+            Label(newwin, text=f"Set parameter ranges for {model_key}:",
+                fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
+
+            # Charger les bornes déjà saisies par l’utilisateur, sinon celles par défaut
+            base_bounds = self.user_param_bounds.get(
+                model_key, Fitting.default_param_bounds.get(model_key, {})
+            )
+
+            self.param_entries = {}
+
+            for param, (pmin, pmax) in base_bounds.items():
+                row = Frame(newwin)
+                row.pack(pady=6, fill="x")
+
+                Label(row, text=f"{param} min:", width=14, anchor="w").pack(side=LEFT)
+                e_min = Entry(row, width=12)
+                e_min.insert(0, str(pmin))  # pré-rempli
+                e_min.pack(side=LEFT, padx=6)
+
+                Label(row, text=f"{param} max:", width=14, anchor="w").pack(side=LEFT)
+                e_max = Entry(row, width=12)
+                e_max.insert(0, str(pmax))  # pré-rempli
+                e_max.pack(side=LEFT, padx=6)
+
+                self.param_entries[param] = (e_min, e_max)
+
+            def save_params():
+                bounds = {}
+                modified = False  # drapeau pour savoir si l’utilisateur a modifié quelque chose
+
+                for param, (e_min, e_max) in self.param_entries.items():
+                    lo_txt, hi_txt = e_min.get().strip(), e_max.get().strip()
+
+                    # Valeurs par défaut pour ce paramètre
+                    default_lo, default_hi = Fitting.default_param_bounds[model_key][param]
+
+                    try:
+                        lo = float(lo_txt)
+                        hi = float(hi_txt)
+                    except ValueError:
+                        messagebox.showerror("Invalid input", f"{param}: invalid number")
+                        return
+
+                    bounds[param] = (lo, hi)
+
+                    # Vérifier si modifié par rapport aux valeurs par défaut
+                    if lo != default_lo or hi != default_hi:
+                        modified = True
+
+                # Sauvegarde
+                self.user_param_bounds[model_key] = bounds
+                self.param_modified = modified  # True si l’utilisateur a changé quelque chose
+                newwin.destroy()
+
+            Button(newwin, text="Save", command=save_params, bg="green", fg="white").pack(pady=15)
+
+        def Set_Function4():
+            """Fenêtre pour définir les bornes des paramètres du modèle sélectionné."""
+            try:
+                idx = self.lbox.curselection()[0]
+                model_key = self.lbox.get(idx)
+            except Exception:
+                messagebox.showwarning("No Model Selected", "Please select a model first.")
+                return
+
+            newwin = Toplevel(self.top2)
+            newwin.title(f"{model_key} - Parameter Ranges")
+            newwin.geometry("520x420")
+
+            Label(newwin, text=f"Set parameter ranges for {model_key}:",
+                fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
+
+            # Récupère les bornes sauvegardées par l’utilisateur, sinon par défaut
+            if model_key in self.user_param_bounds:
+                base_bounds = self.user_param_bounds[model_key]
+            else:
+                base_bounds = Fitting.default_param_bounds.get(model_key, {})
+
+            self.param_entries = {}
+            initial_display = {}
+
+            for param in base_bounds.keys():
+                default_lo, default_hi = Fitting.default_param_bounds.get(model_key, {}).get(param, (None, None))
+                saved_lo, saved_hi = self.user_param_bounds.get(model_key, {}).get(param, (None, None))
+
+                # if model_key == "PowerLaw1D":
+                #     # ⚡ Par défaut : aucune borne affichée → champs vides
+                #     disp_min, disp_max = "", ""
+                # else:
+                #     disp_min = str(saved_lo if saved_lo is not None else default_lo or "")
+                #     disp_max = str(saved_hi if saved_hi is not None else default_hi or "")
+
+                # --- Toujours afficher un min (par défaut ou sauvegardé)
+                disp_min = str(saved_lo if saved_lo is not None else default_lo or "")
+
+                # --- Pour PowerLaw1D : max vide par défaut
+                if model_key == "PowerLaw1D":
+                    disp_max = "" if saved_hi is None else str(saved_hi)
+                else:
+                    disp_max = str(saved_hi if saved_hi is not None else default_hi or "")
+
+                row = Frame(newwin)
+                row.pack(pady=6, fill="x")
+
+                Label(row, text=f"{param} min:", width=14, anchor="w").pack(side=LEFT)
+                e_min = Entry(row, width=14)
+                e_min.insert(0, disp_min)
+                e_min.pack(side=LEFT, padx=6)
+
+                Label(row, text=f"{param} max:", width=14, anchor="w").pack(side=LEFT)
+                e_max = Entry(row, width=14)
+                e_max.insert(0, disp_max)
+                e_max.pack(side=LEFT, padx=6)
+
+                self.param_entries[param] = (e_min, e_max)
+                initial_display[param] = (disp_min, disp_max)
+
+            def save_params():
+                bounds = {}
+                modified = False
+
+                for param, (e_min, e_max) in self.param_entries.items():
+                    min_txt = e_min.get().strip()
+                    max_txt = e_max.get().strip()
+
+                    lo = float(min_txt) if min_txt != "" else None
+                    hi = float(max_txt) if max_txt != "" else None
+
+                    # Vérifier cohérence si min et max donnés
+                    if lo is not None and hi is not None and hi <= lo:
+                        messagebox.showerror("Invalid bounds", f"{param}: max must be > min")
+                        return
+
+                    bounds[param] = (lo, hi)
+
+                    # Détection de modification
+                    init_min, init_max = initial_display[param]
+                    if min_txt != init_min or max_txt != init_max:
+                        modified = True
+
+                self.user_param_bounds[model_key] = bounds
+                self.user_param_modified[model_key] = modified
+
+                print(f"[Set_Function] {model_key} bounds saved: {bounds}, modified={modified}")
+                newwin.destroy()
+
+            Button(newwin, text="Save", command=save_params, bg='green', fg='white').pack(pady=12)
+
+        def Set_Function():
+            """Fenêtre pour définir valeur initiale (default), min et max de chaque paramètre du modèle sélectionné."""
+            try:
+                idx = self.lbox.curselection()[0]
+                model_key = self.lbox.get(idx)
+            except Exception:
+                messagebox.showwarning("No Model Selected", "Please select a model first.")
+                return
+
+            newwin = Toplevel(self.top2)
+            newwin.title(f"{model_key} - Parameter Settings")
+            newwin.geometry("680x480")
+            newwin.configure(bg="#f7f9fc")
+
+            Label(
+                newwin,
+                text=f"Set parameter values for {model_key}",
+                fg="#1e3a8a",
+                bg="#f7f9fc",
+                font=("Helvetica", 13, "bold")
+            ).pack(pady=15)
+
+            self.param_entries = {}
+            initial_display = {}
+
+            # Récupération des valeurs par défaut et bornes
+            base_defaults = Fitting.default_param_values.get(model_key, {})
+            base_bounds = Fitting.default_param_bounds.get(model_key, {})
+            saved_values = self.user_param_values.get(model_key, {})
+            saved_bounds = self.user_param_bounds.get(model_key, {})
+
+            form_frame = Frame(newwin, bg="#f7f9fc")
+            form_frame.pack(pady=10, padx=20, fill="x")
+
+            for param in base_defaults.keys():
+                # valeur initiale
+                disp_default = str(saved_values.get(param, base_defaults[param]))
+                # bornes
+                pmin, pmax = saved_bounds.get(param, base_bounds.get(param, (None, None)))
+                disp_min = "" if pmin is None else str(pmin)
+                disp_max = "" if pmax is None else str(pmax)
+
+                row = Frame(form_frame, bg="#f7f9fc")
+                row.pack(pady=6, fill="x")
+
+                Label(row, text=f"{param}:", width=14, anchor="w", bg="#f7f9fc").pack(side=LEFT)
+
+                Label(row, text="Default:", bg="#f7f9fc").pack(side=LEFT)
+                e_def = Entry(row, width=10)
+                e_def.insert(0, disp_default)
+                e_def.pack(side=LEFT, padx=6)
+
+                Label(row, text="Min:", bg="#f7f9fc").pack(side=LEFT)
+                e_min = Entry(row, width=10)
+                e_min.insert(0, disp_min)
+                e_min.pack(side=LEFT, padx=6)
+
+                Label(row, text="Max:", bg="#f7f9fc").pack(side=LEFT)
+                e_max = Entry(row, width=10)
+                e_max.insert(0, disp_max)
+                e_max.pack(side=LEFT, padx=6)
+
+                self.param_entries[param] = (e_def, e_min, e_max)
+                initial_display[param] = (disp_default, disp_min, disp_max)
+
+            # --- Actions ---
+            def save_params():
+                values, bounds = {}, {}
+                modified = False
+
+                for param, (e_def, e_min, e_max) in self.param_entries.items():
+                    def_txt, min_txt, max_txt = e_def.get().strip(), e_min.get().strip(), e_max.get().strip()
+
+                    try:
+                        def_val = float(def_txt)
+                    except ValueError:
+                        messagebox.showerror("Invalid input", f"{param}: invalid default value")
+                        return
+
+                    lo = float(min_txt) if min_txt != "" else None
+                    hi = float(max_txt) if max_txt != "" else None
+
+                    if lo is not None and hi is not None and hi <= lo:
+                        messagebox.showerror("Invalid bounds", f"{param}: max must be > min")
+                        return
+
+                    values[param] = def_val
+                    bounds[param] = (lo, hi)
+
+                    if (def_txt, min_txt, max_txt) != initial_display[param]:
+                        modified = True
+
+                self.user_param_values[model_key] = values
+                self.user_param_bounds[model_key] = bounds
+                self.user_param_modified[model_key] = modified
+
+                print(f"[Set_Function] {model_key} values saved: {values}, bounds={bounds}, modified={modified}")
+                newwin.destroy()
+
+            def reset_defaults():
+                """Réinitialise tous les champs aux valeurs par défaut."""
+                for param, (e_def, e_min, e_max) in self.param_entries.items():
+                    def_val = Fitting.default_param_values[model_key][param]
+                    lo, hi = Fitting.default_param_bounds[model_key].get(param, (None, None))
+                    e_def.delete(0, END)
+                    e_def.insert(0, str(def_val))
+                    e_min.delete(0, END)
+                    e_min.insert(0, "" if lo is None else str(lo))
+                    e_max.delete(0, END)
+                    e_max.insert(0, "" if hi is None else str(hi))
+                print(f"[Set_Function] {model_key} reset to defaults")
+
+            def cancel_window():
+                newwin.destroy()
+
+            # --- Boutons ---
+            btn_frame = Frame(newwin, bg="#f7f9fc")
+            btn_frame.pack(pady=20)
+
+            Button(btn_frame, text="Save", command=save_params,
+                bg="#16a34a", fg="white", width=12).pack(side=LEFT, padx=10)
+
+            Button(btn_frame, text="Reset to Defaults", command=reset_defaults,
+                bg="#f97316", fg="white", width=16).pack(side=LEFT, padx=10)
+
+            Button(btn_frame, text="Cancel", command=cancel_window,
+                bg="#ef4444", fg="white", width=12).pack(side=LEFT, padx=10)
+
+
 
         self.lblFunc = Label(self.top2, text="Set function components: ")  # name the scrollbar
         self.lblFunc.place(relx=0.75, rely=0.30)
@@ -194,9 +657,9 @@ class Fitting:
             e_low_det = self.e_low_det[usable_channels]
             e_high_det = self.e_high_det[usable_channels]
 
-            print("Usable channels: ", usable_channels)
-            print("Energies law: ", e_low_det)
-            print("Energies high: ", e_high_det)
+            # print("Usable channels: ", usable_channels)
+            # print("Energies law: ", e_low_det)
+            # print("Energies high: ", e_high_det)
 
             self.text_min_energy = Label(self.top2, text="Min energy")
             self.text_min_energy.place(relx=0.75, rely=0.45, anchor=N)
@@ -604,7 +1067,7 @@ class Fitting:
     def integrate_flux(e1, e2, model_func, n_points=10):
         energies = np.linspace(e1, e2, n_points)
         fluxes = model_func(energies)
-        return np.trapezoid(fluxes, energies) / (e2 - e1)
+        return np.trapz(fluxes, energies) / (e2 - e1)
     
     class ForwardFoldedPowerLaw(FittableModel):
         n_inputs = 1
@@ -883,19 +1346,19 @@ class Fitting:
                 "Would you like to open the Background window now?"
                 )
                 if answer:
-                    # ✅ Fermer la fenêtre actuelle et Ouvrir la fenêtre Background
+                    # ✅ close current Fit Options window and open Background window
                     self.show_db_var.set(0)
                     self.top2.destroy()
                     background.BackgroundWindow()
                 else:
-                    # ✅ Décoche la case si refus
+                    # ✅ uncheck the checkbox
                     self.show_db_var.set(0)
                 return
 
     def on_background_clicked(self):
         if self.show_db_var.get():
             if background.BackgroundWindow.DATA_BKG_SELECTED:
-                answer = messagebox.askyesno(
+                answer = Fitting.ask_custom_yesno(
                     "Background already selected",
                     "A background has already been selected.\nWould you like to select a new one?"
                 )
@@ -908,6 +1371,419 @@ class Fitting:
             else:
                 self.on_background_check()  # Original logic (first-time case)
 
+
+    # def _apply_param_bounds_2(self, model, model_key: str):
+    #     """
+    #     Applique les bornes utilisateur si modifiées.
+    #     Sinon conserve les valeurs initiales du modèle.
+    #     """
+    #     # Cas 1 : utilisateur a modifié → on applique
+    #     if getattr(self, "param_modified", False):
+    #         bounds_map = self.user_param_bounds.get(model_key, {})
+    #         for pname, (lo, hi) in bounds_map.items():
+    #             if hasattr(model, pname):
+    #                 par = getattr(model, pname)
+    #                 try:
+    #                     par.bounds = (lo, hi)
+    #                     par.min = lo
+    #                     par.max = hi
+    #                 except Exception:
+    #                     pass
+
+    #     # Cas 2 : pas de modification → on applique juste les bornes par défaut, mais
+    #     # on conserve les valeurs initiales internes (pas de réinitialisation)
+    #     else:
+    #         bounds_map = Fitting.default_param_bounds.get(model_key, {})
+    #         for pname, (lo, hi) in bounds_map.items():
+    #             if hasattr(model, pname):
+    #                 par = getattr(model, pname)
+    #                 init_val = par.value  # conserver valeur initiale
+    #                 try:
+    #                     par.bounds = (lo, hi)
+    #                     par.min = lo
+    #                     par.max = hi
+    #                     par.value = init_val  # ⚡ garder la valeur initiale si non modifié
+    #                 except Exception:
+    #                     pass
+
+    #     """
+    #     Applique les bornes uniquement si l'utilisateur a modifié la popup.
+    #     Pour PowerLaw1D : par défaut aucune borne n'est appliquée.
+    #     """
+    #     modified = self.user_param_modified.get(model_key, False)
+    #     if not modified:
+    #         # ⚡ Pas de modification → on ne touche à rien
+    #         return
+
+    #     bounds_map = self.user_param_bounds.get(model_key, {})
+    #     for pname, (lo, hi) in bounds_map.items():
+    #         if hasattr(model, pname):
+    #             par = getattr(model, pname)
+    #             try:
+    #                 if lo is not None:
+    #                     par.min = lo
+    #                 if hi is not None:
+    #                     par.max = hi
+    #                 # Certaines versions d'astropy supportent directement .bounds
+    #                 if lo is not None or hi is not None:
+    #                     try:
+    #                         par.bounds = (lo, hi)
+    #                     except Exception:
+    #                         pass
+    #             except Exception as exc:
+    #                 print(f"⚠️ Bound set failed for {pname}: {exc}")
+
+    # def _apply_param_values(self, model, model_key: str):
+    #     """
+    #     1. Applique les valeurs initiales saisies par l’utilisateur si elles ont été modifiées.
+    #     2. Applique des bornes cachées pour certains modèles sensibles.
+    #     """
+    #     # --- 1) Valeurs initiales visibles (popup)
+    #     modified = self.user_param_modified.get(model_key, False)
+    #     if modified:
+    #         values_map = self.user_param_values.get(model_key, {})
+    #         for pname, val in values_map.items():
+    #             if hasattr(model, pname):
+    #                 try:
+    #                     getattr(model, pname).value = val
+    #                 except Exception as exc:
+    #                     print(f"⚠️ Failed to set value for {pname}: {exc}")
+
+    #     # --- 2) Bornes cachées internes
+    #     bounds_map = Fitting.hidden_param_bounds.get(model_key, {})
+    #     for pname, (lo, hi) in bounds_map.items():
+    #         if hasattr(model, pname):
+    #             par = getattr(model, pname)
+    #             try:
+    #                 if lo is not None:
+    #                     par.min = lo
+    #                 if hi is not None:
+    #                     par.max = hi
+    #                 try:
+    #                     par.bounds = (lo, hi)
+    #                 except Exception:
+    #                     pass
+    #             except Exception as exc:
+    #                 print(f"⚠️ Failed to set hidden bounds for {pname}: {exc}")
+
+
+
+    def _apply_param_bounds(self, model, model_key: str):
+        """
+        Applique les valeurs initiales + bornes (min, max).
+        """
+        values_map = self.user_param_values.get(
+            model_key, Fitting.default_param_values.get(model_key, {})
+        )
+        bounds_map = self.user_param_bounds.get(
+            model_key, Fitting.default_param_bounds.get(model_key, {})
+        )
+
+        for pname in values_map.keys():
+            if hasattr(model, pname):
+                par = getattr(model, pname)
+                init_val = values_map[pname]
+                lo, hi = bounds_map.get(pname, (None, None))
+                try:
+                    if lo is not None:
+                        par.min = lo
+                    else:
+                        par.min = -np.inf
+
+                    if hi is not None:
+                        par.max = hi
+                    else:
+                        par.max = np.inf
+                    # try:
+                    #     par.bounds = (lo, hi)
+                    # except Exception:
+                    #     pass
+                    par.value = init_val
+                except Exception as exc:
+                    print(f"⚠️ Failed to set {pname}: {exc}")
+
+    # def _check_bounds_hit(self, fitted_model, model_key):
+    #     for pname in Fitting.default_param_values.get(model_key, {}).keys():
+    #         if hasattr(fitted_model, pname):
+    #             par = getattr(fitted_model, pname)
+    #             lo = getattr(par, "min", -np.inf)
+    #             hi = getattr(par, "max",  np.inf)
+    #             val = par.value
+    #             if np.isfinite(lo) and abs(val - lo) < 1e-8 * max(1, abs(lo)):
+    #                 print(f"⚠️ {pname} converged to lower bound {lo}")
+    #             if np.isfinite(hi) and abs(val - hi) < 1e-8 * max(1, abs(hi)):
+    #                 print(f"⚠️ {pname} converged to upper bound {hi}")
+
+    
+    def _params_vector_to_model(self, model_template, param_names, vec):
+        """
+        Retourne une copie du modèle template avec par.value = vec[i] pour les param_names.
+        """
+        m = copy.deepcopy(model_template)
+        for i, name in enumerate(param_names):
+            if hasattr(m, name):
+                try:
+                    getattr(m, name).value = float(vec[i])
+                except Exception:
+                    pass
+        return m
+
+
+    # def fit_unconstrained_then_bounded(self, model_template, x_fit, y_fit, y_err, param_names, bounds_map=None, initial_values=None):
+        """
+        1) Fit non-borné (LevMar) en partant des valeurs initiales fournies (initial_values ou celles du modèle).
+        2) Si la solution non-bornée satisfait les bornes -> on la renvoie.
+        3) Sinon -> on lance un fit borné (scipy.least_squares) démarrant depuis la solution non-bornée.
+        Retourne un modèle astropy (copie) correspondant à la solution choisie.
+        """
+        # Appliquer les valeurs initiales (sans poser de bornes)
+        if initial_values:
+            for pname, val in initial_values.items():
+                if hasattr(model_template, pname):
+                    try:
+                        getattr(model_template, pname).value = float(val)
+                    except Exception:
+                        pass
+
+        # 1) Fit non-borné (LevMar)
+        fitter = LevMarLSQFitter()
+        try:
+            fitted_nc = fitter(copy.deepcopy(model_template), x_fit, y_fit, weights=1.0 / (y_err + 1e-30))
+        except Exception as e:
+            print("⚠️ Unconstrained LevMar fit failed:", e)
+            # fallback : retourner le template (ou on peut tenter directement least_squares)
+            return copy.deepcopy(model_template)
+
+        # extraire les valeurs non-bornées
+        uncon_values = [getattr(fitted_nc, p).value for p in param_names]
+
+        # 2) Pas de bornes fournies -> utiliser solution non-bornée
+        if not bounds_map:
+            return fitted_nc
+
+        # 3) Vérifier si la solution non-bornée respecte les bornes
+        in_bounds = True
+        tol = 1e-12
+        for i, pname in enumerate(param_names):
+            lo, hi = bounds_map.get(pname, (None, None))
+            val = uncon_values[i]
+            if (lo is not None and val < (lo - tol)) or (hi is not None and val > (hi + tol)):
+                in_bounds = False
+                break
+
+        if in_bounds:
+            return fitted_nc
+
+        # 4) Sinon, fit borné via least_squares en démarrant de uncon_values
+        x0 = np.array(uncon_values, dtype=float)
+        lb = []
+        ub = []
+        for pname in param_names:
+            lo, hi = bounds_map.get(pname, (None, None))
+            lb.append(-np.inf if lo is None else lo)
+            ub.append(np.inf if hi is None else hi)
+        lb = np.array(lb, dtype=float)
+        ub = np.array(ub, dtype=float)
+
+        def residuals(vec):
+            m = self._params_vector_to_model(model_template, param_names, vec)
+            y_model = m(x_fit)
+            return (y_model - y_fit) / (y_err + 1e-30)
+
+        try:
+            res = least_squares(residuals, x0, bounds=(lb, ub), xtol=1e-8, ftol=1e-8, max_nfev=2000)
+        except Exception as e:
+            print("⚠️ least_squares failed:", e)
+            return fitted_nc
+
+        best_vec = res.x if res is not None else uncon_values
+        fitted_bounded = self._params_vector_to_model(model_template, param_names, best_vec)
+        return fitted_bounded
+
+    def fit_unconstrained_then_bounded(self, model_template, x_fit, y_fit, y_err,
+                                   param_names, bounds_map=None, initial_values=None):
+        """
+        1) Fit non-borné (LevMar) en partant des valeurs initiales fournies (initial_values ou celles du modèle).
+        2) Si la solution non-bornée satisfait les bornes -> on la renvoie.
+        3) Sinon -> on relance un fit borné (LevMar avec .min / .max appliqués).
+        Retourne un modèle astropy (copie) correspondant à la solution choisie.
+        """
+        # Appliquer les valeurs initiales (sans poser de bornes)
+        if initial_values:
+            for pname, val in initial_values.items():
+                if hasattr(model_template, pname):
+                    try:
+                        getattr(model_template, pname).value = float(val)
+                    except Exception:
+                        pass
+
+        fitter = LevMarLSQFitter()
+
+        # 1) Fit non-borné
+        try:
+            fitted_nc = fitter(copy.deepcopy(model_template), x_fit, y_fit,
+                            weights=1.0 / (y_err + 1e-30))
+        except Exception as e:
+            print("⚠️ Unconstrained LevMar fit failed:", e)
+            return copy.deepcopy(model_template)
+
+        # extraire les valeurs non-bornées
+        uncon_values = [getattr(fitted_nc, p).value for p in param_names]
+
+        # 2) Pas de bornes fournies -> utiliser solution non-bornée
+        if not bounds_map:
+            return fitted_nc
+
+        # 3) Vérifier si la solution non-bornée respecte les bornes
+        # in_bounds = True
+        # tol = 1e-12
+        # for i, pname in enumerate(param_names):
+        #     lo, hi = bounds_map.get(pname, (None, None))
+        #     val = uncon_values[i]
+        #     if (lo is not None and val < (lo - tol)) or (hi is not None and val > (hi + tol)):
+        #         in_bounds = False
+        #         break
+
+        # if in_bounds:
+        #     return fitted_nc
+
+        # 4) Sinon, fit borné via LevMarLSQFitter avec min/max
+        bounded_model = copy.deepcopy(model_template)
+
+        # appliquer les bornes sur chaque paramètre
+        for pname in param_names:
+            if hasattr(bounded_model, pname):
+                par = getattr(bounded_model, pname)
+                lo, hi = bounds_map.get(pname, (None, None))
+                if lo is not None:
+                    par.min = lo
+                if hi is not None:
+                    par.max = hi
+
+                # Priorité : valeur utilisateur > valeur par défaut > fit non-borné
+                if initial_values and pname in initial_values:
+                    par.value = initial_values[pname]
+                elif pname in Fitting.default_param_values.get(model_template.__class__.__name__, {}):
+                    par.value = Fitting.default_param_values[model_template.__class__.__name__][pname]
+                else:
+                    par.value = uncon_values[param_names.index(pname)]
+
+        # initialiser aux valeurs du fit non-borné
+        for i, pname in enumerate(param_names):
+            if hasattr(bounded_model, pname):
+                getattr(bounded_model, pname).value = uncon_values[i]
+
+        try:
+            fitted_bounded = fitter(bounded_model, x_fit, y_fit,
+                                    weights=1.0 / (y_err + 1e-30))
+            return fitted_bounded
+        except Exception as e:
+            print("⚠️ Bounded LevMar fit failed:", e)
+            return fitted_nc  # fallback
+
+
+    def fit_with_bounds_check(self, model_template, x_fit, y_fit, y_err,
+                          param_names, model_key,
+                          internal_bounds_map=None, user_bounds_map=None,
+                          initial_values=None):
+        """
+        Fit en deux étapes avec LevMarLSQFitter uniquement :
+        1) Fit avec contraintes "internes" (par ex. default_param_bounds).
+        2) Si le résultat respecte les bornes utilisateur → on garde.
+        3) Sinon → refit avec bornes utilisateur appliquées.
+        """
+        # --- Maps par défaut ---
+        if internal_bounds_map is None:
+            internal_bounds_map = Fitting.default_param_bounds.get(model_key, {})
+        if user_bounds_map is None:
+            user_bounds_map = self.user_param_bounds.get(model_key, Fitting.default_param_bounds.get(model_key, {}))
+        if initial_values is None:
+            initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
+
+        fitter = LevMarLSQFitter()
+
+        # --- Étape 0 : appliquer les valeurs initiales ---
+        try:
+            for pname, val in initial_values.items():
+                if hasattr(model_template, pname):
+                    getattr(model_template, pname).value = float(val)
+        except Exception:
+            pass
+
+        # --- Étape 1 : modèle avec bornes internes ---
+        model_step1 = copy.deepcopy(model_template)
+        for pname in param_names:
+            if hasattr(model_step1, pname):
+                lo, hi = internal_bounds_map.get(pname, (None, None))
+                par = getattr(model_step1, pname)
+                try:
+                    if lo is not None:
+                        par.min = lo
+                    if hi is not None:
+                        par.max = hi
+                except Exception:
+                    pass
+
+        try:
+            fitted1 = fitter(model_step1, x_fit, y_fit, weights=1.0 / (y_err + 1e-30))
+            y_model1 = fitted1(x_fit)
+            if not np.all(np.isfinite(y_model1)):
+                raise ValueError("Non-finite model output at step1")
+        except Exception as e_step1:
+            print(f"⚠️ Step1 LevMar fit failed: {e_step1}")
+            return self._fit_with_user_bounds_only(model_template, x_fit, y_fit, y_err, param_names, user_bounds_map, initial_values)
+
+        # --- Vérifier si fitted1 est dans les bornes utilisateur ---
+        tol = 1e-12
+        in_user_bounds = True
+        for pname in param_names:
+            if not hasattr(fitted1, pname):
+                continue
+            val = getattr(fitted1, pname).value
+            lo, hi = user_bounds_map.get(pname, (None, None))
+            if lo is not None and val < lo - tol:
+                in_user_bounds = False
+                break
+            if hi is not None and val > hi + tol:
+                in_user_bounds = False
+                break
+
+        if in_user_bounds:
+            return fitted1
+
+        # --- Étape 2 : refit avec bornes utilisateur ---
+        return self._fit_with_user_bounds_only(model_template, x_fit, y_fit, y_err, param_names, user_bounds_map, initial_values)
+
+
+    def _fit_with_user_bounds_only(self, model_template, x_fit, y_fit, y_err,
+                                param_names, user_bounds_map, initial_values):
+        """Fit avec LevMarLSQFitter en appliquant uniquement les bornes utilisateur."""
+        model_bounded = copy.deepcopy(model_template)
+
+        # Appliquer initial values et bornes utilisateur
+        for pname in param_names:
+            if hasattr(model_bounded, pname):
+                val = initial_values.get(pname, getattr(model_bounded, pname).value)
+                lo, hi = user_bounds_map.get(pname, (None, None))
+                par = getattr(model_bounded, pname)
+                try:
+                    par.value = float(val)
+                    if lo is not None:
+                        par.min = lo
+                    if hi is not None:
+                        par.max = hi
+                except Exception:
+                    pass
+
+        fitter = LevMarLSQFitter()
+        try:
+            fitted2 = fitter(model_bounded, x_fit, y_fit, weights=1.0 / (y_err + 1e-30))
+            return fitted2
+        except Exception as e_step2:
+            print(f"⚠️ Step2 LevMar (user bounds) failed: {e_step2}")
+            return model_bounded
+
+    
 
     def _selective_fit(self):
         """Selection depending on Plot Units and Function Model
@@ -933,19 +1809,15 @@ class Fitting:
 
                 index_start = background.BackgroundWindow.DATA_BKG_START
                 index_end = background.BackgroundWindow.DATA_BKG_END
-                # print(f"✔️ Background range selected: {index_start} to {index_end} ")
-                # print('--------------------------------')
+                
                 background_slice = self.counts[index_start:index_end + 1, :] 
                 bkg_vector = np.mean(background_slice, axis=0) 
                 counts_bkg_removed = self.counts - bkg_vector 
                 self.data_background = np.where(counts_bkg_removed > 0, counts_bkg_removed, 1e-5)
 
-                # print('bkg_vector :', bkg_vector)
-                # print('counts_bkg_removed :', counts_bkg_removed)
-                # print('background_slice :', self.data_background)
+                
                 used_data = self.data_background
                 absolute_name = "Data - Background"
-                # print("test data - background:")
 
             else:
 
@@ -955,7 +1827,6 @@ class Fitting:
             
 
             counts_all = np.mean(used_data, axis=0)
-            print("Counts :", counts_all)
             counts_err_all = np.mean(self.counts_err, axis=0)
             exposure = np.mean(self.time_del)
             e_low_det_all = self.e_low_det
@@ -1052,25 +1923,73 @@ class Fitting:
             if self.lbox.curselection()[0] == 0:
                 self.fit_model = 'Power Law'
                 # Create model
-                model_fit = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                model_key = "PowerLaw1D"
+                # model_fit = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
 
-                # Fitting
-                fitter = LevMarLSQFitter()
-                fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
-                                    weights=1.0 / (counts_err_fit / exposure))
+                # # # Apply user-defined initial values and bounds
+                # self._apply_param_bounds(model_fit, model_key)
 
-                # Parameters
+                # # # Fitting
+                # fitter = LevMarLSQFitter()
+                # fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
+                #                     weights=1.0 / (counts_err_fit / exposure))
+
+                # residuals = (counts_fit / exposure - fitted_model(x_fit)) / (counts_err_fit / exposure + 1e-30)
+                # chi2 = np.sum(residuals**2)
+                # print("Erreur finale (chi²) :", chi2)
+
+
+
+                # 1) préparer un template (sans bornes forcées) et appliquer les valeurs initiales souhaitées
+                model_template = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
+                bounds_map = self.user_param_bounds.get(model_key, Fitting.default_param_bounds.get(model_key, {}))
+
+                # 2) fit robuste : unconstrained puis bounded si nécessaire
+                fitted_model = self.fit_unconstrained_then_bounded(
+                    model_template,
+                    x_fit,
+                    counts_fit / exposure,       # y_fit
+                    counts_err_fit / exposure,   # y_err 
+                    ["amplitude", "alpha"],
+                    bounds_map,
+                    initial_values
+                )
+
+                # Diagnostic (optionnel)
+                # self._check_bounds_hit(fitted_model, model_key)
+
+                # Récupérer les paramètres
                 amplitude = fitted_model.amplitude.value
                 alpha = fitted_model.alpha.value
                 x_0 = fitted_model.x_0
 
-                # Modèle complet pour affichage sur tout le domaine
+                # Construire modèle complet pour affichage (optionnel — comme tu fais ailleurs)
                 model_display = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix, exposure)
-                model_display.amplitude = fitted_model.amplitude
-                model_display.alpha = fitted_model.alpha
+                try:
+                    model_display.amplitude = fitted_model.amplitude
+                    model_display.alpha = fitted_model.alpha
+                except Exception:
+                    # safer: assign values
+                    model_display.amplitude.value = amplitude
+                    model_display.alpha.value = alpha
 
-                # Calcul du modèle simulé complet
                 rate_modeled_full = model_display(x_fake)
+
+                # Parameters
+                # amplitude = fitted_model.amplitude.value
+                # alpha = fitted_model.alpha.value
+                # x_0 = fitted_model.x_0
+
+                # print(f"Fitted Power Law: amplitude = {amplitude:.2e}, alpha = {alpha:.2f}")
+
+                # # Modèle complet pour affichage sur tout le domaine
+                # model_display = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix, exposure)
+                # model_display.amplitude = fitted_model.amplitude
+                # model_display.alpha = fitted_model.alpha
+
+                # # Calcul du modèle simulé complet
+                # rate_modeled_full = model_display(x_fake)
 
                 if unit == 'Rate':
                     model_y = (rate_modeled_full / dE_det)
@@ -1138,22 +2057,34 @@ class Fitting:
             elif self.lbox.curselection()[0] == 1:
                 self.fit_model = 'Broken Power Law'
 
-                model_fit = Fitting.ForwardFoldedBrokenPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
-                model_fit.alpha_1.bounds = (0.1, 10)
-                model_fit.alpha_2.bounds = (0.1, 10)
-                model_fit.E_break.bounds = (1, 100)
-                model_fit.amplitude.bounds = (1e-5, 1e3)
+                # Create model
+                model_key = "BrokenPowerLaw1D"
 
+                # model_fit = Fitting.ForwardFoldedBrokenPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
 
-                # Fitting
-                print("x_fit:", x_fit)
-                print("counts_fit / exposure:", counts_fit / exposure)
-                print("weights:", 1.0 / (counts_err_fit / exposure))
+                # # Apply user-defined initial values and bounds
+                # self._apply_param_bounds(model_fit, model_key)
 
     
-                fitter = LevMarLSQFitter()
-                fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
-                                    weights=1.0 / (counts_err_fit / exposure))
+                # fitter = LevMarLSQFitter()
+                # fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
+                #                     weights=1.0 / (counts_err_fit / exposure))
+                
+                model_template = Fitting.ForwardFoldedBrokenPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                param_names = list(Fitting.default_param_values.get(model_key, {}).keys())
+                internal_bounds_map = Fitting.default_param_bounds.get(model_key, {})
+                user_bounds_map = self.user_param_bounds.get(model_key, internal_bounds_map)
+                initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
+
+                # --- Lancer la logique "fit en deux étapes" ---
+                fitted_model = self.fit_with_bounds_check(
+                    model_template, x_fit, counts_fit / exposure, counts_err_fit / exposure,
+                    param_names, model_key,
+                    internal_bounds_map=internal_bounds_map,
+                    user_bounds_map=user_bounds_map,
+                    initial_values=initial_values
+                )
+
 
                 # Parameters
                 amplitude = fitted_model.amplitude.value
@@ -1237,18 +2168,35 @@ class Fitting:
             elif self.lbox.curselection()[0] == 2:
                 self.fit_model = 'Exponential Power Law'
 
-                model_fit = Fitting.ForwardFoldedExpPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
-                # Fixe des bornes pour éviter l’explosion
-                model_fit.p0.bounds = (1e-3, 1e5)
-                model_fit.p1.bounds = (-5, 5)
-                model_fit.p2.bounds = (1e-2, 100)
-                model_fit.e3.bounds = (-10, 10)
-                model_fit.e4.bounds = (0.1, 100)
+                # Create model
+                model_key = "Single Power Law Times an Exponential"
 
-                # Fitting
-                fitter = LevMarLSQFitter()
-                fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
-                                    weights=1.0 / (counts_err_fit / exposure))
+                # model_fit = Fitting.ForwardFoldedExpPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+
+                # # Apply user-defined initial values and bounds
+                # self._apply_param_bounds(model_fit, model_key)
+
+                # # Fitting
+                # fitter = LevMarLSQFitter()
+                # fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
+                #                     weights=1.0 / (counts_err_fit / exposure))
+                
+
+                model_template = Fitting.ForwardFoldedExpPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                param_names = list(Fitting.default_param_values.get(model_key, {}).keys())
+                internal_bounds_map = Fitting.default_param_bounds.get(model_key, {})
+                user_bounds_map = self.user_param_bounds.get(model_key, internal_bounds_map)
+                initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
+
+                # --- Lancer la logique "fit en deux étapes" ---
+                fitted_model = self.fit_with_bounds_check(
+                    model_template, x_fit, counts_fit / exposure, counts_err_fit / exposure,
+                    param_names, model_key,
+                    internal_bounds_map=internal_bounds_map,
+                    user_bounds_map=user_bounds_map,
+                    initial_values=initial_values
+                )
+
 
                 # Parameters
                 p0 = fitted_model.p0.value
@@ -1333,13 +2281,34 @@ class Fitting:
 
             elif self.lbox.curselection()[0] == 3:
                 self.fit_model = 'VTH'
+                
+                # Create model
+                model_key = "V_TH"
+                # model_fit = Fitting.ForwardFoldedVTH(e_low_true, e_high_true, matrix_fit, exposure)
 
-                model_fit = Fitting.ForwardFoldedVTH(e_low_true, e_high_true, matrix_fit, exposure)
+                # # Apply user-defined initial values and bounds
+                # self._apply_param_bounds(model_fit, model_key)
 
-                # Fitting
-                fitter = LevMarLSQFitter()
-                fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
-                                    weights=1.0 / (counts_err_fit / exposure))
+                # # Fitting
+                # fitter = LevMarLSQFitter()
+                # fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
+                #                     weights=1.0 / (counts_err_fit / exposure))
+                
+
+                model_template = Fitting.ForwardFoldedVTH(e_low_true, e_high_true, matrix_fit, exposure)
+                param_names = list(Fitting.default_param_values.get(model_key, {}).keys())
+                internal_bounds_map = Fitting.default_param_bounds.get(model_key, {})
+                user_bounds_map = self.user_param_bounds.get(model_key, internal_bounds_map)
+                initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
+
+                # --- Lancer la logique  ---
+                fitted_model = self.fit_with_bounds_check(
+                    model_template, x_fit, counts_fit / exposure, counts_err_fit / exposure,
+                    param_names, model_key,
+                    internal_bounds_map=internal_bounds_map,
+                    user_bounds_map=user_bounds_map,
+                    initial_values=initial_values
+                )
 
                 T = fitted_model.T.value
                 EM = fitted_model.EM.value
@@ -1419,12 +2388,32 @@ class Fitting:
             elif self.lbox.curselection()[0] == 4:
                 self.fit_model = 'V_TH + Power Law'
 
-                
-                model_fit = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                # Create model 
+                model_key = "V_TH + PowerLaw"               
+                # model_fit = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
 
-                fitter = LevMarLSQFitter()
-                fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
-                                    weights=1.0 / (counts_err_fit / exposure))
+
+                # # Apply user-defined initial values and bounds
+                # self._apply_param_bounds(model_fit, model_key)
+
+                # fitter = LevMarLSQFitter()
+                # fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
+                #                     weights=1.0 / (counts_err_fit / exposure))
+                
+                model_template = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                param_names = list(Fitting.default_param_values.get(model_key, {}).keys())
+                internal_bounds_map = Fitting.default_param_bounds.get(model_key, {})
+                user_bounds_map = self.user_param_bounds.get(model_key, internal_bounds_map)
+                initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
+
+                # --- Lancer la logique  ---
+                fitted_model = self.fit_with_bounds_check(
+                    model_template, x_fit, counts_fit / exposure, counts_err_fit / exposure,
+                    param_names, model_key,
+                    internal_bounds_map=internal_bounds_map,
+                    user_bounds_map=user_bounds_map,
+                    initial_values=initial_values
+                )
 
                 # Paramètres du modèle
                 EM = fitted_model.EM.value
