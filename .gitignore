@@ -16,3 +16,4 @@ STIX Solar Orbitor.spec
 build/
 dist/
 justfortest.py
+otherfile.py

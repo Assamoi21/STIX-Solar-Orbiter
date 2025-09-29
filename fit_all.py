@@ -17,14 +17,12 @@ import tkinter as tk
 from matplotlib.widgets import SpanSelector
 import os
 import sys
-import torch
-import torch.nn as nn
 import copy
 from scipy.optimize import least_squares
+from scipy.optimize import curve_fit
 
 
 register_matplotlib_converters()
-
 
 
 class Fitting:
@@ -53,7 +51,7 @@ class Fitting:
     default_param_bounds = {
         "PowerLaw1D": {
             "amplitude": (None, None),
-            "alpha": (None, None)
+            "alpha": (None, None),
         },
         "BrokenPowerLaw1D": {
             "amplitude": (1e-5, 1e3),
@@ -77,13 +75,31 @@ class Fitting:
             "T": (0.1, 50.0),
             "amplitude": (1e-2, 1e2),
             "alpha": (2, 10.0)
-        }
+        },
+        "PowerLawCutoffFix": {
+            "amplitude": (1e-12, 1e6),
+            "alpha": (0.1, 50.0),
+            # "amplitude": (None, None),
+            # "alpha": (None, None),
+        },
+        "PowerLawCutoffFree": {
+            "amplitude": (None, None),
+            "alpha": (None, None),
+            "E_cut": (1.0, 1e3)
+        },
+        "V_TH + PowerLawCutoffFix": {
+            "EM": (1e44, 1e52),
+            "T": (0.1, 50.0),
+            "amplitude": (1e-2, 1e2),
+            "alpha": (2, 10.0)
+        },
     }
 
     default_param_values = {
         "PowerLaw1D": {
             "amplitude": 1e-2,
-            "alpha": 2.0
+            "alpha": 2.0,
+            "E_pivot": 100.0
         },
         "BrokenPowerLaw1D": {
             "amplitude": 1e-2,
@@ -106,11 +122,30 @@ class Fitting:
             "EM": 1e48,
             "T": 1.0,
             "amplitude": 1e-2,
-            "alpha": 2.0
-        }
+            "alpha": 2.0,
+            "E_pivot": 100.0
+        },
+        "PowerLawCutoffFix": {
+            "amplitude": 1e-2,
+            "alpha": 2.0,
+            "E_cut": 10.0    # fixe mais modifiable
+        },
+        "PowerLawCutoffFree": {
+            "amplitude": 1e-2,
+            "alpha": 2.0,
+            "E_cut": 10.0    # fitté
+        },
+        "V_TH + PowerLawCutoffFix": {
+            "EM": 1e48,
+            "T": 1.0,
+            "amplitude": 1e-2,
+            "alpha": 2.0,
+            "E_cut": 10
+        },
     }
 
-    
+
+
     # create a new window called 'SPEX Fit Options'
     def __init__(self, root):
         """Creates a new window, providing widgets to perform fitting analysis"""
@@ -221,281 +256,152 @@ class Fitting:
         self.user_param_values = {} # initial values set by user in Set_Function
         self.user_param_modified = {} # True if user modified bounds/values from default
 
-        # self.X_Label = Label(self.top2, text="Energy range to fit: ")  # name "Energy range(s) to fit"
-        # self.X_Label.place(relx=0.75, rely=0.32)  # locate
 
-        # FIXME: Empty Window, surely to be removed later on
-        # def Set_Function():  # new window Set_Function definition
-        #     """Creates a new window for "Set spec_data axis" part"""
+        # def Set_Function():
+        #     """Fenêtre popup pour définir les bornes des paramètres du modèle sélectionné"""
+        #     if not self.fit_model:
+        #         messagebox.showwarning("No Model Selected", "Please select a model first.")
+        #         return
+
         #     newwin = Toplevel(root)
-        #     newwin.title('Function values')  # title of the window
-        #     newwin.geometry("600x400")  # size of the new window
-        #     display = Label(newwin, text="Choose function values: ", fg='blue', font=("Helvetica", 11, "bold"))
-        #     display.place(relx=0.04, rely=0.07)
+        #     newwin.title(f'{self.fit_model} - Parameter Ranges')
+        #     newwin.geometry("500x400")
 
-        def Set_Function1():
-            """Fenêtre popup pour définir les bornes des paramètres du modèle sélectionné"""
-            if not self.fit_model:
-                messagebox.showwarning("No Model Selected", "Please select a model first.")
-                return
+        #     Label(newwin, text=f"Set parameter ranges for {self.fit_model}:",
+        #         fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
 
-            newwin = Toplevel(root)
-            newwin.title(f'{self.fit_model} - Parameter Ranges')
-            newwin.geometry("500x400")
+        #     # Dictionnaire des paramètres par modèle
+        #     model_params = {
+        #         "PowerLaw1D": ["amplitude", "alpha"],
+        #         "BrokenPowerLaw1D": ["amplitude", "E_break", "alpha_1", "alpha_2"],
+        #         "Single Power Law Times an Exponential": ["p0", "p1", "p2", "e3", "e4"],
+        #         "V_TH": ["EM", "T"],
+        #         "V_TH + PowerLaw": ["EM", "T", "amplitude", "alpha"]
+        #     }
 
-            Label(newwin, text=f"Set parameter ranges for {self.fit_model}:",
-                fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
+        #     self.param_entries = {}  # stocker les entrées
 
-            # Dictionnaire des paramètres par modèle
-            model_params = {
-                "PowerLaw1D": ["amplitude", "alpha"],
-                "BrokenPowerLaw1D": ["amplitude", "E_break", "alpha_1", "alpha_2"],
-                "Single Power Law Times an Exponential": ["p0", "p1", "p2", "e3", "e4"],
-                "V_TH": ["EM", "T"],
-                "V_TH + PowerLaw": ["EM", "T", "amplitude", "alpha"]
-            }
+        #     if self.fit_model in model_params:
+        #         for param in model_params[self.fit_model]:
+        #             frame = Frame(newwin)
+        #             frame.pack(pady=5, fill="x")
 
-            self.param_entries = {}  # stocker les entrées
+        #             Label(frame, text=f"{param} min:", width=12, anchor="w").pack(side=LEFT)
+        #             min_entry = Entry(frame, width=10)
+        #             min_entry.pack(side=LEFT, padx=5)
 
-            if self.fit_model in model_params:
-                for param in model_params[self.fit_model]:
-                    frame = Frame(newwin)
-                    frame.pack(pady=5, fill="x")
+        #             Label(frame, text=f"{param} max:", width=12, anchor="w").pack(side=LEFT)
+        #             max_entry = Entry(frame, width=10)
+        #             max_entry.pack(side=LEFT, padx=5)
 
-                    Label(frame, text=f"{param} min:", width=12, anchor="w").pack(side=LEFT)
-                    min_entry = Entry(frame, width=10)
-                    min_entry.pack(side=LEFT, padx=5)
+        #             self.param_entries[param] = (min_entry, max_entry)
 
-                    Label(frame, text=f"{param} max:", width=12, anchor="w").pack(side=LEFT)
-                    max_entry = Entry(frame, width=10)
-                    max_entry.pack(side=LEFT, padx=5)
+        #     def save_params():
+        #         self.param_bounds = {}
+        #         for param, (min_e, max_e) in self.param_entries.items():
+        #             try:
+        #                 min_val = float(min_e.get())
+        #                 max_val = float(max_e.get())
+        #                 self.param_bounds[param] = (min_val, max_val)
+        #             except ValueError:
+        #                 messagebox.showerror("Invalid input", f"Invalid bounds for {param}")
+        #                 return
+        #         newwin.destroy()
 
-                    self.param_entries[param] = (min_entry, max_entry)
+        #     Button(newwin, text="Save", command=save_params, bg="green", fg="white").pack(pady=15)
 
-            def save_params():
-                self.param_bounds = {}
-                for param, (min_e, max_e) in self.param_entries.items():
-                    try:
-                        min_val = float(min_e.get())
-                        max_val = float(max_e.get())
-                        self.param_bounds[param] = (min_val, max_val)
-                    except ValueError:
-                        messagebox.showerror("Invalid input", f"Invalid bounds for {param}")
-                        return
-                newwin.destroy()
 
-            Button(newwin, text="Save", command=save_params, bg="green", fg="white").pack(pady=15)
+        #     """Fenêtre pour définir les bornes des paramètres du modèle sélectionné."""
+        #     try:
+        #         idx = self.lbox.curselection()[0]
+        #         model_key = self.lbox.get(idx)
+        #     except Exception:
+        #         messagebox.showwarning("No Model Selected", "Please select a model first.")
+        #         return
 
-        def Set_Function2():
-            """Fenêtre popup pour définir les bornes des paramètres du modèle sélectionné"""
-            if not self.fit_model:
-                messagebox.showwarning("No Model Selected", "Please select a model first.")
-                return
+        #     newwin = Toplevel(self.top2)
+        #     newwin.title(f"{model_key} - Parameter Ranges")
+        #     newwin.geometry("520x420")
 
-            newwin = Toplevel(root)
-            newwin.title(f'{self.fit_model} - Parameter Ranges')
-            newwin.geometry("500x400")
+        #     Label(newwin, text=f"Set parameter ranges for {model_key}:",
+        #         fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
 
-            Label(newwin, text=f"Set parameter ranges for {self.fit_model}:",
-                fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
+        #     # Récupère les bornes sauvegardées par l’utilisateur, sinon par défaut
+        #     if model_key in self.user_param_bounds:
+        #         base_bounds = self.user_param_bounds[model_key]
+        #     else:
+        #         base_bounds = Fitting.default_param_bounds.get(model_key, {})
 
-            # Charger les bornes par défaut
-            default_bounds = Fitting.default_param_bounds.get(self.fit_model, {})
+        #     self.param_entries = {}
+        #     initial_display = {}
 
-            self.param_entries = {}
+        #     for param in base_bounds.keys():
+        #         default_lo, default_hi = Fitting.default_param_bounds.get(model_key, {}).get(param, (None, None))
+        #         saved_lo, saved_hi = self.user_param_bounds.get(model_key, {}).get(param, (None, None))
 
-            if default_bounds:
-                for param, (pmin, pmax) in default_bounds.items():
-                    frame = Frame(newwin)
-                    frame.pack(pady=5, fill="x")
+        #         # if model_key == "PowerLaw1D":
+        #         #     # ⚡ Par défaut : aucune borne affichée → champs vides
+        #         #     disp_min, disp_max = "", ""
+        #         # else:
+        #         #     disp_min = str(saved_lo if saved_lo is not None else default_lo or "")
+        #         #     disp_max = str(saved_hi if saved_hi is not None else default_hi or "")
 
-                    Label(frame, text=f"{param} min:", width=12, anchor="w").pack(side=LEFT)
-                    min_entry = Entry(frame, width=10)
-                    min_entry.insert(0, str(pmin))  # pré-rempli avec valeur par défaut
-                    min_entry.pack(side=LEFT, padx=5)
+        #         # --- Toujours afficher un min (par défaut ou sauvegardé)
+        #         disp_min = str(saved_lo if saved_lo is not None else default_lo or "")
 
-                    Label(frame, text=f"{param} max:", width=12, anchor="w").pack(side=LEFT)
-                    max_entry = Entry(frame, width=10)
-                    max_entry.insert(0, str(pmax))  # pré-rempli avec valeur par défaut
-                    max_entry.pack(side=LEFT, padx=5)
+        #         # --- Pour PowerLaw1D : max vide par défaut
+        #         if model_key == "PowerLaw1D":
+        #             disp_max = "" if saved_hi is None else str(saved_hi)
+        #         else:
+        #             disp_max = str(saved_hi if saved_hi is not None else default_hi or "")
 
-                    self.param_entries[param] = (min_entry, max_entry)
+        #         row = Frame(newwin)
+        #         row.pack(pady=6, fill="x")
 
-            def save_params():
-                self.param_bounds = {}
-                for param, (min_e, max_e) in self.param_entries.items():
-                    try:
-                        min_val = float(min_e.get())
-                        max_val = float(max_e.get())
-                        self.param_bounds[param] = (min_val, max_val)
-                    except ValueError:
-                        messagebox.showerror("Invalid input", f"Invalid bounds for {param}")
-                        return
-                newwin.destroy()
+        #         Label(row, text=f"{param} min:", width=14, anchor="w").pack(side=LEFT)
+        #         e_min = Entry(row, width=14)
+        #         e_min.insert(0, disp_min)
+        #         e_min.pack(side=LEFT, padx=6)
 
-            Button(newwin, text="Save", command=save_params, bg="green", fg="white").pack(pady=15)
+        #         Label(row, text=f"{param} max:", width=14, anchor="w").pack(side=LEFT)
+        #         e_max = Entry(row, width=14)
+        #         e_max.insert(0, disp_max)
+        #         e_max.pack(side=LEFT, padx=6)
 
-        def Set_Function3():
-            """Fenêtre pour définir les bornes des paramètres du modèle sélectionné"""
-            # Vérifier qu'un modèle est bien sélectionné
-            try:
-                idx = self.lbox.curselection()[0]
-                model_key = self.lbox.get(idx)  # ex: "PowerLaw1D"
-            except Exception:
-                messagebox.showwarning("No Model Selected", "Please select a model first.")
-                return
+        #         self.param_entries[param] = (e_min, e_max)
+        #         initial_display[param] = (disp_min, disp_max)
 
-            newwin = Toplevel(self.top2)
-            newwin.title(f"{model_key} - Parameter Ranges")
-            newwin.geometry("520x420")
+        #     def save_params():
+        #         bounds = {}
+        #         modified = False
 
-            Label(newwin, text=f"Set parameter ranges for {model_key}:",
-                fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
+        #         for param, (e_min, e_max) in self.param_entries.items():
+        #             min_txt = e_min.get().strip()
+        #             max_txt = e_max.get().strip()
 
-            # Charger les bornes déjà saisies par l’utilisateur, sinon celles par défaut
-            base_bounds = self.user_param_bounds.get(
-                model_key, Fitting.default_param_bounds.get(model_key, {})
-            )
+        #             lo = float(min_txt) if min_txt != "" else None
+        #             hi = float(max_txt) if max_txt != "" else None
 
-            self.param_entries = {}
+        #             # Vérifier cohérence si min et max donnés
+        #             if lo is not None and hi is not None and hi <= lo:
+        #                 messagebox.showerror("Invalid bounds", f"{param}: max must be > min")
+        #                 return
 
-            for param, (pmin, pmax) in base_bounds.items():
-                row = Frame(newwin)
-                row.pack(pady=6, fill="x")
+        #             bounds[param] = (lo, hi)
 
-                Label(row, text=f"{param} min:", width=14, anchor="w").pack(side=LEFT)
-                e_min = Entry(row, width=12)
-                e_min.insert(0, str(pmin))  # pré-rempli
-                e_min.pack(side=LEFT, padx=6)
+        #             # Détection de modification
+        #             init_min, init_max = initial_display[param]
+        #             if min_txt != init_min or max_txt != init_max:
+        #                 modified = True
 
-                Label(row, text=f"{param} max:", width=14, anchor="w").pack(side=LEFT)
-                e_max = Entry(row, width=12)
-                e_max.insert(0, str(pmax))  # pré-rempli
-                e_max.pack(side=LEFT, padx=6)
+        #         self.user_param_bounds[model_key] = bounds
+        #         self.user_param_modified[model_key] = modified
 
-                self.param_entries[param] = (e_min, e_max)
+        #         print(f"[Set_Function] {model_key} bounds saved: {bounds}, modified={modified}")
+        #         newwin.destroy()
 
-            def save_params():
-                bounds = {}
-                modified = False  # drapeau pour savoir si l’utilisateur a modifié quelque chose
+        #     Button(newwin, text="Save", command=save_params, bg='green', fg='white').pack(pady=12)
 
-                for param, (e_min, e_max) in self.param_entries.items():
-                    lo_txt, hi_txt = e_min.get().strip(), e_max.get().strip()
-
-                    # Valeurs par défaut pour ce paramètre
-                    default_lo, default_hi = Fitting.default_param_bounds[model_key][param]
-
-                    try:
-                        lo = float(lo_txt)
-                        hi = float(hi_txt)
-                    except ValueError:
-                        messagebox.showerror("Invalid input", f"{param}: invalid number")
-                        return
-
-                    bounds[param] = (lo, hi)
-
-                    # Vérifier si modifié par rapport aux valeurs par défaut
-                    if lo != default_lo or hi != default_hi:
-                        modified = True
-
-                # Sauvegarde
-                self.user_param_bounds[model_key] = bounds
-                self.param_modified = modified  # True si l’utilisateur a changé quelque chose
-                newwin.destroy()
-
-            Button(newwin, text="Save", command=save_params, bg="green", fg="white").pack(pady=15)
-
-        def Set_Function4():
-            """Fenêtre pour définir les bornes des paramètres du modèle sélectionné."""
-            try:
-                idx = self.lbox.curselection()[0]
-                model_key = self.lbox.get(idx)
-            except Exception:
-                messagebox.showwarning("No Model Selected", "Please select a model first.")
-                return
-
-            newwin = Toplevel(self.top2)
-            newwin.title(f"{model_key} - Parameter Ranges")
-            newwin.geometry("520x420")
-
-            Label(newwin, text=f"Set parameter ranges for {model_key}:",
-                fg='blue', font=("Helvetica", 11, "bold")).pack(pady=10)
-
-            # Récupère les bornes sauvegardées par l’utilisateur, sinon par défaut
-            if model_key in self.user_param_bounds:
-                base_bounds = self.user_param_bounds[model_key]
-            else:
-                base_bounds = Fitting.default_param_bounds.get(model_key, {})
-
-            self.param_entries = {}
-            initial_display = {}
-
-            for param in base_bounds.keys():
-                default_lo, default_hi = Fitting.default_param_bounds.get(model_key, {}).get(param, (None, None))
-                saved_lo, saved_hi = self.user_param_bounds.get(model_key, {}).get(param, (None, None))
-
-                # if model_key == "PowerLaw1D":
-                #     # ⚡ Par défaut : aucune borne affichée → champs vides
-                #     disp_min, disp_max = "", ""
-                # else:
-                #     disp_min = str(saved_lo if saved_lo is not None else default_lo or "")
-                #     disp_max = str(saved_hi if saved_hi is not None else default_hi or "")
-
-                # --- Toujours afficher un min (par défaut ou sauvegardé)
-                disp_min = str(saved_lo if saved_lo is not None else default_lo or "")
-
-                # --- Pour PowerLaw1D : max vide par défaut
-                if model_key == "PowerLaw1D":
-                    disp_max = "" if saved_hi is None else str(saved_hi)
-                else:
-                    disp_max = str(saved_hi if saved_hi is not None else default_hi or "")
-
-                row = Frame(newwin)
-                row.pack(pady=6, fill="x")
-
-                Label(row, text=f"{param} min:", width=14, anchor="w").pack(side=LEFT)
-                e_min = Entry(row, width=14)
-                e_min.insert(0, disp_min)
-                e_min.pack(side=LEFT, padx=6)
-
-                Label(row, text=f"{param} max:", width=14, anchor="w").pack(side=LEFT)
-                e_max = Entry(row, width=14)
-                e_max.insert(0, disp_max)
-                e_max.pack(side=LEFT, padx=6)
-
-                self.param_entries[param] = (e_min, e_max)
-                initial_display[param] = (disp_min, disp_max)
-
-            def save_params():
-                bounds = {}
-                modified = False
-
-                for param, (e_min, e_max) in self.param_entries.items():
-                    min_txt = e_min.get().strip()
-                    max_txt = e_max.get().strip()
-
-                    lo = float(min_txt) if min_txt != "" else None
-                    hi = float(max_txt) if max_txt != "" else None
-
-                    # Vérifier cohérence si min et max donnés
-                    if lo is not None and hi is not None and hi <= lo:
-                        messagebox.showerror("Invalid bounds", f"{param}: max must be > min")
-                        return
-
-                    bounds[param] = (lo, hi)
-
-                    # Détection de modification
-                    init_min, init_max = initial_display[param]
-                    if min_txt != init_min or max_txt != init_max:
-                        modified = True
-
-                self.user_param_bounds[model_key] = bounds
-                self.user_param_modified[model_key] = modified
-
-                print(f"[Set_Function] {model_key} bounds saved: {bounds}, modified={modified}")
-                newwin.destroy()
-
-            Button(newwin, text="Save", command=save_params, bg='green', fg='white').pack(pady=12)
 
         def Set_Function():
             """Fenêtre pour définir valeur initiale (default), min et max de chaque paramètre du modèle sélectionné."""
@@ -532,9 +438,7 @@ class Fitting:
             form_frame.pack(pady=10, padx=20, fill="x")
 
             for param in base_defaults.keys():
-                # valeur initiale
                 disp_default = str(saved_values.get(param, base_defaults[param]))
-                # bornes
                 pmin, pmax = saved_bounds.get(param, base_bounds.get(param, (None, None)))
                 disp_min = "" if pmin is None else str(pmin)
                 disp_max = "" if pmax is None else str(pmax)
@@ -544,6 +448,20 @@ class Fitting:
 
                 Label(row, text=f"{param}:", width=14, anchor="w", bg="#f7f9fc").pack(side=LEFT)
 
+                # --- Cas spécial : E_pivot n'a pas de Min/Max ---
+                if (model_key == "PowerLaw1D" or model_key=="V_TH + PowerLaw" or model_key=="PowerLawCutoffFix" 
+                    or model_key=="PowerLawCutoffFree" or model_key=="V_TH + PowerLawCutoffFix") and (param == "E_pivot"  or param == "E_cut") :
+
+                    Label(row, text="Value:", bg="#f7f9fc").pack(side=LEFT)
+                    e_def = Entry(row, width=10)
+                    e_def.insert(0, disp_default)
+                    e_def.pack(side=LEFT, padx=6)
+
+                    self.param_entries[param] = (e_def, None, None)
+                    initial_display[param] = (disp_default, "", "")
+                    continue
+
+                # --- Cas normal : Default + Min + Max ---
                 Label(row, text="Default:", bg="#f7f9fc").pack(side=LEFT)
                 e_def = Entry(row, width=10)
                 e_def.insert(0, disp_default)
@@ -568,6 +486,21 @@ class Fitting:
                 modified = False
 
                 for param, (e_def, e_min, e_max) in self.param_entries.items():
+                    # Cas spécial : pas de min/max (E_pivot)
+                    if e_min is None and e_max is None:
+                        def_txt = e_def.get().strip()
+                        try:
+                            def_val = float(def_txt)
+                        except ValueError:
+                            messagebox.showerror("Invalid input", f"{param}: invalid value")
+                            return
+                        values[param] = def_val
+                        bounds[param] = (None, None)
+                        if def_txt != initial_display[param][0]:
+                            modified = True
+                        continue
+
+                    # Cas normal
                     def_txt, min_txt, max_txt = e_def.get().strip(), e_min.get().strip(), e_max.get().strip()
 
                     try:
@@ -600,13 +533,16 @@ class Fitting:
                 """Réinitialise tous les champs aux valeurs par défaut."""
                 for param, (e_def, e_min, e_max) in self.param_entries.items():
                     def_val = Fitting.default_param_values[model_key][param]
-                    lo, hi = Fitting.default_param_bounds[model_key].get(param, (None, None))
+                    lo, hi = Fitting.default_param_bounds.get(model_key, {}).get(param, (None, None))
+
                     e_def.delete(0, END)
                     e_def.insert(0, str(def_val))
-                    e_min.delete(0, END)
-                    e_min.insert(0, "" if lo is None else str(lo))
-                    e_max.delete(0, END)
-                    e_max.insert(0, "" if hi is None else str(hi))
+
+                    if e_min is not None and e_max is not None:
+                        e_min.delete(0, END)
+                        e_min.insert(0, "" if lo is None else str(lo))
+                        e_max.delete(0, END)
+                        e_max.insert(0, "" if hi is None else str(hi))
                 print(f"[Set_Function] {model_key} reset to defaults")
 
             def cancel_window():
@@ -624,7 +560,6 @@ class Fitting:
 
             Button(btn_frame, text="Cancel", command=cancel_window,
                 bg="#ef4444", fg="white", width=12).pack(side=LEFT, padx=10)
-
 
 
         self.lblFunc = Label(self.top2, text="Set function components: ")  # name the scrollbar
@@ -656,10 +591,6 @@ class Fitting:
 
             e_low_det = self.e_low_det[usable_channels]
             e_high_det = self.e_high_det[usable_channels]
-
-            # print("Usable channels: ", usable_channels)
-            # print("Energies law: ", e_low_det)
-            # print("Energies high: ", e_high_det)
 
             self.text_min_energy = Label(self.top2, text="Min energy")
             self.text_min_energy.place(relx=0.75, rely=0.45, anchor=N)
@@ -775,7 +706,7 @@ class Fitting:
         self.closeButton5 = Button(self.top2, text="Close", command=self.destroy5)  # add Close button
         # Close "Fit Options" window
         self.closeButton5.place(relx=0.5, rely=0.94)
-        self.models = ['PowerLaw1D', 'BrokenPowerLaw1D','Single Power Law Times an Exponential', 'V_TH', 'V_TH + PowerLaw']  # , 'Neural Network' function names
+        self.models = ['PowerLaw1D', 'BrokenPowerLaw1D','Single Power Law Times an Exponential', 'V_TH', 'V_TH + PowerLaw', 'PowerLawCutoffFix', 'PowerLawCutoffFree', 'V_TH + PowerLawCutoffFix']  # , 'Neural Network' function names
         for p in self.models:
             """On the right: place an 'entry text' Scrollbar widget (scrollbar) When user highlight the function, 
             displays the text information about function description and input parameters"""
@@ -783,7 +714,9 @@ class Fitting:
         self.lbox.bind("<<ListboxSelect>>", self.onSelect)
         self.list = {'PowerLaw1D': {'One dimensional power law model', '\n\n',
                                     'amplitude – model amplitude at the reference energy', '\n',
-                                    'energy_data – reference energy', '\n', 'alpha – power law index'},
+                                    'Epivot – energie pivot (kEv)', '\n', 
+                                    'energy_data – reference energy', '\n', 'alpha – power law index'
+                                    },
                      # if user choose PowerLaw1D, display
                      'BrokenPowerLaw1D': {'One dimensional power law model with a break', '\n\n',
                                           'amplitude - model amplitude at the break energy', '\n',
@@ -826,27 +759,29 @@ class Fitting:
                                     'T - Temperature (keV)', '\n',
                                     'EM - Emission Measure (cm^-3)', '\n',
                                     'Amplitude - Model amplitude at the reference energy', '\n',
-                                    'Alpha - Power law index'
+                                    'Alpha - Power law index', 
+                                    '\n', 'Epivot – energie pivot (kEv)'
                                     },
-                    'Neural Network': {'Neural Network model', '\n',       }
+                    'Neural Network': {'Neural Network model', '\n',       },
+                    'PowerLawCutoffFix': {'Power law model with fix cutoff', '\n',
+                                    'amplitude – model amplitude at the reference energy', '\n',
+                                    'Ec – Cutoff energy', '\n', 
+                                    'alpha – power law index'
+                                    },
+                    'PowerLawCutoffFree': {'Power law model with free cutoff', '\n',
+                                    'amplitude – model amplitude at the reference energy', '\n',
+                                    'Ec – Cutoff energy', '\n', 
+                                    'alpha – power law index'
+                                    },
                      
                      }
                     
         self.list_selection = Listbox(self.top2, highlightcolor='red', bd=4)
         self.list_selection.place(relx=0.33, rely=0.15, relheight=0.45, relwidth=0.30)
 
-        # print("counts: ", self.counts.shape)
-        # print("counts_err: ", self.counts_err.shape)
-        # print("times: ", self.times.shape)
-        # print("time_del: ", self.time_del.shape)
-        # print("e_low_det: ", self.e_low_det.shape)
-        # print("e_high_det: ", self.e_high_det.shape)
-        # print("matrix: ", self.matrix.shape)
-        # print("e_low_true: ", self.e_low_true.shape)
-        # print("e_high_true: ", self.e_high_true.shape)
-
         if background.BackgroundWindow.DATA_BKG_SELECTED :
             self.show_db_var.set(1)  # Set the checkbox to checked if background data is selected
+
 
     def open_file(self, file=None):
         """Reads the input data using Astropy library. It can be any extension. RHESSI .fits files are analysed. \n
@@ -878,6 +813,7 @@ class Fitting:
         else:
             self.text_filename.insert(0, "No file chosen") 
 
+
     def open_srm_file(self, file=None):
         """Reads the input data using Astropy library. It can be any extension. RHESSI .fits files are analysed. \n
         Parameters: \n
@@ -904,6 +840,7 @@ class Fitting:
             self.update_energy_range()
         else:
             self.text_filename2.insert(0, "No file chosen")
+
 
     def update_energy_range(self):
         if self.e_low_det is None or self.e_high_det is None or self.matrix is None:
@@ -984,6 +921,7 @@ class Fitting:
 
         # return hdulist[2].data, hdulist[3].data, hdulist[0].header, hdulist[3].header
     
+
     @staticmethod
     def load_srm_data(file):
         """Reads the Data and Header contents from input file. Loads the input file choosen in 'Select Input' section.
@@ -1018,10 +956,12 @@ class Fitting:
         return result
         # return hdulist[1].data
 
+
     @staticmethod
     def editEnergy(p1):
         """Call new class to edit spec_data axis"""
         new_window.Set_Energy(p1)
+
 
     def onSelect(self, event):
         """Affiche les infos de la fonction sélectionnée dans la Listbox de droite."""
@@ -1055,9 +995,11 @@ class Fitting:
         for i in file_list:
             self.list_selection.insert(END, i)
 
+
     def findfiles(self, val):
         """Finding the information related to the function name"""
         self.sender = val.widget
+
 
     def destroy5(self):
         """Closing 'SPEX Fit Options' window"""
@@ -1068,30 +1010,33 @@ class Fitting:
         energies = np.linspace(e1, e2, n_points)
         fluxes = model_func(energies)
         return np.trapz(fluxes, energies) / (e2 - e1)
-    
+
+
     class ForwardFoldedPowerLaw(FittableModel):
         n_inputs = 1
         n_outputs = 1
 
         amplitude = Parameter(default=1e-2)
         alpha = Parameter(default=2.0)
-        x_0 = 100.0  # énergie pivot en keV, fixe ici
+        # x_0 = 100.0  # énergie pivot en keV, fixe ici
 
-        def __init__(self, e_low_true, e_high_true, matrix, exposure, **kwargs):
+        def __init__(self, e_low_true, e_high_true, matrix, exposure, E_pivot=100.0, **kwargs):
             super().__init__(**kwargs)
             self.e_low_true = e_low_true
             self.e_high_true = e_high_true
             self.matrix = matrix
             self.exposure = exposure
+            self.E_pivot = E_pivot
 
         def evaluate(self, x, amplitude, alpha):
-            model_func = lambda E: amplitude * (E / self.x_0) ** (-alpha)
+            model_func = lambda E: amplitude * (E / self.E_pivot) ** (-alpha)
             true_fluxes = np.array([
                 Fitting.integrate_flux(e1, e2, model_func)
                 for e1, e2 in zip(self.e_low_true, self.e_high_true)
             ])
             folded = np.dot(true_fluxes, self.matrix) / self.exposure
             return folded
+
 
     # === Forward Folded Broken Power Law ===
     class ForwardFoldedBrokenPowerLaw(FittableModel):
@@ -1200,14 +1145,14 @@ class Fitting:
         # Paramètres Power Law
         amplitude = Parameter(default=1e-2)
         alpha = Parameter(default=2.0)
-        x_0 = 100.0  # énergie pivot en keV
 
-        def __init__(self, e_low_true, e_high_true, matrix, exposure, **kwargs):
+        def __init__(self, e_low_true, e_high_true, matrix, exposure, E_pivot = 100.0, **kwargs):
             super().__init__(**kwargs)
             self.e_low_true = e_low_true
             self.e_high_true = e_high_true
             self.matrix = matrix
             self.exposure = exposure
+            self.E_pivot = E_pivot
 
         def evaluate(self, x, EM, T, amplitude, alpha):
             # Constante de Gaunt
@@ -1219,7 +1164,7 @@ class Fitting:
                 # Thermal component
                 thermal = (A * EM) / (E * np.sqrt(safe_T)) * np.exp(-E / safe_T)
                 # Power-law component
-                power = amplitude * (E / self.x_0) ** (-alpha)
+                power = amplitude * (E / self.E_pivot) ** (-alpha)
                 return thermal + power
 
             # Intégration du flux photonique dans chaque bin SRM
@@ -1232,33 +1177,76 @@ class Fitting:
             folded = np.dot(true_fluxes, self.matrix) / self.exposure
             return folded
 
-    class NeuralNetReconstruction:
+
+    class ForwardFoldedPowerLawCutoffFix(FittableModel):
         """
-        Classe pour utiliser un réseau neuronal entraîné pour estimer
-        le spectre photonique à partir des counts et de la SRM.
+        Power law avec cutoff fixe (E_c constant mais modifiable par l'utilisateur).
+        P(E) = A * E^-alpha si E >= E_c, sinon 0
         """
+        n_inputs = 1
+        n_outputs = 1
 
-        def __init__(self, model_path):
-            self.device = torch.device("cpu")
-            self.model = torch.load(model_path, map_location=self.device)
-            self.model.eval()
+        amplitude = Parameter(default=1e-2)
+        alpha = Parameter(default=2.0)
 
-        def prepare_input(self, counts, SRM):
-            """
-            Prépare l'entrée du réseau : concatène counts et SRM aplatie
-            """
-            srm_flat = SRM.flatten()
-            x_input = np.concatenate([counts, srm_flat])
-            return torch.tensor(x_input, dtype=torch.float32).unsqueeze(0)
+        def __init__(self, e_low_true, e_high_true, matrix, exposure, E_cut=10.0, **kwargs):
+            super().__init__(**kwargs)
+            self.e_low_true = e_low_true
+            self.e_high_true = e_high_true
+            self.matrix = matrix
+            self.exposure = exposure
+            self.E_cut = E_cut  
 
-        def predict_photons(self, counts, SRM):
-            """
-            Utilise le réseau pour prédire le spectre photonique
-            """
-            with torch.no_grad():
-                x_input = self.prepare_input(counts, SRM)
-                pred = self.model(x_input)
-            return pred.numpy().flatten()
+        def evaluate(self, x, amplitude, alpha):
+            # def model_func(E):
+            #     return np.where(E >= self.E_cut,
+            #                     amplitude * (E) ** (-alpha),
+            #                     1)
+            
+            model_func = lambda E: np.where(E >= self.E_cut, amplitude * (E) ** (-alpha), 0.0)
+
+            true_fluxes = np.array([
+                Fitting.integrate_flux(e1, e2, model_func)
+                for e1, e2 in zip(self.e_low_true, self.e_high_true)
+            ])
+
+            folded = np.dot(true_fluxes, self.matrix) / self.exposure
+            return folded
+
+
+    class ForwardFoldedPowerLawCutoffFree(FittableModel):
+        """
+        Power law avec cutoff libre (E_c est un Parameter ajusté).
+        P(E) = A * E^-alpha si E >= E_c, sinon 0
+        """
+        n_inputs = 1
+        n_outputs = 1
+
+        amplitude = Parameter(default=1e-2)
+        alpha = Parameter(default=2.0)
+        E_cut = Parameter(default=10.0, bounds=(1.0, 1e3))  # cutoff fitté
+
+        def __init__(self, e_low_true, e_high_true, matrix, exposure, **kwargs):
+            super().__init__(**kwargs)
+            self.e_low_true = e_low_true
+            self.e_high_true = e_high_true
+            self.matrix = matrix
+            self.exposure = exposure
+
+        def evaluate(self, x, amplitude, alpha, E_cut):
+            def model_func(E):
+                return np.where(E >= E_cut,
+                                amplitude * np.maximum(E, 1e-6) ** (-alpha),
+                                0.0)
+
+            true_fluxes = np.array([
+                Fitting.integrate_flux(e1, e2, model_func)
+                for e1, e2 in zip(self.e_low_true, self.e_high_true)
+            ])
+
+            folded = np.dot(true_fluxes, self.matrix) / self.exposure
+            return np.nan_to_num(folded, nan=0.0, posinf=0.0, neginf=0.0)
+
 
     def ask_custom_yesno(title, message):
         win = Toplevel()
@@ -1337,6 +1325,7 @@ class Fitting:
 
         Button(popup, text="Confirm", command=confirm, bg="#4CAF50", fg="white").pack(pady=10)
 
+
     def on_background_check(self):
         if self.show_db_var.get():  # Si check activé
             if not background.BackgroundWindow.DATA_BKG_SELECTED:
@@ -1355,6 +1344,7 @@ class Fitting:
                     self.show_db_var.set(0)
                 return
 
+
     def on_background_clicked(self):
         if self.show_db_var.get():
             if background.BackgroundWindow.DATA_BKG_SELECTED:
@@ -1370,102 +1360,6 @@ class Fitting:
                     self.show_db_var.set(1)  # Keep checkbox checked
             else:
                 self.on_background_check()  # Original logic (first-time case)
-
-
-    # def _apply_param_bounds_2(self, model, model_key: str):
-    #     """
-    #     Applique les bornes utilisateur si modifiées.
-    #     Sinon conserve les valeurs initiales du modèle.
-    #     """
-    #     # Cas 1 : utilisateur a modifié → on applique
-    #     if getattr(self, "param_modified", False):
-    #         bounds_map = self.user_param_bounds.get(model_key, {})
-    #         for pname, (lo, hi) in bounds_map.items():
-    #             if hasattr(model, pname):
-    #                 par = getattr(model, pname)
-    #                 try:
-    #                     par.bounds = (lo, hi)
-    #                     par.min = lo
-    #                     par.max = hi
-    #                 except Exception:
-    #                     pass
-
-    #     # Cas 2 : pas de modification → on applique juste les bornes par défaut, mais
-    #     # on conserve les valeurs initiales internes (pas de réinitialisation)
-    #     else:
-    #         bounds_map = Fitting.default_param_bounds.get(model_key, {})
-    #         for pname, (lo, hi) in bounds_map.items():
-    #             if hasattr(model, pname):
-    #                 par = getattr(model, pname)
-    #                 init_val = par.value  # conserver valeur initiale
-    #                 try:
-    #                     par.bounds = (lo, hi)
-    #                     par.min = lo
-    #                     par.max = hi
-    #                     par.value = init_val  # ⚡ garder la valeur initiale si non modifié
-    #                 except Exception:
-    #                     pass
-
-    #     """
-    #     Applique les bornes uniquement si l'utilisateur a modifié la popup.
-    #     Pour PowerLaw1D : par défaut aucune borne n'est appliquée.
-    #     """
-    #     modified = self.user_param_modified.get(model_key, False)
-    #     if not modified:
-    #         # ⚡ Pas de modification → on ne touche à rien
-    #         return
-
-    #     bounds_map = self.user_param_bounds.get(model_key, {})
-    #     for pname, (lo, hi) in bounds_map.items():
-    #         if hasattr(model, pname):
-    #             par = getattr(model, pname)
-    #             try:
-    #                 if lo is not None:
-    #                     par.min = lo
-    #                 if hi is not None:
-    #                     par.max = hi
-    #                 # Certaines versions d'astropy supportent directement .bounds
-    #                 if lo is not None or hi is not None:
-    #                     try:
-    #                         par.bounds = (lo, hi)
-    #                     except Exception:
-    #                         pass
-    #             except Exception as exc:
-    #                 print(f"⚠️ Bound set failed for {pname}: {exc}")
-
-    # def _apply_param_values(self, model, model_key: str):
-    #     """
-    #     1. Applique les valeurs initiales saisies par l’utilisateur si elles ont été modifiées.
-    #     2. Applique des bornes cachées pour certains modèles sensibles.
-    #     """
-    #     # --- 1) Valeurs initiales visibles (popup)
-    #     modified = self.user_param_modified.get(model_key, False)
-    #     if modified:
-    #         values_map = self.user_param_values.get(model_key, {})
-    #         for pname, val in values_map.items():
-    #             if hasattr(model, pname):
-    #                 try:
-    #                     getattr(model, pname).value = val
-    #                 except Exception as exc:
-    #                     print(f"⚠️ Failed to set value for {pname}: {exc}")
-
-    #     # --- 2) Bornes cachées internes
-    #     bounds_map = Fitting.hidden_param_bounds.get(model_key, {})
-    #     for pname, (lo, hi) in bounds_map.items():
-    #         if hasattr(model, pname):
-    #             par = getattr(model, pname)
-    #             try:
-    #                 if lo is not None:
-    #                     par.min = lo
-    #                 if hi is not None:
-    #                     par.max = hi
-    #                 try:
-    #                     par.bounds = (lo, hi)
-    #                 except Exception:
-    #                     pass
-    #             except Exception as exc:
-    #                 print(f"⚠️ Failed to set hidden bounds for {pname}: {exc}")
-
 
 
     def _apply_param_bounds(self, model, model_key: str):
@@ -1501,20 +1395,8 @@ class Fitting:
                     par.value = init_val
                 except Exception as exc:
                     print(f"⚠️ Failed to set {pname}: {exc}")
-
-    # def _check_bounds_hit(self, fitted_model, model_key):
-    #     for pname in Fitting.default_param_values.get(model_key, {}).keys():
-    #         if hasattr(fitted_model, pname):
-    #             par = getattr(fitted_model, pname)
-    #             lo = getattr(par, "min", -np.inf)
-    #             hi = getattr(par, "max",  np.inf)
-    #             val = par.value
-    #             if np.isfinite(lo) and abs(val - lo) < 1e-8 * max(1, abs(lo)):
-    #                 print(f"⚠️ {pname} converged to lower bound {lo}")
-    #             if np.isfinite(hi) and abs(val - hi) < 1e-8 * max(1, abs(hi)):
-    #                 print(f"⚠️ {pname} converged to upper bound {hi}")
-
     
+
     def _params_vector_to_model(self, model_template, param_names, vec):
         """
         Retourne une copie du modèle template avec par.value = vec[i] pour les param_names.
@@ -1739,7 +1621,11 @@ class Fitting:
         for pname in param_names:
             if not hasattr(fitted1, pname):
                 continue
-            val = getattr(fitted1, pname).value
+            attr = getattr(fitted1, pname)
+            if isinstance(attr, (int, float, np.floating)):
+                # c'est un paramètre fixe → ignorer
+                continue
+            val = attr.value
             lo, hi = user_bounds_map.get(pname, (None, None))
             if lo is not None and val < lo - tol:
                 in_user_bounds = False
@@ -1783,7 +1669,6 @@ class Fitting:
             print(f"⚠️ Step2 LevMar (user bounds) failed: {e_step2}")
             return model_bounded
 
-    
 
     def _selective_fit(self):
         """Selection depending on Plot Units and Function Model
@@ -1857,11 +1742,9 @@ class Fitting:
             e_low_det = e_low_det[valid]
             e_high_det = e_high_det[valid]
 
-            # print('matrix shape:', matrix.shape)
-            # print('counts shape:', counts.shape)
-
-            # print('counts:', counts)
-            # print('matrix:', matrix)
+            # matrix[:] = 1.0  # temporary for testing fitting procedure without matrix
+            # print('after setting matrix to 1.0:')
+            # print('min', np.min(matrix), 'max', np.max(matrix), 'shape', np.shape(matrix))
 
 
             edges_det = np.append(e_low_det, e_high_det[-1])
@@ -1877,13 +1760,20 @@ class Fitting:
             # fit_Emin = 10.0  # keV
             # fit_Emax = 20.0  # keV
 
+            
+
             # mask for fitting range
             fit_mask = (edges_det[:-1] >= fit_Emin) & (edges_det[1:] <= fit_Emax)
+
+            
+            
 
             x_fit = x_fake[fit_mask]
             counts_fit = counts[fit_mask]
             counts_err_fit = counts_err[fit_mask]
             matrix_fit = matrix[:, fit_mask]
+
+            
 
             # Counts
             mean_counts = counts
@@ -1921,8 +1811,8 @@ class Fitting:
             #             color='gray', alpha=0.3, label="Background Interval")
 
             if self.lbox.curselection()[0] == 0:
+
                 self.fit_model = 'Power Law'
-                # Create model
                 model_key = "PowerLaw1D"
                 # model_fit = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
 
@@ -1941,7 +1831,8 @@ class Fitting:
 
 
                 # 1) préparer un template (sans bornes forcées) et appliquer les valeurs initiales souhaitées
-                model_template = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                E_pivot_val = self.user_param_values.get(model_key, {}).get("E_pivot", 100.0)
+                model_template = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix_fit, exposure, E_pivot=E_pivot_val)
                 initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
                 bounds_map = self.user_param_bounds.get(model_key, Fitting.default_param_bounds.get(model_key, {}))
 
@@ -1956,16 +1847,14 @@ class Fitting:
                     initial_values
                 )
 
-                # Diagnostic (optionnel)
-                # self._check_bounds_hit(fitted_model, model_key)
-
                 # Récupérer les paramètres
                 amplitude = fitted_model.amplitude.value
                 alpha = fitted_model.alpha.value
-                x_0 = fitted_model.x_0
+
+                print(f"Fitted Power Law: amplitude = {amplitude:.2e}, alpha = {alpha:.2f}, E_pivot = {E_pivot_val:.2f} keV")
 
                 # Construire modèle complet pour affichage (optionnel — comme tu fais ailleurs)
-                model_display = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix, exposure)
+                model_display = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix, exposure, E_pivot=E_pivot_val)
                 try:
                     model_display.amplitude = fitted_model.amplitude
                     model_display.alpha = fitted_model.alpha
@@ -1976,21 +1865,6 @@ class Fitting:
 
                 rate_modeled_full = model_display(x_fake)
 
-                # Parameters
-                # amplitude = fitted_model.amplitude.value
-                # alpha = fitted_model.alpha.value
-                # x_0 = fitted_model.x_0
-
-                # print(f"Fitted Power Law: amplitude = {amplitude:.2e}, alpha = {alpha:.2f}")
-
-                # # Modèle complet pour affichage sur tout le domaine
-                # model_display = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix, exposure)
-                # model_display.amplitude = fitted_model.amplitude
-                # model_display.alpha = fitted_model.alpha
-
-                # # Calcul du modèle simulé complet
-                # rate_modeled_full = model_display(x_fake)
-
                 if unit == 'Rate':
                     model_y = (rate_modeled_full / dE_det)
                 elif unit == 'Counts':
@@ -2000,13 +1874,14 @@ class Fitting:
                 else:
                     raise ValueError("Unit most be choose")
                 
+                
                 plt.step(edges_det[:-1], model_y, where='mid',
                     label='Fitted Model', color='blue')
                 
                 if self.show_params_var.get():
                     # show model parameters on the plot
                     plt.text(0.05, 0.4,
-                        f"Power Law:\n amplitude = {amplitude:.2e}\n alpha = {alpha:.2f} \n",
+                        f"Power Law:\n amplitude = {amplitude:.2e}\n alpha = {alpha:.2f} \n E_pivot = {E_pivot_val:.2f} keV \n",
                         transform=plt.gca().transAxes,
                         fontsize=10,
                         verticalalignment='top',
@@ -2026,7 +1901,7 @@ class Fitting:
                     
                 if self.show_photon_var.get():
                     # --- Photon ---
-                    model_func = lambda E: amplitude * (E / x_0)**(-alpha)
+                    model_func = lambda E: amplitude * (E / E_pivot_val)**(-alpha)
                     flux_photons = np.array([
                         Fitting.integrate_flux(e1, e2, model_func)
                         for e1, e2 in zip(e_low_true, e_high_true)
@@ -2047,7 +1922,7 @@ class Fitting:
                     plt.legend()
                     if self.show_params_var.get():
                         plt.text(0.05, 0.4,
-                            f"Power Law:\n amplitude = {amplitude:.2e}\n alpha = {alpha:.2f} \n",
+                            f"Power Law:\n amplitude = {amplitude:.2e}\n alpha = {alpha:.2f} \n E_pivot = {E_pivot_val:.2f} keV \n",
                             transform=plt.gca().transAxes,
                             fontsize=10,
                             verticalalignment='top',
@@ -2055,9 +1930,9 @@ class Fitting:
                     plt.tight_layout()
                 
             elif self.lbox.curselection()[0] == 1:
-                self.fit_model = 'Broken Power Law'
 
                 # Create model
+                self.fit_model = 'Broken Power Law'
                 model_key = "BrokenPowerLaw1D"
 
                 # model_fit = Fitting.ForwardFoldedBrokenPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
@@ -2166,9 +2041,9 @@ class Fitting:
                     plt.tight_layout()
 
             elif self.lbox.curselection()[0] == 2:
-                self.fit_model = 'Exponential Power Law'
 
                 # Create model
+                self.fit_model = 'Exponential Power Law'
                 model_key = "Single Power Law Times an Exponential"
 
                 # model_fit = Fitting.ForwardFoldedExpPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
@@ -2280,9 +2155,8 @@ class Fitting:
                     plt.tight_layout()
 
             elif self.lbox.curselection()[0] == 3:
-                self.fit_model = 'VTH'
                 
-                # Create model
+                self.fit_model = 'VTH'
                 model_key = "V_TH"
                 # model_fit = Fitting.ForwardFoldedVTH(e_low_true, e_high_true, matrix_fit, exposure)
 
@@ -2386,9 +2260,8 @@ class Fitting:
                     plt.tight_layout()
 
             elif self.lbox.curselection()[0] == 4:
-                self.fit_model = 'V_TH + Power Law'
 
-                # Create model 
+                self.fit_model = 'V_TH + Power Law'
                 model_key = "V_TH + PowerLaw"               
                 # model_fit = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
 
@@ -2400,8 +2273,12 @@ class Fitting:
                 # fitted_model = fitter(model_fit, x_fit, counts_fit / exposure,
                 #                     weights=1.0 / (counts_err_fit / exposure))
                 
-                model_template = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
-                param_names = list(Fitting.default_param_values.get(model_key, {}).keys())
+                E_pivot_val = self.user_param_values.get(model_key, {}).get("E_pivot", 100.0)
+                model_template = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix_fit, exposure, E_pivot=E_pivot_val)
+                param_names = [
+                    p for p in Fitting.default_param_values[model_key].keys()
+                    if p != "E_pivot"
+                ]
                 internal_bounds_map = Fitting.default_param_bounds.get(model_key, {})
                 user_bounds_map = self.user_param_bounds.get(model_key, internal_bounds_map)
                 initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
@@ -2422,7 +2299,7 @@ class Fitting:
                 alpha = fitted_model.alpha.value
 
                 # Création du modèle à afficher sur tout le domaine
-                model_display = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix, exposure)
+                model_display = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix, exposure, E_pivot=E_pivot_val)
                 model_display.EM = fitted_model.EM
                 model_display.T = fitted_model.T
                 model_display.amplitude = fitted_model.amplitude
@@ -2442,12 +2319,13 @@ class Fitting:
                 if self.show_params_var.get():
                     if self.show_params_var.get():
                         plt.text(
-                            0.05, 0.4,
+                            0.06, 0.5,
                             f"V_TH + Power Law:\n"
                             f"T  = {T:.2e} keV\n"
                             f"EM = {EM:.2e} cm⁻³\n"
                             f"amplitude = {amplitude:.2e}\n"
-                            f"alpha     = {alpha:.2f}",
+                            f"alpha     = {alpha:.2f}\n"
+                            f"E_pivot = {E_pivot_val:.2f} keV",
                             transform=plt.gca().transAxes,
                             fontsize=10,
                             verticalalignment='top',
@@ -2499,7 +2377,8 @@ class Fitting:
                             f"T  = {T:.2e} keV\n"
                             f"EM = {EM:.2e} cm⁻³\n"
                             f"amplitude = {amplitude:.2e}\n"
-                            f"alpha     = {alpha:.2f}",
+                            f"alpha     = {alpha:.2f}\n"
+                            f"E_pivot = {E_pivot_val:.2f} keV",
                             transform=plt.gca().transAxes,
                             fontsize=10,
                             verticalalignment='top',
@@ -2509,19 +2388,238 @@ class Fitting:
                     plt.tight_layout()
 
             elif self.lbox.curselection()[0] == 5:
-                self.fit_model = 'Neural Network'
 
-                # Load the neural network model
-                model_path = "model.pt"  # chemin vers ton modèle
-                nn_model = Fitting.NeuralNetReconstruction(model_path)
-                photons_estimates = nn_model.predict_photons(counts, matrix)
-                # self.plot_photon_result(photons_estimates)
+                self.fit_model = 'PowerLawCutoffFix'
+                model_key = "PowerLawCutoffFix"
 
-                print("Photon spectrum (NN):", photons_estimates)
-                plt.figure()
-                plt.plot(edges_det[:-1], photons_estimates, label="NN prediction")
-                plt.xlabel("Energy (keV)")
-                plt.ylabel("Photon Flux")
+                E_cut_val = self.user_param_values.get(model_key, {}).get("E_cut", 10.0)
+                model_template = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
+                bounds_map = self.user_param_bounds.get(model_key, Fitting.default_param_bounds.get(model_key, {}))
+
+                fitted_model = self.fit_unconstrained_then_bounded(
+                    model_template,
+                    x_fit,
+                    counts_fit / exposure,       # y_fit
+                    counts_err_fit / exposure,   # y_err 
+                    ["amplitude", "alpha"],
+                    bounds_map,
+                    initial_values
+                )
+                
+                amplitude = fitted_model.amplitude.value
+                alpha = fitted_model.alpha.value
+
+                model_display = Fitting.ForwardFoldedPowerLaw(e_low_true, e_high_true, matrix, exposure)
+                try:
+                    model_display.amplitude = fitted_model.amplitude
+                    model_display.alpha = fitted_model.alpha
+                except Exception:
+                    model_display.amplitude.value = amplitude
+                    model_display.alpha.value = alpha
+
+                rate_modeled_full = model_display(x_fake)
+
+                if unit == 'Rate':
+                    model_y = (rate_modeled_full / dE_det)
+                elif unit == 'Counts':
+                    model_y = (rate_modeled_full * exposure)
+                elif unit == 'Flux':
+                    model_y = (rate_modeled_full / (self.area * dE_det))
+                else:
+                    raise ValueError("Unit most be choose")
+                
+                # Apply cutoff in plotting range E >= E_cut_val (cutoff value) and E <= fit_Emax (fitting max value)
+                fit_mask_cutoff = (edges_det[:-1] >= E_cut_val) & (edges_det[1:] <= fit_Emax)
+                model_y = np.where(fit_mask_cutoff, model_y, 0)
+                
+                plt.step(edges_det[:-1], model_y, label='Fitted Model', color='blue')
+                
+                if self.show_params_var.get():
+                    # show model parameters on the plot
+                    plt.text(0.05, 0.4,
+                        f"Power Law:\n amplitude = {amplitude:.2e}\n alpha = {alpha:.2f} \n E_cut = {E_cut_val:.2f}",
+                        transform=plt.gca().transAxes,
+                        fontsize=10,
+                        verticalalignment='top',
+                        bbox=dict(facecolor='white', alpha=0.7))
+                
+                plt.xscale('log')
+                plt.yscale('log')
+                plt.xlabel("Channel Energy (keV)")
+                plt.ylabel(y_label)
+                plt.title(f"Fitting on [{fit_Emin}, {fit_Emax}] keV")
+                if self.grid_var.get():
+                    plt.grid(True, which="both", ls="--", alpha=0.5)
+                else:
+                    plt.grid(False)
                 plt.legend()
+                plt.tight_layout()
+                    
+                if self.show_photon_var.get():
+
+                    # --- Photon ---
+                    # Should be verify because it's not true
+                    model_func = lambda E: np.where(E >= E_cut_val, amplitude * (E) ** (-alpha), 0.0)
+                    flux_photons = np.array([
+                        Fitting.integrate_flux(e1, e2, model_func)
+                        for e1, e2 in zip(e_low_true, e_high_true)
+                    ])
+
+                    plt.figure()
+                    plt.step(Edges_photon[:-1], flux_photons, where='mid',
+                            label='Photon model', color='green')
+                    xscale = getattr(self, "photon_xscale", "log")
+                    yscale = getattr(self, "photon_yscale", "log")
+                    plt.xscale(xscale)
+                    plt.yscale(yscale)
+                    plt.xlabel("Energy (keV)")
+                    plt.ylabel("Photon flux [photons / (s cm² keV)]")
+                    plt.title("Photon Flux Model")
+                    if self.grid_var.get():
+                        plt.grid(True, which="both", ls="--", alpha=0.5)
+                    plt.legend()
+                    if self.show_params_var.get():
+                        plt.text(0.05, 0.4,
+                            f"Power Law:\n amplitude = {amplitude:.2e}\n alpha = {alpha:.2f} \n E_cut = {E_cut_val:.2f}",
+                            transform=plt.gca().transAxes,
+                            fontsize=10,
+                            verticalalignment='top',
+                            bbox=dict(facecolor='white', alpha=0.7))
+                    plt.tight_layout()
+
+            elif self.lbox.curselection()[0] == 6:
+
+                self.fit_model = 'PowerLawCutoffFree'
+                model_key = "PowerLawCutoffFree"
+
+                messagebox.showwarning("Not yet available", "Please be patient.")
+                return
+
+
+            elif self.lbox.curselection()[0] == 7:
+
+                self.fit_model = 'V_TH + PowerLawCutoffFix'
+                model_key = "V_TH + PowerLawCutoffFix"               
+                
+
+                E_cut_val = self.user_param_values.get(model_key, {}).get("E_cut", 10.0)
+                model_template = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix_fit, exposure)
+                param_names = [
+                    p for p in Fitting.default_param_values[model_key].keys()
+                    if p != "E_cut"
+                ]
+                internal_bounds_map = Fitting.default_param_bounds.get(model_key, {})
+                user_bounds_map = self.user_param_bounds.get(model_key, internal_bounds_map)
+                initial_values = self.user_param_values.get(model_key, Fitting.default_param_values.get(model_key, {}))
+
+                fitted_model = self.fit_with_bounds_check(
+                    model_template, x_fit, counts_fit / exposure, counts_err_fit / exposure,
+                    param_names, model_key,
+                    internal_bounds_map=internal_bounds_map,
+                    user_bounds_map=user_bounds_map,
+                    initial_values=initial_values
+                )
+
+                # Paramètres du modèle
+                EM = fitted_model.EM.value
+                T = fitted_model.T.value
+                amplitude = fitted_model.amplitude.value
+                alpha = fitted_model.alpha.value
+
+                # Création du modèle à afficher sur tout le domaine
+                model_display = Fitting.ForwardFoldedVTHPlusPowerLaw(e_low_true, e_high_true, matrix, exposure)
+                model_display.EM = fitted_model.EM
+                model_display.T = fitted_model.T
+                model_display.amplitude = fitted_model.amplitude
+                model_display.alpha = fitted_model.alpha
+
+                rate_modeled_full = model_display(x_fake)
+
+                if unit == 'Rate':
+                    model_y = rate_modeled_full / dE_det
+                elif unit == 'Counts':
+                    model_y = rate_modeled_full * exposure
+                elif unit == 'Flux':
+                    model_y = rate_modeled_full / (self.area * dE_det)
+
+                # Apply cutoff in plotting range E >= E_cut_val (cutoff value) and E <= fit_Emax (fitting max value)
+                fit_mask_cutoff = (edges_det[:-1] >= E_cut_val) & (edges_det[1:] <= fit_Emax)
+                model_y = np.where(fit_mask_cutoff, model_y, 0)
+
+                plt.step(edges_det[:-1], model_y, where='mid', label='Fitted VTH Model', color='blue')
+
+                if self.show_params_var.get():
+                    if self.show_params_var.get():
+                        plt.text(
+                            0.06, 0.5,
+                            f"V_TH + Power Law:\n"
+                            f"T  = {T:.2e} keV\n"
+                            f"EM = {EM:.2e} cm⁻³\n"
+                            f"amplitude = {amplitude:.2e}\n"
+                            f"alpha     = {alpha:.2f}\n"
+                            f"E_cut = {E_cut_val:.2f} keV",
+                            transform=plt.gca().transAxes,
+                            fontsize=10,
+                            verticalalignment='top',
+                            bbox=dict(facecolor='white', alpha=0.7)
+                        )
+                    
+                plt.xscale('log')
+                plt.yscale('log')
+                plt.xlabel("Channel Energy (keV)")
+                plt.ylabel(y_label)
+                plt.title(f"Fitting on [{fit_Emin}, {fit_Emax}] keV")
+                if self.grid_var.get():
+                    plt.grid(True, which="both", ls="--", alpha=0.5)
+                else:
+                    plt.grid(False)
+                plt.legend()
+                plt.tight_layout()
+
+                # === AFFICHAGE PHOTONIQUE ===
+                # Should be verify because it's not true
+                if self.show_photon_var.get():
+                    model_func = lambda E: (
+                        (1.07e-42 * 1.2 * EM) / (E * np.sqrt(max(1e-3, T))) * np.exp(-E / T) +
+                        amplitude * (E / 100.0) ** (-alpha)
+                    )
+
+                    flux_photons = np.array([
+                        Fitting.integrate_flux(e1, e2, model_func)
+                        for e1, e2 in zip(e_low_true, e_high_true)
+                    ])
+
+
+                    plt.figure()
+                    plt.step(Edges_photon[:-1], flux_photons, where='mid',
+                            label='Photon model', color='green')
+                    xscale = getattr(self, "photon_xscale", "log")
+                    yscale = getattr(self, "photon_yscale", "log")
+                    plt.xscale(xscale)
+                    plt.yscale(yscale)
+                    plt.xlabel("Energy (keV)")
+                    plt.ylabel("Photon flux [photons / (s cm² keV)]")
+                    plt.title("Photon Flux Model")
+                    if self.grid_var.get():
+                        plt.grid(True, which="both", ls="--", alpha=0.5)
+                    plt.legend()
+                    if self.show_params_var.get():
+                        plt.text(
+                            0.05, 0.4,
+                            f"V_TH + Power Law:\n"
+                            f"T  = {T:.2e} keV\n"
+                            f"EM = {EM:.2e} cm⁻³\n"
+                            f"amplitude = {amplitude:.2e}\n"
+                            f"alpha     = {alpha:.2f}\n"
+                            f"E_cut = {E_cut_val:.2f} keV",
+                            transform=plt.gca().transAxes,
+                            fontsize=10,
+                            verticalalignment='top',
+                            bbox=dict(facecolor='white', alpha=0.7)
+                        )
+
+                    plt.tight_layout()
+
 
             plt.show()
